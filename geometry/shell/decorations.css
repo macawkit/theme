@@ -1,0 +1,70 @@
+.spark {
+    --width: var(--highlight-thickness);
+    gap: var(--highlight-thickness)
+}
+
+.spark > i:last-child {
+    --glow-color: color-mix(in srgb, var(--shine-color) var(--glow-strength), #0000);
+    background: var(--color);
+    box-shadow: 
+        0 0 calc(var(--shine-radius) * 2) var(--color),
+        0 0 calc(var(--glow-radius) * 2) var(--glow-color);
+}
+
+.share {
+    display: flex;
+    gap: var(--element-inner-margin-small);
+    height: var(--bar-thickness);
+}
+
+.share > i {
+    --glow-color: color-mix(in srgb, var(--shine-color) var(--glow-strength), #0000);
+    flex: var(--value);
+    height: 100%;
+    background: var(--color);
+    box-shadow: 0 0 var(--glow-radius) var(--glow-color);
+}
+
+.badge, .tag {
+    height: var(--element-height-tiny);
+    padding: 0 var(--margin-tight);
+    font-weight: 500;
+    font-size: var(--decrease-font-size);
+    clip-path: var(--chipped-corner-small);
+}
+
+.badge {
+    gap: var(--margin-tight);
+    font-family: var(--mono);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+}
+
+.badge::before {
+    --glow-color: color-mix(in srgb, var(--shine-color) var(--glow-strength), #0000);
+    content: "";
+    flex: none;
+    width: calc(var(--element-inner-margin-small) * 2);
+    height: calc(var(--element-inner-margin-small) * 2);
+    border-radius: 50%;
+    background: var(--shine-color);
+    box-shadow: 0 0 calc(var(--glow-radius) / 2) calc(var(--shine-radius) / 2) var(--shine-color);
+}
+
+div[role="meter"] {
+    height: var(--bar-thickness-small);
+    background: var(--background);
+    position: relative;
+}
+
+div[role="meter"]:before {
+    --glow-color: color-mix(in srgb, var(--shine-color) var(--glow-strength), #0000);
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: var(--value);
+    height: 100%;
+    background: var(--color);
+    box-shadow: 0 0 var(--glow-radius) var(--glow-color);
+}

@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="theme.css">
+    <link rel="stylesheet" href="geometry/shell/index.css">
+    <link rel="stylesheet" href="palette/hyacinth.css">
+    <link rel="stylesheet" href="icon.css">
+    <style>
+        .demo {
+            display: grid;
+            min-height: calc(var(--element-height) * 3);
+        }
+
+        .demo > .panel {
+            display: grid;
+            margin: 0;
+        }
+
+        .demo > .row {
+            justify-content: center;
+        }
+
+        .demo > dl {
+            --key-width: minmax(0, 1fr);
+            row-gap: 0;
+            margin: 0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(12, minmax(0, 1fr));
+            gap: var(--margin);
+            padding: var(--margin);
+        }
+
+        .grid > section {
+            grid-column: span 12;
+            grid-row: span var(--rows);
+        }
+
+        .swatches {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(var(--column-width), 1fr));
+            gap: var(--margin-minimal);
+        }
+
+        .swatches > div {
+            display: flex;
+            flex-direction: column;
+            padding-bottom: var(--margin-minimal);
+            background: var(--mtt-color-panel);
+            gap: var(--margin-tight);
+        }
+
+        .swatches > div > i {
+            --color: var(--mtt-color-body);
+            height: 50px;
+            background: var(--color);
+            border-bottom: 1px solid var(--mtt-color-line-dimmed);
+        }
+
+        .swatches > div > :not(i) {
+            margin: 0 var(--margin-tight);
+        }
+
+        .swatch-group > .label {
+            display: block;
+        }
+
+        .stripe {
+            display: grid;
+            grid-auto-flow: column;
+            grid-auto-columns: minmax(0, 1fr);
+            padding: 0;
+        }
+
+        .stripe > div {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            grid-template-rows: auto 1fr;
+            align-items: start;
+            gap: var(--margin-tight);
+            padding: var(--margin-tight);
+            border-left: 1px solid var(--mtt-color-line-dimmed);
+        }
+
+        .stripe > div > :not(.spark, .note) {
+            grid-column: 1 / -1;
+        }
+
+        .stripe > div:first-child {
+            border-left: none;
+        }
+
+        .stripe > div:first-child {
+            border-left: none;
+        }
+
+        .card header {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr) auto;
+            margin-bottom: 0;
+            padding-bottom: var(--margin);
+        }
+
+        .card header > .stack {
+            gap: 0;
+        }
+
+        .card .cols {
+            border-bottom: 1px solid var(--mtt-color-line-dimmed);
+        }
+
+        .card .cols > * {
+            padding: var(--margin-tight) 0;
+            text-align: center;
+        }
+
+        .card .cols h2 {
+            margin: 0;
+        }
+
+        .card .cols > :not(:first-child) {
+            border-left: 1px solid var(--mtt-color-line-dimmed);
+        }
+
+        @media (min-width: 1280px) {
+            .grid > section {
+                --cols: 12;
+                --rows: 1;
+                grid-column: span var(--cols);
+                grid-row: span var(--rows);
+            }
+        }
+    </style>
+    <script src="general.js" defer></script>
+</head>
+<body>
+
+<main class="grid">
+    <section class="panel">
+        <header>
+            <span class="label">01</span>
+            <h3>Color tokens</h3>
+            <span class="note">Defined as CSS custom properties</span>
+        </header>
+        <div class="stack">
+            <p>Surfaces live on the page itself: <code>--mtt-color-body</code> fills the page and wells, <code>--mtt-color-panel</code> fills panels — so they are not swatched here.</p>
+            <div class="stack tight swatch-group">
+                <span class="label">Main</span>
+                <div class="well swatches">
+                    <div>
+                        <i style="--color: var(--mtt-color-main-dimmed)"></i>
+                        <h4>Main dimmed</h4>
+                        <small><code>--mtt-color-main-dimmed</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--mtt-color-button)"></i>
+                        <h4>Button</h4>
+                        <small><code>--mtt-color-button</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--mtt-color-main)"></i>
+                        <h4>Main</h4>
+                        <small><code>--mtt-color-main</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--mtt-color-main-highlight)"></i>
+                        <h4>Main highlight</h4>
+                        <small><code>--mtt-color-main-highlight</code></small>
+                    </div>
+                </div>
+            </div>
+            <div class="stack tight swatch-group">
+                <span class="label">Text</span>
+                <div class="well swatches">
+                    <div>
+                        <i style="--color: var(--mtt-color-text-muted)"></i>
+                        <h4>Text muted</h4>
+                        <small><code>--mtt-color-text-muted</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--mtt-color-text)"></i>
+                        <h4>Text</h4>
+                        <small><code>--mtt-color-text</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--mtt-color-text-decorated)"></i>
+                        <h4>Text decorated</h4>
+                        <small><code>--mtt-color-text-decorated</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--mtt-color-text-bright)"></i>
+                        <h4>Text bright</h4>
+                        <small><code>--mtt-color-text-bright</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--mtt-color-text-brightest)"></i>
+                        <h4>Text brightest</h4>
+                        <small><code>--mtt-color-text-brightest</code></small>
+                    </div>
+                </div>
+            </div>
+            <div class="stack tight swatch-group">
+                <span class="label">Line</span>
+                <div class="well swatches">
+                    <div>
+                        <i style="--color: var(--mtt-color-line-dimmed)"></i>
+                        <h4>Line dimmed</h4>
+                        <small><code>--mtt-color-line-dimmed</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--mtt-color-line)"></i>
+                        <h4>Line</h4>
+                        <small><code>--mtt-color-line</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--mtt-color-line-highlight)"></i>
+                        <h4>Line highlight</h4>
+                        <small><code>--mtt-color-line-highlight</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--mtt-color-line-decorated)"></i>
+                        <h4>Line decorated</h4>
+                        <small><code>--mtt-color-line-decorated</code></small>
+                    </div>
+                </div>
+            </div>
+            <div class="stack tight swatch-group">
+                <span class="label">Info</span>
+                <div class="well swatches">
+                    <div>
+                        <i style="--color: var(--color-info)"></i>
+                        <h4>Info</h4>
+                        <small><code>--color-info</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--color-info-highlight)"></i>
+                        <h4>Info highlight</h4>
+                        <small><code>--color-info-highlight</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--color-info-text)"></i>
+                        <h4>Info text</h4>
+                        <small><code>--color-info-text</code></small>
+                    </div>
+                </div>
+            </div>
+            <div class="stack tight swatch-group">
+                <span class="label">Signature</span>
+                <div class="well swatches">
+                    <div>
+                        <i style="--color: var(--color-signature)"></i>
+                        <h4>Signature</h4>
+                        <small><code>--color-signature</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--color-signature-highlight)"></i>
+                        <h4>Signature highlight</h4>
+                        <small><code>--color-signature-highlight</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--color-signature-text)"></i>
+                        <h4>Signature text</h4>
+                        <small><code>--color-signature-text</code></small>
+                    </div>
+                </div>
+            </div>
+            <div class="stack tight swatch-group">
+                <span class="label">Success</span>
+                <div class="well swatches">
+                    <div>
+                        <i style="--color: var(--color-success)"></i>
+                        <h4>Success</h4>
+                        <small><code>--color-success</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--color-success-highlight)"></i>
+                        <h4>Success highlight</h4>
+                        <small><code>--color-success-highlight</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--color-success-text)"></i>
+                        <h4>Success text</h4>
+                        <small><code>--color-success-text</code></small>
+                    </div>
+                </div>
+            </div>
+            <div class="stack tight swatch-group">
+                <span class="label">Priority</span>
+                <div class="well swatches">
+                    <div>
+                        <i style="--color: var(--color-priority)"></i>
+                        <h4>Priority</h4>
+                        <small><code>--color-priority</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--color-priority-highlight)"></i>
+                        <h4>Priority highlight</h4>
+                        <small><code>--color-priority-highlight</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--color-priority-text)"></i>
+                        <h4>Priority text</h4>
+                        <small><code>--color-priority-text</code></small>
+                    </div>
+                </div>
+            </div>
+            <div class="stack tight swatch-group">
+                <span class="label">Warning</span>
+                <div class="well swatches">
+                    <div>
+                        <i style="--color: var(--color-warning)"></i>
+                        <h4>Warning</h4>
+                        <small><code>--color-warning</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--color-warning-highlight)"></i>
+                        <h4>Warning highlight</h4>
+                        <small><code>--color-warning-highlight</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--color-warning-text)"></i>
+                        <h4>Warning text</h4>
+                        <small><code>--color-warning-text</code></small>
+                    </div>
+                </div>
+            </div>
+            <div class="stack tight swatch-group">
+                <span class="label">Danger</span>
+                <div class="well swatches">
+                    <div>
+                        <i style="--color: var(--color-danger)"></i>
+                        <h4>Danger</h4>
+                        <small><code>--color-danger</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--color-danger-highlight)"></i>
+                        <h4>Danger highlight</h4>
+                        <small><code>--color-danger-highlight</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--color-danger-text)"></i>
+                        <h4>Danger text</h4>
+                        <small><code>--color-danger-text</code></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel">
+        <header>
+            <span class="label">02</span>
+            <h3>Visual language</h3>
+            <span class="note">surfaces · markers · layers</span>
+        </header>
+        <div class="stack">
+            <div class="tiles">
+                <div class="stack tight">
+                    <div class="well demo">
+                        <div class="panel"></div>
+                    </div>
+                    <strong>Panel</strong>
+                    <small><code>.panel</code></small>
+                    <small>A region of the page and the outermost surface. Everything else lives inside one.</small>
+                </div>
+                <div class="stack tight">
+                    <div class="well demo">
+                        <div class="panel"><div class="well"></div></div>
+                    </div>
+                    <strong>Well</strong>
+                    <small><code>.well</code></small>
+                    <small>Sunk into a surface. Holds a group of data or controls so they read as one.</small>
+                </div>
+                <div class="stack tight">
+                    <div class="well demo">
+                        <div class="card"></div>
+                    </div>
+                    <strong>Card</strong>
+                    <small><code>.card</code></small>
+                    <small>A self-contained unit inside a panel, made to be repeated.</small>
+                </div>
+                <div class="stack tight">
+                    <div class="well demo">
+                        <div class="row">
+                            <div class="box"><i class="icon i-user"></i></div>
+                            <div class="box active"><i class="icon i-user"></i></div>
+                        </div>
+                    </div>
+                    <strong>Box</strong>
+                    <small><code>.box · .active</code></small>
+                    <small>The smallest frame: one glyph or one value. Lights up when active.</small>
+                </div>
+                <div class="stack tight">
+                    <div class="well demo">
+                        <div class="panel">
+                            <header>
+                                <span class="label">01</span>
+                                <h4>Title</h4>
+                                <span class="note">note</span>
+                            </header>
+                        </div>
+                    </div>
+                    <strong>Header</strong>
+                    <small><code>header · .label · .note</code></small>
+                    <small>Names a region and rules it off from its content: index, title, aside.</small>
+                </div>
+                <div class="stack tight">
+                    <div class="well demo">
+                        <dl>
+                            <dt class="note">Key</dt><dd>Value</dd>
+                            <dt class="note">Key</dt><dd>Value</dd>
+                        </dl>
+                    </div>
+                    <strong>Divider</strong>
+                    <small><code>dl · table</code></small>
+                    <small>Rows are separated by hairlines, never boxed. Lines stay quieter than content.</small>
+                </div>
+                <div class="stack tight">
+                    <div class="well demo">
+                        <div class="row">
+                            <div role="tablist" class="small" aria-label="Specimen">
+                                <button type="button" role="tab" aria-selected="true">One</button>
+                                <button type="button" role="tab" aria-selected="false">Two</button>
+                                <button type="button" role="tab" aria-selected="false">Three</button>
+                            </div>
+                        </div>
+                    </div>
+                    <strong>Tabs</strong>
+                    <small><code>[role=tablist] · nav.tabs</code></small>
+                    <small>A choice along one axis. Only the selected tab is marked; the rest stay flat.</small>
+                </div>
+                <div class="stack tight">
+                    <div class="well demo">
+                        <div class="row">
+                            <span class="tag">Tag</span>
+                            <span class="badge">Badge</span>
+                            <span class="badge success">Tone</span>
+                        </div>
+                    </div>
+                    <strong>Tag · Badge</strong>
+                    <small><code>.tag · .badge · .&lt;tone&gt;</code></small>
+                    <small>Inline markers. A tag names something; a badge reports a state and carries a light.</small>
+                </div>
+            </div>
+            <div class="scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Layer</th>
+                            <th>Applies to</th>
+                            <th>Surface</th>
+                            <th>Role</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Ground</td>
+                            <td><code>body · .well · .card</code></td>
+                            <td><code>--mtt-color-body</code></td>
+                            <td><small>The page itself, and anything sunk back down to it</small></td>
+                        </tr>
+                        <tr>
+                            <td>Surface</td>
+                            <td><code>.panel</code></td>
+                            <td><code>--mtt-color-panel</code></td>
+                            <td><small>Raised from the ground; frames a region</small></td>
+                        </tr>
+                        <tr>
+                            <td>Marked</td>
+                            <td><code>.box · [aria-current] · [aria-selected]</code></td>
+                            <td><code>--mtt-color-main-dimmed</code></td>
+                            <td><small>Where you are, what is chosen, what stands alone</small></td>
+                        </tr>
+                        <tr>
+                            <td>Toned</td>
+                            <td><code>.info … .danger</code></td>
+                            <td><code>--background</code></td>
+                            <td><small>Re-tones a whole subtree through three variables</small></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel" style="--cols: 6; --rows: 2;">
+        <header>
+            <span class="label">03</span>
+            <h3>Typography</h3>
+            <span class="note">Space Grotesk · JetBrains Mono labels &amp; data</span>
+        </header>
+        <dl>
+            <dt><b>Hero</b><code class="small">.hero</code></dt>
+            <dd class="hero">48,213 delivered</dd>
+
+            <dt><b>Heading 1</b><code class="small">h1</code></dt>
+            <dd><h1>Mail queue</h1></dd>
+
+            <dt><b>Heading 2</b><code class="small">h2</code></dt>
+            <dd><h2>Domains &amp; routing</h2></dd>
+
+            <dt><b>Heading 3</b><code class="small">h3</code></dt>
+            <dd><h3>Relay configuration</h3></dd>
+
+            <dt><b>Heading 4</b><code class="small">h4</code></dt>
+            <dd><h4>Postscreen blocked 2,941 connections from listed hosts in the last 24 hours.</h4></dd>
+
+            <dt><b>Paragraph</b><code class="small">p</code></dt>
+            <dd><p>Postscreen blocked 2,941 connections from listed hosts in the last 24 hours.</p></dd>
+
+            <dt><b>Note</b><code class="small">.note</code></dt>
+            <dd class="note">Postscreen blocked 2,941 connections from listed hosts in the last 24 hours.</dd>
+
+            <dt><b>Caption</b><code class="small">small, .small</code></dt>
+            <dd><small>Updated 2 seconds ago · auto-refresh on</small></dd>
+
+            <dt><b>Label</b><code class="small">.label</code></dt>
+            <dd class="label">Queue status</dd>
+
+            <dt><b>Mono data</b><code class="small">code</code></dt>
+            <dd><code>4F2A91C3B7 · 198.51.100.23 · 250 2.0.0</code></dd>
+        </dl>
+    </section>
+
+    <section class="panel" style="--cols: 6;">
+        <header>
+            <span class="label">04</span>
+            <h3>Buttons</h3>
+            <span class="note">primary · secondary · ghost · danger</span>
+        </header>
+        <div class="stack">
+            <table>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Primary</th>
+                        <th>Secondary</th>
+                        <th>Ghost</th>
+                        <th>Danger</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>Default</th>
+                        <td><button><i class="icon i-send"></i>Flush</button></td>
+                        <td><button class="alt">Requeue</button></td>
+                        <td><button class="ghost">Cancel</button></td>
+                        <td><button class="danger"><i class="icon i-trash"></i>Delete</button></td>
+                    </tr>
+                    <tr>
+                    <th>Hover</th>
+                        <td><button class="hover"><i class="icon i-send"></i>Flush</button></td>
+                        <td><button class="hover alt">Requeue</button></td>
+                        <td><button class="hover ghost">Cancel</button></td>
+                        <td><button class="hover danger"><i class="icon i-trash"></i>Delete</button></td>
+                    </tr>
+                    <tr>
+                    <th>Pressed</th>
+                        <td><button class="active hover"><i class="icon i-send"></i>Flush</button></td>
+                        <td><button class="active hover alt">Requeue</button></td>
+                        <td><button class="active hover ghost">Cancel</button></td>
+                        <td><button class="active hover danger"><i class="icon i-trash"></i>Delete</button></td>
+                    </tr>
+                    <tr>
+                    <th>Disabled</th>
+                        <td><button disabled><i class="icon i-send"></i>Flush</button></td>
+                        <td><button class="alt" disabled>Requeue</button></td>
+                        <td><button class="ghost" disabled>Cancel</button></td>
+                        <td><button class="danger" disabled><i class="icon i-trash"></i>Delete</button></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="row">
+                <button class="small">Small</button>
+                <button class="alt small"><i class="icon i-plus"></i>Add domain</button>
+                <button class="alt" title="Retry"><i class="icon i-refresh"></i></button>
+                <button class="alt" title="Hold"><i class="icon i-pause"></i></button>
+                <button class="alt" title="Delete"><i class="icon i-trash"></i></button>
+                <button class="large"><i class="icon i-plus"></i>New mailbox</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel" style="--cols: 6;">
+        <header>
+            <span class="label">05</span>
+            <h3>Toggles &amp; checks</h3>
+            <span class="note">switches · checkbox · radio · segmented</span>
+        </header>
+            <div class="stack">
+                <label>
+                    <input type="checkbox" class="switch" checked>
+                    <span>
+                        <b>Postscreen</b>
+                        <small>Pre-greet tests on</small>
+                    </span>
+                </label>
+                <label>
+                    <input type="checkbox" class="switch">
+                    <span>
+                        <b>Greylisting</b>
+                        <small>Off</small>
+                    </span>
+                </label>
+                <label>
+                    <input type="checkbox" class="switch" disabled>
+                    <span>
+                        <b>Soft bounce</b>
+                        <small>Locked by policy</small>
+                    </span>
+                </label>
+                <div class="row">
+                    <label><input type="checkbox" checked>SPF</label>
+                    <label><input type="checkbox" checked>DKIM</label>
+                    <label><input type="checkbox" id="dmarc">DMARC</label>
+                    <label><input type="checkbox">ARC</label>
+                </div>
+            <div class="row">
+                <label><input type="radio" name="tls" class="check" checked>TLS required</label>
+                <label><input type="radio" name="tls" class="check">Opportunistic</label>
+            </div>
+            <div class="row">
+                <div role="tablist" aria-label="Queue view">
+                    <button type="button" role="tab" id="qt-all" aria-controls="qp-all" aria-selected="true">All</button>
+                    <button type="button" role="tab" id="qt-active" aria-controls="qp-active" aria-selected="false">Active</button>
+                    <button type="button" role="tab" id="qt-deferred" aria-controls="qp-deferred" aria-selected="false">Deferred</button>
+                    <button type="button" role="tab" id="qt-hold" aria-controls="qp-hold" aria-selected="false">Hold</button>
+                </div>
+                <span class="small">ARIA tabs · panels · ← → Home End</span>
+            </div>
+            <p class="small" role="tabpanel" id="qp-all" aria-labelledby="qt-all">128 messages in the queue</p>
+            <p class="small" role="tabpanel" id="qp-active" aria-labelledby="qt-active" hidden>23 messages being delivered now</p>
+            <p class="small" role="tabpanel" id="qp-deferred" aria-labelledby="qt-deferred" hidden>37 deferred · oldest 2h 03m</p>
+            <p class="small" role="tabpanel" id="qp-hold" aria-labelledby="qt-hold" hidden>4 messages on hold</p>
+            <div class="row">
+                <div role="tablist" class="small" aria-label="Queue view">
+                    <button type="button" role="tab" aria-selected="true">All</button>
+                    <button type="button" role="tab" aria-selected="false">Active</button>
+                    <button type="button" role="tab" aria-selected="false">Deferred</button>
+                    <button type="button" role="tab" aria-selected="false">Hold</button>
+                </div>
+                <span class="small">ARIA small tabs · panels · ← → Home End</span>
+            </div>
+            <div class="row">
+                <nav class="tabs" aria-label="Quota filter">
+                    <a href="?q=all">All</a>
+                    <a href="?q=warn" aria-current="page">Near limit</a>
+                    <a href="?q=err">Over 95%</a>
+                </nav>
+                <span class="small">links · server pages</span>
+            </div>
+            <div class="row">
+                <nav class="tabs small" aria-label="Quota filter">
+                    <a href="?q=all">All</a>
+                    <a href="?q=warn" aria-current="page">Near limit</a>
+                    <a href="?q=err">Over 95%</a>
+                </nav>
+                <span class="small">links · Small variant</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel">
+        <header>
+            <span class="label">06</span>
+            <h3>Inputs</h3>
+            <span class="note">default · focus · error · disabled</span>
+        </header>
+        <div class="cols">
+            <fieldset>
+                <label>
+                    Hostname
+                    <input value="mx1.example.net">
+                    <small>FQDN used in SMTP banner</small>
+                </label>
+            </fieldset>
+            <fieldset>
+                <label>
+                    Relay transport
+                    <select>
+                        <option>smtp:[relay.example]</option>
+                    </select>
+                    <small>Default for outbound mail</small>
+                </label>
+            </fieldset>
+            <fieldset>
+                <label>
+                    Search
+                    <input type="search" placeholder="Queue ID, sender, IP…">
+                </label>
+            </fieldset>
+            <fieldset>
+                <label>
+                    Focused
+                    <input value="postmaster@example.com" class="focus">
+                    <small>Primary admin address</small>
+                </label>
+            </fieldset>
+            <fieldset>
+                <label>
+                    Domain
+                    <input value="example..com" class="error">
+                    <small class="error"><i class="icon i-error"></i>Invalid domain name</small>
+                </label>
+            </fieldset>
+            <fieldset>
+                <label>
+                    Disabled
+                    <input value="/var/spool/postfix" disabled>
+                    <small>Set in main.cf</small>
+                </label>
+            </fieldset>
+        </div>
+    </section>
+
+    <section class="panel">
+        <header>
+            <span class="label">07</span>
+            <h3>Stat tiles</h3>
+            <span class="note">Dashboard with sparks</span>
+        </header>
+        <div class="panel stripe">
+            <div>
+                <span class="note">Queued</span>
+                <div class="spark signature" data-values="45,50,43,59,69,65,79,75,84,90,81,100"></div>
+                <strong class="hero">128</strong>
+                <div class="small row"><code class="delta info">+12</code>23 active · 4 on hold</div>
+            </div>
+            <div>
+                <span class="note">Delivered · 24h</span>
+                <div class="spark success" data-values="40,45,44,55,62,70,66,77,85,81,91,100"></div>
+                <strong class="hero">48,213</strong>
+                <div class="small row"><code class="success">+6.2%</code>vs 45,402 yesterday</div>
+            </div>
+            <div>
+                <span class="note">Rejected spam</span>
+                <div class="spark priority" data-values="60,66,63,75,72,84,78,81,90,87,93,100"></div>
+                <strong class="hero">2,941</strong>
+                <div class="small row"><code class="success">+14%</code>81% via RBL checks</div>
+            </div>
+            <div>
+                <span class="note">Deferred</span>
+                <div class="spark warning" data-values="96,93,100,88,80,83,75,70,74,64,67,59"></div>
+                <strong class="hero">37</strong>
+                <div class="small row"><code class="warning">−8</code>oldest 2h 03m</div>
+            </div>
+            <div>
+                <span class="note">Bounced</span>
+                <div class="spark danger" data-values="60,66,63,75,72,84,78,81,90,87,93,100"></div>
+                <strong class="hero">112</strong>
+                <div class="small row"><code class="danger">+3</code>0.23% bounce rate</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel" style="--cols: 4;">
+        <header>
+            <span class="label">08</span>
+            <h3>Tags and progress bars</h3>
+            <span class="note">queue + account states</span>
+        </header>
+        <div class="stack">
+            <div class="row">
+                <span class="badge success">Delivered</span>
+                <span class="badge warning">Deferred</span>
+                <span class="badge danger">Bounced</span>
+                <span class="badge signature">Active</span>
+                <span class="badge info">Queued</span>
+                <span class="badge priority">On hold</span>
+                <span class="badge priority">Suspended</span>
+            </div>
+            <div class="well stack tight">
+                <div class="row between">
+                    <small>Queue composition</small>
+                    <small>128 msgs</small>
+                </div>
+                <div class="share">
+                    <i class="signature" style="--value: 17.97"></i>
+                    <i class="warning" style="--value: 28.91"></i>
+                    <i class="priority" style="--value: 3.12"></i>
+                    <i class="info" style="--value: 50.00"></i>
+                </div>
+            </div>
+            <div class="well stack">
+                <div class="stack tight">
+                    <div class="row between">
+                        <small>Quota · default</small>
+                        <small>37%</small>
+                    </div>
+                    <div role="meter" aria-label="Quota · default" aria-valuenow="37" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <div class="stack tight">
+                    <div class="row between">
+                        <small>Quota · .ok</small>
+                        <small>52%</small>
+                    </div>
+                    <div class="success" role="meter" aria-label="Quota · .ok" aria-valuenow="52" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <div class="stack tight">
+                    <div class="row between">
+                        <small>Quota · warning</small>
+                        <small>84%</small>
+                    </div>
+                    <div class="warning" role="meter" aria-label="Quota · .warn" aria-valuenow="84" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <div class="stack tight">
+                    <div class="row between">
+                        <small>Quota · .err</small>
+                        <small>97%</small>
+                    </div>
+                    <div class="danger" role="meter" aria-label="Quota · .err" aria-valuenow="97" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            </div>
+            <div class="row">
+                <span class="tag">TLS 1.3</span>
+                <span class="tag">DKIM pass</span>
+                <span class="tag">SPF pass</span>
+                <span class="tag danger">DKIM fail</span>
+                <span class="tag signature">128</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel" style="--cols: 4;">
+        <header>
+            <span class="label">09</span>
+            <h3>Card</h3>
+            <span class="note">composed recipe</span>
+        </header>
+        <div class="card">
+            <div>
+                <header>
+                    <div class="box"><i class="icon i-domains"></i></div>
+                    <div class="stack">
+                        <strong>example.com</strong>
+                        <small>MX mx1.example.net</small>
+                    </div>
+                    <span class="badge signature">Active</span>
+                </header>
+                <div class="cols">
+                    <div class="stack tight">
+                        <span class="note">Mailboxes</span>
+                        <h2>42</h2>
+                    </div>
+                    <div class="stack tight">
+                        <span class="note">Aliases</span>
+                        <h2>17</h2>
+                    </div>
+                    <div class="stack tight">
+                        <span class="note">24h volume</span>
+                        <h2>6,812</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="stack tight">
+                <div class="row between">
+                    <small>Storage</small>
+                    <small>18.4 / 50 GB</small>
+                </div>
+                <div role="meter" aria-label="Storage" aria-valuenow="37" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <div class="row">
+                <span class="tag">SPF</span>
+                <span class="tag">DKIM</span>
+                <span class="tag">DMARC p=reject</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel" style="--cols: 4;">
+        <header>
+            <span class="label">10</span>
+            <h3>Sidebar nav</h3>
+            <span class="note">active · hover · counts</span>
+        </header>
+        <div class="well stack">
+            <nav>
+                <span class="note">Mail system</span>
+                <ul>
+                    <li><a href="#"><small>01</small>Dashboard</a></li>
+                    <li><a href="#" aria-current="page"><small>02</small>Mail Queue<small>128</small></a></li>
+                    <li><a href="#"><small>03</small>Domains<small>14</small></a></li>
+                    <li><a href="#"><small>04</small>Mailboxes<small>312</small></a></li>
+                    <li><a href="#"><small>05</small>Aliases<small>87</small></a></li>
+                    <li><a href="#"><small>06</small>Logs</a></li>
+                </ul>
+            </nav>
+            <nav>
+                <span class="note">Config</span>
+                <ul>
+                    <li><a href="#"><small>07</small>Settings</a></li>
+                </ul>
+            </nav>
+        </div>
+    </section>
+</main>
+</body>
+<script>
+    const dmarc = document.getElementById('dmarc');
+    dmarc.indeterminate = true;
+</script>
+</html>

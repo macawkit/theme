@@ -1,0 +1,178 @@
+:is(input:not([type="checkbox"], [type="radio"]), select, textarea),
+label:has(> :is(input:not([type="checkbox"], [type="radio"]), select, textarea)) {
+    --field-surface: var(--mtt-color-body);
+    --field-ink: var(--mtt-color-text-bright);
+    --field-tick-color: var(--mtt-color-line-highlight);
+    --field-tick-size: calc(var(--chip) / 2);
+    --field-tick: linear-gradient(var(--field-tick-color), var(--field-tick-color));
+    --field-extra-background: none;
+    --field-glow: none;
+
+    --field-corners:
+        var(--field-tick) 0 0 / var(--field-tick-size) 1px,
+        var(--field-tick) 0 0 / 1px var(--field-tick-size),
+        var(--field-tick) 100% 0 / var(--field-tick-size) 1px,
+        var(--field-tick) 100% 0 / 1px var(--field-tick-size),
+        var(--field-tick) 0 100% / var(--field-tick-size) 1px,
+        var(--field-tick) 0 100% / 1px var(--field-tick-size),
+        var(--field-tick) 100% 100% / var(--field-tick-size) 1px,
+        var(--field-tick) 100% 100% / 1px var(--field-tick-size);
+}
+
+:is(input:not([type="checkbox"], [type="radio"]), select, textarea) {
+    inline-size: 100%;
+    min-inline-size: 0;
+    min-block-size: var(--element-height);
+    margin: 0;
+    padding: 0 var(--margin-tight);
+    border: 0;
+    border-radius: 0;
+
+    color: var(--field-ink);
+    caret-color: var(--mtt-color-line-decorated);
+    font-family: var(--mono);
+
+    background:
+        var(--field-corners),
+        var(--field-extra-background),
+        var(--field-surface);
+    background-repeat: no-repeat;
+
+    transition:
+        background var(--animation-duration) var(--animation-ease),
+        box-shadow var(--animation-duration) var(--animation-ease);
+}
+
+:is(input:not([type="checkbox"], [type="radio"]), select, textarea):is(:focus, .focus),
+label:has(> :is(input:not([type="checkbox"], [type="radio"]), select, textarea):is(:focus, .focus)) {
+    --field-surface: var(--mtt-color-main-dimmed);
+    --field-tick-color: var(--mtt-color-line-decorated);
+    --field-tick-size: var(--chip);
+
+    --field-glow: 0 0 var(--shine-radius) var(--field-tick-color);
+}
+
+:is(input, select, textarea):is(:user-invalid, [aria-invalid="true"], .error),
+label:has(> :is(input, select, textarea):is(:user-invalid, [aria-invalid="true"], .error)) {
+    --field-tick-color: var(--color-danger-highlight);
+}
+
+:is(input, select, textarea):is(:user-invalid, [aria-invalid="true"], .error):is(:focus, .focus),
+label:has(> :is(input, select, textarea):is(:user-invalid, [aria-invalid="true"], .error):is(:focus, .focus)) {
+    --field-surface: var(--color-danger);
+    --field-tick-color: var(--color-danger-text);
+}
+
+label:has(> :is(input, select, textarea):is(:user-invalid, [aria-invalid="true"], .error)) > small {
+    color: var(--color-danger-text);
+}
+
+:is(input, select, textarea):disabled,
+label:has(> :is(input, select, textarea):is(disabled, [aria-disabled=true])) {
+    --field-surface: transparent;
+    --field-tick-color: var(--mtt-color-line-dimmed);
+    --field-glow: none;
+}
+
+select {
+    padding-inline-end: 34px;
+
+    --field-extra-background:
+        linear-gradient(45deg, transparent 50%, var(--mtt-color-text-muted) 50%)
+            calc(100% - 15px) calc(50% - 2px) / 6px 6px,
+        linear-gradient(135deg, var(--mtt-color-text-muted) 50%, transparent 50%)
+            calc(100% - 10px) calc(50% - 2px) / 6px 6px;
+}
+
+textarea {
+    min-block-size: 64px;
+    padding-block: var(--margin-tight);
+    line-height: var(--line-height);
+    resize: vertical;
+}
+
+:is(input, textarea)::placeholder {
+    color: var(--mtt-color-text-muted);
+    opacity: 1;
+}
+
+/*
+    Progressive enhancement.
+
+    The label can contain arbitrary text, help, or decorations: the pseudo
+    elements use the control's anchor box rather than label layout.
+*/
+@supports (anchor-name: --mtt-field-control) {
+    label:has(> :is(input:not([type="checkbox"], [type="radio"]), select, textarea)) {
+        position: relative;
+        anchor-scope: --mtt-field-control;
+    }
+
+    label:has(> :is(input:not([type="checkbox"], [type="radio"]), select, textarea))
+        > :is(input:not([type="checkbox"], [type="radio"]), select, textarea) {
+        anchor-name: --mtt-field-control;
+
+        --field-corners: none;
+        --field-glow: none;
+    }
+
+    label:has(> input[type="search"]) > input[type="search"] {
+        padding-inline-start: var(--element-height);
+    }
+
+
+    label:has(> input[type="search"])::before {
+        content: "";
+        position: absolute;
+        position-anchor: --mtt-field-control;
+        z-index: 1;
+
+        inset-inline-start: calc(anchor(start) + var(--margin-tight));
+        inset-block-start: anchor(center);
+        inline-size: var(--element-height-tiny);
+        block-size: var(--element-height-tiny);
+        transform: translateY(-50%);
+
+        pointer-events: none;
+        background-color: var(--field-ink);
+        -webkit-mask: var(--mtt-icon-search) center / contain no-repeat;
+        mask: var(--mtt-icon-search) center / contain no-repeat;
+    }
+
+    label:has(> :is(input:not([type="checkbox"], [type="radio"]), select, textarea))::after {
+        content: "";
+        position: absolute;
+        position-anchor: --mtt-field-control;
+        z-index: 1;
+
+        inset-inline-start: anchor(start);
+        inset-block-start: anchor(start);
+        inline-size: anchor-size(--mtt-field-control width);
+        block-size: anchor-size(--mtt-field-control height);
+
+        pointer-events: none;
+        background:
+            var(--field-tick) 0 0 / var(--field-tick-size) 1px,
+            var(--field-tick) 0 0 / 1px var(--field-tick-size),
+            var(--field-tick) 100% 0 / var(--field-tick-size) 1px,
+            var(--field-tick) 100% 0 / 1px var(--field-tick-size),
+            var(--field-tick) 0 100% / var(--field-tick-size) 1px,
+            var(--field-tick) 0 100% / 1px var(--field-tick-size),
+            var(--field-tick) 100% 100% / var(--field-tick-size) 1px,
+            var(--field-tick) 100% 100% / 1px var(--field-tick-size);
+        background-repeat: no-repeat;
+
+        transition: 
+            background var(--animation-duration) var(--animation-ease),
+            filter var(--animation-duration) var(--animation-ease);
+    }
+
+    label:has(> :is(input:not([type="checkbox"], [type="radio"], disabled, [aria-disabled=true]), select, textarea):is(:focus, .focus))::after {
+        filter:
+        drop-shadow(0 0 var(--shine-radius) var(--field-tick-color))
+        drop-shadow(
+            0 0 var(--glow-radius)
+            color-mix(in srgb, var(--field-tick-color) var(--glow-strength), #0000)
+        );
+    }
+}
