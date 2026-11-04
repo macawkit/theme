@@ -1,4 +1,4 @@
-:is(.panel, .card) {
+:is(.panel, .card, .alert) {
     padding: var(--margin);
     position: relative;
     background-color: var(--mtt-color-panel);
@@ -6,7 +6,7 @@
     background-image: linear-gradient(
         135deg,
         #0000 calc(50% - 1px),
-        var(--mtt-color-line-highlight) 0 calc(50% + 1px),
+        var(--corner-line, var(--mtt-color-line-highlight)) 0 calc(50% + 1px),
         #0000 0
     );
     background-size: var(--chip) var(--chip);
@@ -39,6 +39,39 @@
     right: -1px;
     bottom: -1px;
     border-width: 0 1px 1px 0;
+}
+
+.alert {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--margin-tight);
+    min-width: 0;
+    --corner-line: var(--color);
+    border: none;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color) calc(var(--glow-strength) / 2), var(--background));
+    background-color: var(--background);
+}
+
+.alert > .stack {
+    gap: 0;
+    min-width: 0;
+}
+
+.alert::after {
+    --highlight-color: var(--color);
+    --glow-color: color-mix(in srgb, var(--highlight-color) var(--glow-strength), #0000);
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: var(--highlight-thickness);
+    height: 100%;
+    pointer-events: none;
+    background-color: var(--highlight-color);
+    box-shadow:
+        0 0 var(--shine-radius) var(--highlight-color),
+        0 0 var(--glow-radius) var(--glow-color);
 }
 
 

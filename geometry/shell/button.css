@@ -181,7 +181,7 @@ nav:not(.tabs) a::after {
 }
 
 :is(button, .button).ghost:is(.hover, :hover):not(:disabled, [aria-disabled=true]) {
-    --background-color: var(--mtt-color-main-dimmed);
+    --background-color: var(--background);
     color: var(--mtt-color-text-bright);
 }
 
@@ -189,6 +189,11 @@ nav:not(.tabs) a::after {
 nav:not(.tabs) a[aria-current]::after {
     transition: opacity var(--animation-duration-fast) var(--animation-ease);
     opacity: 1;
+}
+
+:is(.info, .signature, .success, .priority, .warning, .danger) :is(button, .button).ghost::after,
+:is(button, .button).ghost:is(.info, .signature, .success, .priority, .warning, .danger)::after {
+    --highlight-color: var(--color);
 }
 
 nav.tabs > a,

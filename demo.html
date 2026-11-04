@@ -127,6 +127,10 @@
             border-left: 1px solid var(--mtt-color-line-dimmed);
         }
 
+        .num {
+            text-align: right;
+        }
+
         @media (min-width: 1280px) {
             .grid > section {
                 --cols: 12;
@@ -447,44 +451,42 @@
                     <small>Inline markers. A tag names something; a badge reports a state and carries a light.</small>
                 </div>
             </div>
-            <div class="scroll">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Layer</th>
-                            <th>Applies to</th>
-                            <th>Surface</th>
-                            <th>Role</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Ground</td>
-                            <td><code>body · .well · .card</code></td>
-                            <td><code>--mtt-color-body</code></td>
-                            <td><small>The page itself, and anything sunk back down to it</small></td>
-                        </tr>
-                        <tr>
-                            <td>Surface</td>
-                            <td><code>.panel</code></td>
-                            <td><code>--mtt-color-panel</code></td>
-                            <td><small>Raised from the ground; frames a region</small></td>
-                        </tr>
-                        <tr>
-                            <td>Marked</td>
-                            <td><code>.box · [aria-current] · [aria-selected]</code></td>
-                            <td><code>--mtt-color-main-dimmed</code></td>
-                            <td><small>Where you are, what is chosen, what stands alone</small></td>
-                        </tr>
-                        <tr>
-                            <td>Toned</td>
-                            <td><code>.info … .danger</code></td>
-                            <td><code>--background</code></td>
-                            <td><small>Re-tones a whole subtree through three variables</small></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Layer</th>
+                        <th>Applies to</th>
+                        <th>Surface</th>
+                        <th>Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Ground</td>
+                        <td><code>body · .well · .card</code></td>
+                        <td><code>--mtt-color-body</code></td>
+                        <td><small>The page itself, and anything sunk back down to it</small></td>
+                    </tr>
+                    <tr>
+                        <td>Surface</td>
+                        <td><code>.panel</code></td>
+                        <td><code>--mtt-color-panel</code></td>
+                        <td><small>Raised from the ground; frames a region</small></td>
+                    </tr>
+                    <tr>
+                        <td>Marked</td>
+                        <td><code>.box · [aria-current] · [aria-selected]</code></td>
+                        <td><code>--mtt-color-main-dimmed</code></td>
+                        <td><small>Where you are, what is chosen, what stands alone</small></td>
+                    </tr>
+                    <tr>
+                        <td>Toned</td>
+                        <td><code>.info … .danger</code></td>
+                        <td><code>--background</code></td>
+                        <td><small>Re-tones a whole subtree through three variables</small></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </section>
 
@@ -896,6 +898,151 @@
                     <li><a href="#"><small>07</small>Settings</a></li>
                 </ul>
             </nav>
+        </div>
+    </section>
+
+    <section class="panel" style="--cols: 6">
+        <header>
+            <span class="label">11</span>
+            <h3>Alerts</h3>
+            <span class="note">.alert · ghost</span>
+        </header>
+        <div class="stack">
+            <div class="alert info" role="status">
+                <i class="icon i-info"></i>
+                <div class="stack">
+                    <strong>Configuration reloaded</strong>
+                    <small>postfix reload completed — 3 parameters changed in main.cf.</small>
+                </div>
+                <button class="ghost small">View diff</button>
+            </div>
+            <div class="alert success" role="status">
+                <i class="icon i-success"></i>
+                <div class="stack">
+                    <strong>Queue flushed</strong>
+                    <small>23 deferred messages were handed back to the smtp transport.</small>
+                </div>
+                <button class="ghost small" title="Dismiss"><i class="icon i-x"></i></button>
+            </div>
+            <div class="alert warning" role="alert">
+                <i class="icon i-warn"></i>
+                <div class="stack">
+                    <strong>Deferrals rising</strong>
+                    <small>37 messages have been deferred for over 1 hour to example.com.</small>
+                </div>
+                <button class="ghost small">Inspect</button>
+            </div>
+            <div class="alert danger" role="alert">
+                <i class="icon i-error"></i>
+                <div class="stack">
+                    <strong>Certificate expiring</strong>
+                    <small>TLS certificate for mx1.example.net expires in 3 days.</small>
+                </div>
+                <button class="ghost small">Renew</button>
+            </div>
+            <div class="well stack tight">
+                <span class="label">Ghost buttons · hover takes the tone</span>
+                <div class="cols">
+                    <button class="ghost info">Info</button>
+                    <button class="ghost signature">Signature</button>
+                    <button class="ghost success">Success</button>
+                    <button class="ghost priority">Priority</button>
+                    <button class="ghost warning">Warning</button>
+                    <button class="ghost danger">Danger</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel" style="--cols: 6">
+        <header>
+            <span class="label">12</span>
+            <h3>Table</h3>
+            <span class="note">domains + queue rows</span>
+        </header>
+        <div class="stack">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Domain</th>
+                        <th class="num">Mailboxes</th>
+                        <th>DKIM</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>example.com</strong></td>
+                        <td class="num"><code>42</code></td>
+                        <td><span class="tag">DKIM pass</span></td>
+                        <td><span class="badge signature">Active</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>example.net</strong></td>
+                        <td class="num"><code>118</code></td>
+                        <td><span class="tag">DKIM pass</span></td>
+                        <td><span class="badge signature">Active</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>shop.example</strong></td>
+                        <td class="num"><code>9</code></td>
+                        <td><span class="tag">DKIM pass</span></td>
+                        <td><span class="badge signature">Active</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>legacy.example.org</strong></td>
+                        <td class="num"><code>0</code></td>
+                        <td><span class="tag danger">DKIM fail</span></td>
+                        <td><span class="badge priority">Suspended</span></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="stack tight">
+                <span class="note">Queue table · from admin screen</span>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Queue ID</th>
+                            <th>Sender → Recipient</th>
+                            <th class="num">Size</th>
+                            <th class="num">Age</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>4F2A91C3B7</code></td>
+                            <td>
+                                billing@acme.example
+                                <small style="display: block">→ ops@example.org</small>
+                            </td>
+                            <td class="num"><code>47.1 KB</code></td>
+                            <td class="num"><code>12s</code></td>
+                            <td><span class="badge success">Delivered</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>9C1E07A2D4</code></td>
+                            <td>
+                                noreply@shop.example
+                                <small style="display: block">→ j.doe@example.com</small>
+                            </td>
+                            <td class="num"><code>12.8 KB</code></td>
+                            <td class="num"><code>4m 20s</code></td>
+                            <td><span class="badge warning">Deferred</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>B83D5F10E2</code></td>
+                            <td>
+                                alerts@monitor.example.net
+                                <small style="display: block">→ oncall@example.org</small>
+                            </td>
+                            <td class="num"><code>3.2 KB</code></td>
+                            <td class="num"><code>18s</code></td>
+                            <td><span class="badge signature">Active</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </section>
 </main>

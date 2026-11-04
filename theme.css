@@ -235,16 +235,6 @@ code {
     align-items: start;
 }
 
-.scroll {
-    overflow-x: auto;
-    min-width: 0;
-}
-
-.scroll > table {
-    width: max-content;
-    min-width: 100%;
-}
-
 .row {
     display: flex;
     align-items: center;
