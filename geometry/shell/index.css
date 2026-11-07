@@ -1,4 +1,6 @@
 @import "base.css";
+
+@import "scrollbar.css";
 @import "panel.css";
 @import "button.css";
 @import "input.css";
