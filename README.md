@@ -6,10 +6,45 @@ Color lives in `palette/`. Visual treatment lives in `geometry/`. Shared structu
 
 Still early; [`demo.html`](demo.html) is the best place to see what it can do.
 
+## Install
+
+```sh
+npm install @macawkit/theme
+# or
+bun add @macawkit/theme
+```
+
+## Use
+
+Pick one geometry and one palette, they are interchangeable:
+
+```js
+import '@macawkit/theme/theme.css';
+import '@macawkit/theme/geometry/shell.css';
+import '@macawkit/theme/palette/hyacinth.css';
+import '@macawkit/theme/icon.css';
+import '@macawkit/theme/general'; // tabs, sparks and meters behaviour
+```
+
+Without a bundler, link the built files:
+
 ```html
-<link rel="stylesheet" href="theme.css">
-<link rel="stylesheet" href="geometry/shell/index.css">
-<link rel="stylesheet" href="palette/hyacinth.css">
-<link rel="stylesheet" href="icon.css">
-<script src="general.js" defer></script>
+<link rel="stylesheet" href="node_modules/@macawkit/theme/dist/theme.css">
+<link rel="stylesheet" href="node_modules/@macawkit/theme/dist/geometry/shell.css">
+<link rel="stylesheet" href="node_modules/@macawkit/theme/dist/palette/hyacinth.css">
+<link rel="stylesheet" href="node_modules/@macawkit/theme/dist/icon.css">
+<script src="node_modules/@macawkit/theme/dist/general.js" defer></script>
+```
+
+## Licenses
+
+The code is MIT. The bundled fonts, Space Grotesk and JetBrains Mono, are under the SIL Open Font License, the texts are next to the font files.
+
+## Develop
+
+Sources are in `src/`, `demo.html` links them directly, so no build is needed to see a change.
+
+```sh
+npm run build          # dist/, unminified
+npm run build:release  # dist/, minified
 ```

@@ -1,0 +1,19 @@
+name: Main CI
+on: [push]
+
+jobs:
+  build:
+    name: Build Project
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+
+      - name: Install Project
+        run: npm ci
+
+      - name: Build Release
+        run: npm run build:release

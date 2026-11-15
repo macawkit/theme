@@ -1,0 +1,36 @@
+{
+  "name": "@macawkit/theme",
+  "version": "0.1.0",
+  "description": "A small CSS kit for MacawKit projects",
+  "exports": {
+    "./general": "./dist/general.js",
+    "./package.json": "./package.json",
+    "./*": "./dist/*"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "clean": "rm -rf dist",
+    "prebuild": "npm run clean",
+    "build": "node build.mjs",
+    "build:release": "npm run build release",
+    "prepack": "npm run build:release"
+  },
+  "author": {
+    "name": "Yury Gubich",
+    "email": "blue@macaw.me"
+  },
+  "repository": {
+    "url": "git+https://github.com/macawkit/theme.git",
+    "type": "git"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "esbuild": "^0.28.2"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true
+  }
+}
