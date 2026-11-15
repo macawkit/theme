@@ -1,0 +1,57 @@
+/*
+    Glow bar: a thin shining strip along an edge of an element.
+    Colored by --glow-source.
+*/
+.alert::after,
+:is(button, .button).ghost::after,
+nav:not(.tabs) a::after,
+nav.tabs > a::after,
+:is(button, .button)[role=tab]::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    pointer-events: none;
+    background-color: var(--glow-source);
+    box-shadow:
+        0 0 var(--shine-radius) var(--glow-source),
+        0 0 var(--glow-radius) var(--glow-color);
+}
+
+/* along the left edge */
+.alert::after,
+:is(button, .button).ghost::after,
+nav:not(.tabs) a::after {
+    top: 0;
+    width: var(--highlight-thickness);
+    height: 100%;
+}
+
+/* along the bottom edge */
+nav.tabs > a::after,
+:is(button, .button)[role=tab]::after {
+    bottom: 0;
+    width: 100%;
+    height: var(--highlight-thickness);
+}
+
+/* hidden until the element is hovered or current, see button.css */
+:is(button, .button).ghost::after,
+nav:not(.tabs) a::after,
+nav.tabs > a::after,
+:is(button, .button)[role=tab]::after {
+    opacity: 0;
+    transition: opacity var(--transition);
+}
+
+.alert::after {
+    --glow-source: var(--color);
+}
+
+:is(button, .button).ghost::after {
+    --glow-source: var(--mtt-color-text-decorated);
+}
+
+nav a::after,
+:is(button, .button)[role=tab]::after {
+    --glow-source: var(--mtt-color-main-highlight);
+}

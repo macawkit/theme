@@ -4,7 +4,7 @@
 }
 
 .spark > i:last-child {
-    --glow-color: color-mix(in srgb, var(--shine-color) var(--glow-strength), #0000);
+    --glow-source: var(--shine-color);
     background: var(--color);
     box-shadow: 
         0 0 calc(var(--shine-radius) * 2) var(--color),
@@ -18,7 +18,7 @@
 }
 
 .share > i {
-    --glow-color: color-mix(in srgb, var(--shine-color) var(--glow-strength), #0000);
+    --glow-source: var(--shine-color);
     flex: var(--value);
     height: 100%;
     background: var(--color);
@@ -41,7 +41,6 @@
 }
 
 .badge::before {
-    --glow-color: color-mix(in srgb, var(--shine-color) var(--glow-strength), #0000);
     content: "";
     flex: none;
     width: calc(var(--element-inner-margin-small) * 2);
@@ -58,7 +57,7 @@ div[role="meter"] {
 }
 
 div[role="meter"]:before {
-    --glow-color: color-mix(in srgb, var(--shine-color) var(--glow-strength), #0000);
+    --glow-source: var(--shine-color);
     content: "";
     position: absolute;
     top: 0;

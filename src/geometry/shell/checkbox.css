@@ -4,33 +4,16 @@ input[type="checkbox"]:not(.switch) {
     height: var(--box-size);
 }
 
-input[type="radio"]:before,
-input[type="checkbox"]:not(.switch):before {
+input[type="radio"]::before,
+input[type="checkbox"]:not(.switch)::before {
     content: "";
     inset: 0;
     position: absolute;
     pointer-events: none;
-    transition: 
-        transform var(--animation-duration) var(--animation-ease),
-        background var(--animation-duration) var(--animation-ease),
-        opacity var(--animation-duration) var(--animation-ease);
-}
-
-input[type="checkbox"]:not(.switch):before {
-    background: var(--mtt-icon-check) 50% / var(--box-size) no-repeat;
-    opacity: 0;
-    transform: scale(.5);
-    transform-origin: center;
-    transition: 
-        transform var(--animation-duration) var(--animation-ease),
-        background var(--animation-duration) var(--animation-ease),
-        opacity var(--animation-duration) var(--animation-ease);
-}
-
-input[type="checkbox"]:not(.switch):is(:checked, :indeterminate):before {
-    opacity: 1;
-    transform: scale(1);
-    transition-duration: var(--animation-duration-fast);
+    transition:
+        transform var(--transition),
+        background var(--transition),
+        opacity var(--transition);
 }
 
 input[type="radio"],
@@ -38,116 +21,141 @@ input[type="checkbox"] {
     border-radius: 0;
     background-color: var(--mtt-color-body);
     box-shadow: 0 0 0 1px var(--mtt-color-line);
-    transition: 
-        background-color var(--animation-duration) var(--animation-ease),
-        box-shadow var(--animation-duration) var(--animation-ease);
+    transition:
+        background-color var(--transition),
+        box-shadow var(--transition);
 }
 
-input[type="checkbox"]:not(.switch):indeterminate::before {
-    width: calc(var(--box-size) - 8px);
-    height: var(--highlight-thickness);
-    top: calc(50% - var(--highlight-thickness) / 2);
-    left: var(--element-inner-margin);
-    background: var(--mtt-color-line-decorated);
-    filter: drop-shadow(0 0 var(--shine-radius) var(--mtt-color-line-decorated));
+/* Checkbox: a tick that scales in, a glowing dash when indeterminate */
+input[type="checkbox"]:not(.switch) {
+    &::before {
+        background: var(--mtt-color-text-brightest);
+        -webkit-mask: var(--mtt-icon-check) 50% / var(--box-size) no-repeat;
+        mask: var(--mtt-icon-check) 50% / var(--box-size) no-repeat;
+        opacity: 0;
+        transform: scale(.5);
+        transform-origin: center;
+    }
+
+    &:is(:checked, :indeterminate)::before {
+        opacity: 1;
+        transform: scale(1);
+        transition-duration: var(--animation-duration-fast);
+    }
+
+    &:indeterminate {
+        --glow-source: var(--mtt-color-main-highlight);
+        box-shadow:
+            inset 0 0 var(--shine-radius) var(--mtt-color-text-decorated),
+            0 0 0 calc(var(--shine-radius) / 2) var(--mtt-color-text-decorated),
+            inset 0 0 0 calc(var(--shine-radius) / 2) var(--mtt-color-text-decorated),
+            0 0 var(--glow-radius) var(--glow-color);
+
+        &::before {
+            width: calc(var(--box-size) - 8px);
+            height: var(--highlight-thickness);
+            top: calc(50% - var(--highlight-thickness) / 2);
+            left: var(--element-inner-margin);
+            background: var(--mtt-color-line-decorated);
+            -webkit-mask: none;
+            mask: none;
+            filter: drop-shadow(0 0 var(--shine-radius) var(--mtt-color-line-decorated));
+        }
+
+        &:is(:hover, .hover) {
+            --glow-source: var(--mtt-color-text-decorated);
+            box-shadow:
+                inset 0 0 calc(var(--shine-radius) * 2) var(--mtt-color-text-decorated),
+                0 0 0 calc(var(--shine-radius) / 2) var(--mtt-color-text-decorated),
+                inset 0 0 0 calc(var(--shine-radius) / 2) var(--mtt-color-text-decorated),
+                0 0 var(--glow-radius) var(--glow-color);
+
+            &::before {
+                background: var(--mtt-color-text-bright);
+                filter: drop-shadow(0 0 var(--shine-radius) var(--mtt-color-text-bright));
+            }
+        }
+    }
 }
 
-input[type="checkbox"]:not(.switch):indeterminate:is(:hover, .hover)::before {
-    background: var(--mtt-color-text-bright);
-    filter: drop-shadow(0 0 var(--shine-radius) var(--mtt-color-text-bright));
-}
-
-input[type="checkbox"]:not(.switch):indeterminate {
-    box-shadow: 
-        inset 0 0 var(--shine-radius) var(--mtt-color-text-decorated),
-        0 0 0 calc(var(--shine-radius) / 2) var(--mtt-color-text-decorated),
-        inset 0 0 0 calc(var(--shine-radius) / 2) var(--mtt-color-text-decorated),
-        0 0 var(--glow-radius) color-mix(in srgb, var(--mtt-color-main-highlight) var(--glow-strength), #0000);
-}
-
-input[type="checkbox"]:not(.switch):indeterminate:is(:hover, .hover) {
-    box-shadow: 
-        inset 0 0 calc(var(--shine-radius) * 2) var(--mtt-color-text-decorated),
-        0 0 0 calc(var(--shine-radius) / 2) var(--mtt-color-text-decorated),
-        inset 0 0 0 calc(var(--shine-radius) / 2) var(--mtt-color-text-decorated),
-        0 0 var(--glow-radius) color-mix(in srgb, var(--mtt-color-text-decorated) var(--glow-strength), #0000);
-}
-
+/* Switch and radio: a solid knob */
 input[type="checkbox"].switch {
     width: calc(var(--element-height-tiny) * 2);
     height: var(--element-height-tiny);
 }
 
-input[type="radio"]:before,
-input[type="checkbox"].switch:before {
+input[type="radio"]::before,
+input[type="checkbox"].switch::before {
     content: '';
     position: absolute;
     background-color: var(--mtt-color-text-bright);
-    transition: 
-        background-color var(--animation-duration) var(--animation-ease),
-        transform var(--animation-duration) var(--animation-ease);
+    transition:
+        background-color var(--transition),
+        transform var(--transition);
 }
 
-input[type="checkbox"].switch:before {
-    top: var(--element-inner-margin);
-    left: var(--element-inner-margin-small);
-    width: calc(50% - var(--element-inner-margin-small));
-    height: calc(100% - var(--element-inner-margin) * 2);
+input[type="checkbox"].switch {
+    &::before {
+        top: var(--element-inner-margin);
+        left: var(--element-inner-margin-small);
+        width: calc(50% - var(--element-inner-margin-small));
+        height: calc(100% - var(--element-inner-margin) * 2);
+    }
+
+    &:checked::before {
+        transform: translateX(100%);
+    }
 }
 
-input[type="radio"]:before {
-    top: var(--element-inner-margin-small);
-    left: var(--element-inner-margin-small);
-    width: calc(100% - var(--element-inner-margin-small) * 2);
-    height: calc(100% - var(--element-inner-margin-small) * 2);
-    transform: scale(.8);
-    background-color: var(--mtt-color-line);
+input[type="radio"] {
+    &::before {
+        top: var(--element-inner-margin-small);
+        left: var(--element-inner-margin-small);
+        width: calc(100% - var(--element-inner-margin-small) * 2);
+        height: calc(100% - var(--element-inner-margin-small) * 2);
+        transform: scale(.8);
+        background-color: var(--mtt-color-line);
+    }
+
+    &:checked::before {
+        background-color: var(--mtt-color-text-bright);
+        transform: scale(1);
+    }
+
+    &:is(:hover, .hover):not(:disabled, [aria-disabled=true])::before {
+        background-color: var(--mtt-color-line-highlight);
+    }
+
+    &:is(:hover, .hover):checked:not(:disabled, [aria-disabled=true])::before {
+        background-color: var(--mtt-color-text-brightest);
+    }
 }
 
-input[type="radio"]:checked:before {
-    background-color: var(--mtt-color-text-bright);
-    transform: scale(1);
-}
-
-input[type="radio"]:is(:hover, .hover):not(:disabled, [aria-disabled=true]):before {
-    background-color: var(--mtt-color-line-highlight);
-}
-
-input[type="radio"]:is(:hover, .hover):checked:not(:disabled, [aria-disabled=true]):before {
-    background-color: var(--mtt-color-text-brightest);
-}
-
-input[type="radio"]:is(:hover, .hover):not(:disabled, [aria-disabled=true]):before,
-input[type="checkbox"]:is(:hover, .hover):not(:disabled, [aria-disabled=true]):before {
-    --background-color: var(--mtt-color-text-brightest);
-}
-
-input[type="checkbox"].switch:checked::before {
-    transform: translateX(100%);
-}
-
-input[type="radio"]:checked:not(:disabled, [aria-disabled=true]):before,
-input[type="checkbox"]:checked:not(:disabled, [aria-disabled=true]):before {
+/* States shared by all three */
+input[type="radio"]:checked:not(:disabled, [aria-disabled=true])::before,
+input[type="checkbox"]:checked:not(:disabled, [aria-disabled=true])::before {
     filter: drop-shadow(0 0 var(--shine-radius) var(--mtt-color-text-bright));
 }
 
 input[type="radio"]:is(:hover, .hover):not(:disabled, [aria-disabled=true], :checked),
 input[type="checkbox"]:is(:hover, .hover):not(:disabled, [aria-disabled=true], :checked) {
-    box-shadow: 
-        0 0 0 calc(var(--shine-radius) / 2) color-mix(in srgb, var(--mtt-color-line-highlight) var(--glow-strength), #0000),
-        0 0 var(--glow-radius) color-mix(in srgb, var(--mtt-color-line-highlight) var(--glow-strength), #0000);
+    --glow-source: var(--mtt-color-line-highlight);
+    box-shadow:
+        0 0 0 calc(var(--shine-radius) / 2) var(--glow-color),
+        0 0 var(--glow-radius) var(--glow-color);
 }
 
 input[type="radio"]:checked,
 input[type="checkbox"]:checked {
     --background-color: var(--mtt-color-main);
+    --glow-source: var(--background-color);
     background-color: var(--background-color);
-    box-shadow: 
+    box-shadow:
         0 0 0 calc(var(--shine-radius) / 2) var(--background-color),
-        0 0 var(--glow-radius) color-mix(in srgb, var(--background-color) var(--glow-strength), #0000);
+        0 0 var(--glow-radius) var(--glow-color);
 }
 
 input[type="radio"]:checked:is(.hover, :hover):not(:disabled, [aria-disabled=true]),
 input[type="checkbox"]:checked:is(.hover, :hover):not(:disabled, [aria-disabled=true]) {
-    --background-color: var(--mtt-color-main-highlight);;
+    --background-color: var(--mtt-color-main-highlight);
 }

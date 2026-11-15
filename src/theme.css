@@ -81,7 +81,7 @@ header > :is(h1, h2, h3, h4, h5, h6) {
     flex: auto;
 }
 
-h1, h2, h3, h4, h5, h6, b, bold, strong {
+h1, h2, h3, h4, h5, h6, b, strong {
     color: var(--mtt-color-text-bright);
 }
 
@@ -107,20 +107,16 @@ input {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-    -ms-appearance: none;
-    -o-appearance: none;
-    appearance: none;
 }
 
 nav.tabs > a > svg,
 nav.tabs > a > img,
 :is(button, .button) > svg,
 :is(button, .button) > img {
-    width: auto; 
-    height: 1.2em; 
     width: 1.2em;
+    height: 1.2em;
     flex-shrink: 0;
-    display: block; 
+    display: block;
 }
 
 nav a,

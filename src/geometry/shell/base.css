@@ -36,6 +36,8 @@
     --animation-duration: 200ms;
     --animation-duration-fast: 100ms;
     --animation-ease: cubic-bezier(.4, 0, .2, 1);
+    --transition: var(--animation-duration) var(--animation-ease);
+    --transition-fast: var(--animation-duration-fast) var(--animation-ease);
     --press-scale: 0.99;
     --press-translate: 1px;
     --chipped-corner: polygon(
@@ -52,6 +54,27 @@
         calc(100% - var(--chip-small)) 100%,
         0 100%
     );
+}
+
+/*
+    Mixins. These are declared on every element, so each of them is computed
+    from the inputs of the element it is used on:
+
+    --glow-source            ->  --glow-color, a soft halo of that color
+    --tick-color, --tick-size ->  --ticks, a background of four corner marks
+*/
+*, ::before, ::after {
+    --glow-color: color-mix(in srgb, var(--glow-source) var(--glow-strength), #0000);
+    --tick: linear-gradient(var(--tick-color), var(--tick-color));
+    --ticks:
+        var(--tick) 0 0 / var(--tick-size) 1px,
+        var(--tick) 0 0 / 1px var(--tick-size),
+        var(--tick) 100% 0 / var(--tick-size) 1px,
+        var(--tick) 100% 0 / 1px var(--tick-size),
+        var(--tick) 0 100% / var(--tick-size) 1px,
+        var(--tick) 0 100% / 1px var(--tick-size),
+        var(--tick) 100% 100% / var(--tick-size) 1px,
+        var(--tick) 100% 100% / 1px var(--tick-size);
 }
 
 th {
@@ -113,7 +136,7 @@ dt:not(:last-of-type), dd:not(:last-of-type) {
 label:has(input:disabled, [aria-disabled=true]),
 :is(:disabled, [aria-disabled=true]) {
     cursor: not-allowed;
-    filter: brightness(0.7) contrast(0.9) saturate(0.7);
+    filter: var(--disabled-filter);
 }
 
 fieldset {

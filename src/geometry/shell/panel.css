@@ -20,25 +20,29 @@
     background-color: var(--mtt-color-body);
 }
 
-:is(.panel, .card)::before,
-:is(.panel, .card)::after {
-    content: "";
-    position: absolute;
-    width: var(--chip);
-    height: var(--chip);
-    border: 0 solid var(--mtt-color-line-highlight);
-    pointer-events: none;
-    z-index: 2;
-}
-:is(.panel, .card)::before {
-    left: -1px;
-    top: -1px;
-    border-width: 1px 0 0 1px;
-}
-:is(.panel, .card)::after {
-    right: -1px;
-    bottom: -1px;
-    border-width: 0 1px 1px 0;
+:is(.panel, .card) {
+    &::before,
+    &::after {
+        content: "";
+        position: absolute;
+        width: var(--chip);
+        height: var(--chip);
+        border: 0 solid var(--mtt-color-line-highlight);
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    &::before {
+        left: -1px;
+        top: -1px;
+        border-width: 1px 0 0 1px;
+    }
+
+    &::after {
+        right: -1px;
+        bottom: -1px;
+        border-width: 0 1px 1px 0;
+    }
 }
 
 .alert {
@@ -58,27 +62,8 @@
     min-width: 0;
 }
 
-.alert::after {
-    --highlight-color: var(--color);
-    --glow-color: color-mix(in srgb, var(--highlight-color) var(--glow-strength), #0000);
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: var(--highlight-thickness);
-    height: 100%;
-    pointer-events: none;
-    background-color: var(--highlight-color);
-    box-shadow:
-        0 0 var(--shine-radius) var(--highlight-color),
-        0 0 var(--glow-radius) var(--glow-color);
-}
-
-
 /* Add glow */
 header {
-    padding-bottom: var(--margin-tight);
-    margin-bottom: var(--margin);
     background: 
         linear-gradient(var(--mtt-color-text-decorated), var(--mtt-color-text-decorated)) 0 100% / calc(var(--chip) * 2) 1px no-repeat,
         linear-gradient(var(--mtt-color-line-highlight), var(--mtt-color-line-highlight)) 100% 100% / var(--chip) 1px no-repeat,

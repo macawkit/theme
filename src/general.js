@@ -1,19 +1,21 @@
+function select (list, tab) {
+    for (const candidate of list.querySelectorAll('[role="tab"]')) {
+        const selected = candidate === tab;
+        candidate.setAttribute('aria-selected', String(selected));
+        candidate.tabIndex = selected ? 0 : -1;
+
+        const id = candidate.getAttribute('aria-controls');
+        const panel = document.getElementById(id);
+        if (panel)
+            panel.hidden = !selected;
+    }
+}
+
 for (const list of document.querySelectorAll('[role="tablist"]')) {
     list.addEventListener('click', event => {
         const tab = event.target.closest('[role="tab"]');
-        if (!tab)
-            return;
-
-        for (const candidate of list.querySelectorAll('[role="tab"]')) {
-            const selected = candidate === tab;
-            candidate.setAttribute('aria-selected', String(selected));
-            candidate.tabIndex = selected ? 0 : -1;
-
-            const id = candidate.getAttribute('aria-controls');
-            const panel = document.getElementById(id);
-            if (panel)
-                panel.hidden = !selected;
-        }
+        if (tab)
+            select(list, tab);
     });
 
     list.addEventListener('keydown', event => {
@@ -37,18 +39,7 @@ for (const list of document.querySelectorAll('[role="tablist"]')) {
             return;
 
         event.preventDefault();
-        
-        for (const candidate of list.querySelectorAll('[role="tab"]')) {
-            const selected = candidate === next;
-            candidate.setAttribute('aria-selected', String(selected));
-            candidate.tabIndex = selected ? 0 : -1;
-
-            const id = candidate.getAttribute('aria-controls');
-            const panel = document.getElementById(id);
-            if (panel)
-                panel.hidden = !selected;
-        }
-
+        select(list, next);
         next.focus();
     });
 }
@@ -60,12 +51,8 @@ for (const spark of document.querySelectorAll('.spark')) {
 
     const values = valuesString.split(',').map(Number);
     const maxValue = Math.max(...values);
-    
-    if (values.length === 0)
-        continue;
 
-    for (const child of spark.children)
-        child.remove();
+    spark.replaceChildren();
 
     for (const value of values) {
         const bar = document.createElement('i');

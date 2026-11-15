@@ -45,6 +45,7 @@
     --glow-radius: 10px;
     --shine-radius: 2px;
     --glow-strength: 50%;
+    --disabled-filter: brightness(0.7) contrast(0.9) saturate(0.7);
 }
 
 html {
