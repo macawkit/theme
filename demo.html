@@ -388,6 +388,92 @@
                     </div>
                 </div>
             </div>
+            <div class="stack tight swatch-group">
+                <span class="label">Category</span>
+                <p>Sixteen marks that tell things apart and say nothing of state, like whose a row is. The first eight go round the hues, the last eight go round again between them, deeper.</p>
+                <div class="well swatches">
+                    <div>
+                        <i style="--color: var(--color-category-1)"></i>
+                        <h4>Category 1</h4>
+                        <small><code>--color-category-1</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--color-category-2)"></i>
+                        <h4>Category 2</h4>
+                        <small><code>--color-category-2</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--color-category-3)"></i>
+                        <h4>Category 3</h4>
+                        <small><code>--color-category-3</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--color-category-4)"></i>
+                        <h4>Category 4</h4>
+                        <small><code>--color-category-4</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--color-category-5)"></i>
+                        <h4>Category 5</h4>
+                        <small><code>--color-category-5</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--color-category-6)"></i>
+                        <h4>Category 6</h4>
+                        <small><code>--color-category-6</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--color-category-7)"></i>
+                        <h4>Category 7</h4>
+                        <small><code>--color-category-7</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--color-category-8)"></i>
+                        <h4>Category 8</h4>
+                        <small><code>--color-category-8</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--color-category-9)"></i>
+                        <h4>Category 9</h4>
+                        <small><code>--color-category-9</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--color-category-10)"></i>
+                        <h4>Category 10</h4>
+                        <small><code>--color-category-10</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--color-category-11)"></i>
+                        <h4>Category 11</h4>
+                        <small><code>--color-category-11</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--color-category-12)"></i>
+                        <h4>Category 12</h4>
+                        <small><code>--color-category-12</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--color-category-13)"></i>
+                        <h4>Category 13</h4>
+                        <small><code>--color-category-13</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--color-category-14)"></i>
+                        <h4>Category 14</h4>
+                        <small><code>--color-category-14</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--color-category-15)"></i>
+                        <h4>Category 15</h4>
+                        <small><code>--color-category-15</code></small>
+                    </div>
+                    <div>
+                        <i style="--color: var(--color-category-16)"></i>
+                        <h4>Category 16</h4>
+                        <small><code>--color-category-16</code></small>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -830,7 +916,7 @@
         <header>
             <span class="label">07</span>
             <h3>Inputs</h3>
-            <span class="note">default · focus · error · disabled</span>
+            <span class="note">default · focus · error · disabled · date · time</span>
         </header>
         <div class="cols">
             <fieldset>
@@ -867,6 +953,20 @@
                     Domain
                     <input value="example..com" class="error">
                     <small class="error"><i class="icon i-error"></i>Invalid domain name</small>
+                </label>
+            </fieldset>
+            <fieldset>
+                <label>
+                    Purge after
+                    <input type="date" value="2026-12-01">
+                    <small>The browser's picker, the kit's icon</small>
+                </label>
+            </fieldset>
+            <fieldset>
+                <label>
+                    Nightly run
+                    <input type="time" value="03:30">
+                    <small>Server time</small>
                 </label>
             </fieldset>
             <fieldset>
@@ -1273,7 +1373,7 @@
         <header>
             <span class="label">16</span>
             <h3>Combobox</h3>
-            <span class="note">combobox · dropdown</span>
+            <span class="note">combobox · choice · dropdown</span>
         </header>
         <div class="stack">
             <fieldset>
@@ -1290,6 +1390,69 @@
                     <li role="presentation">Local</li>
                     <li role="option" id="transport-lmtp"><span>lmtp:unix:private/dovecot</span></li>
                     <li role="option" id="transport-local"><span>local</span></li>
+                </ul>
+                <label>
+                    Time zone
+                    <input role="combobox" aria-controls="zones" aria-expanded="false" aria-autocomplete="list" autocomplete="off" spellcheck="false" placeholder="City or abbreviation…" value="Europe / Berlin">
+                    <input type="hidden" name="zone" value="Europe/Berlin">
+                    <small>Choice · a hidden input posts the id · data-find, try cet</small>
+                </label>
+                <ul role="listbox" id="zones" aria-label="Time zone" popover="manual" data-empty="No matches">
+                    <li role="presentation">Africa</li>
+                    <li role="option" id="tz-africa-cairo" data-value="Africa/Cairo" data-label="Africa / Cairo" data-find="eet egypt"><span>Cairo</span><small>+02:00</small></li>
+                    <li role="option" id="tz-africa-johannesburg" data-value="Africa/Johannesburg" data-label="Africa / Johannesburg" data-find="sast south africa"><span>Johannesburg</span><small>+02:00</small></li>
+                    <li role="option" id="tz-africa-lagos" data-value="Africa/Lagos" data-label="Africa / Lagos" data-find="wat nigeria"><span>Lagos</span><small>+01:00</small></li>
+                    <li role="option" id="tz-africa-nairobi" data-value="Africa/Nairobi" data-label="Africa / Nairobi" data-find="eat kenya"><span>Nairobi</span><small>+03:00</small></li>
+                    <li role="presentation">America</li>
+                    <li role="option" id="tz-america-anchorage" data-value="America/Anchorage" data-label="America / Anchorage" data-find="akst alaska"><span>Anchorage</span><small>−09:00</small></li>
+                    <li role="option" id="tz-america-chicago" data-value="America/Chicago" data-label="America / Chicago" data-find="cst usa"><span>Chicago</span><small>−06:00</small></li>
+                    <li role="option" id="tz-america-denver" data-value="America/Denver" data-label="America / Denver" data-find="mst usa"><span>Denver</span><small>−07:00</small></li>
+                    <li role="option" id="tz-america-los-angeles" data-value="America/Los_Angeles" data-label="America / Los Angeles" data-find="pst usa"><span>Los Angeles</span><small>−08:00</small></li>
+                    <li role="option" id="tz-america-mexico-city" data-value="America/Mexico_City" data-label="America / Mexico City" data-find="cst mexico"><span>Mexico City</span><small>−06:00</small></li>
+                    <li role="option" id="tz-america-new-york" data-value="America/New_York" data-label="America / New York" data-find="est usa"><span>New York</span><small>−05:00</small></li>
+                    <li role="option" id="tz-america-sao-paulo" data-value="America/Sao_Paulo" data-label="America / São Paulo" data-find="brt brazil sao paulo"><span>São Paulo</span><small>−03:00</small></li>
+                    <li role="option" id="tz-america-toronto" data-value="America/Toronto" data-label="America / Toronto" data-find="est canada"><span>Toronto</span><small>−05:00</small></li>
+                    <li role="presentation">Antarctica</li>
+                    <li role="option" id="tz-antarctica-mcmurdo" data-value="Antarctica/McMurdo" data-label="Antarctica / McMurdo" data-find="nzdt"><span>McMurdo</span><small>+13:00</small></li>
+                    <li role="option" id="tz-antarctica-troll" data-value="Antarctica/Troll" data-label="Antarctica / Troll" data-find="norway"><span>Troll</span><small>+00:00</small></li>
+                    <li role="presentation">Asia</li>
+                    <li role="option" id="tz-asia-bangkok" data-value="Asia/Bangkok" data-label="Asia / Bangkok" data-find="ict thailand"><span>Bangkok</span><small>+07:00</small></li>
+                    <li role="option" id="tz-asia-dubai" data-value="Asia/Dubai" data-label="Asia / Dubai" data-find="gst emirates"><span>Dubai</span><small>+04:00</small></li>
+                    <li role="option" id="tz-asia-hong-kong" data-value="Asia/Hong_Kong" data-label="Asia / Hong Kong" data-find="hkt"><span>Hong Kong</span><small>+08:00</small></li>
+                    <li role="option" id="tz-asia-jakarta" data-value="Asia/Jakarta" data-label="Asia / Jakarta" data-find="wib indonesia"><span>Jakarta</span><small>+07:00</small></li>
+                    <li role="option" id="tz-asia-kolkata" data-value="Asia/Kolkata" data-label="Asia / Kolkata" data-find="ist india"><span>Kolkata</span><small>+05:30</small></li>
+                    <li role="option" id="tz-asia-seoul" data-value="Asia/Seoul" data-label="Asia / Seoul" data-find="kst korea"><span>Seoul</span><small>+09:00</small></li>
+                    <li role="option" id="tz-asia-shanghai" data-value="Asia/Shanghai" data-label="Asia / Shanghai" data-find="cst china"><span>Shanghai</span><small>+08:00</small></li>
+                    <li role="option" id="tz-asia-singapore" data-value="Asia/Singapore" data-label="Asia / Singapore" data-find="sgt"><span>Singapore</span><small>+08:00</small></li>
+                    <li role="option" id="tz-asia-tokyo" data-value="Asia/Tokyo" data-label="Asia / Tokyo" data-find="jst japan"><span>Tokyo</span><small>+09:00</small></li>
+                    <li role="presentation">Atlantic</li>
+                    <li role="option" id="tz-atlantic-azores" data-value="Atlantic/Azores" data-label="Atlantic / Azores" data-find="azot portugal"><span>Azores</span><small>−01:00</small></li>
+                    <li role="option" id="tz-atlantic-reykjavik" data-value="Atlantic/Reykjavik" data-label="Atlantic / Reykjavik" data-find="gmt iceland"><span>Reykjavik</span><small>+00:00</small></li>
+                    <li role="presentation">Australia</li>
+                    <li role="option" id="tz-australia-adelaide" data-value="Australia/Adelaide" data-label="Australia / Adelaide" data-find="acdt"><span>Adelaide</span><small>+10:30</small></li>
+                    <li role="option" id="tz-australia-brisbane" data-value="Australia/Brisbane" data-label="Australia / Brisbane" data-find="aest"><span>Brisbane</span><small>+10:00</small></li>
+                    <li role="option" id="tz-australia-perth" data-value="Australia/Perth" data-label="Australia / Perth" data-find="awst"><span>Perth</span><small>+08:00</small></li>
+                    <li role="option" id="tz-australia-sydney" data-value="Australia/Sydney" data-label="Australia / Sydney" data-find="aedt"><span>Sydney</span><small>+11:00</small></li>
+                    <li role="presentation">Europe</li>
+                    <li role="option" id="tz-europe-athens" data-value="Europe/Athens" data-label="Europe / Athens" data-find="eet greece"><span>Athens</span><small>+02:00</small></li>
+                    <li role="option" id="tz-europe-berlin" data-value="Europe/Berlin" data-label="Europe / Berlin" data-find="cet germany" aria-current="true"><span>Berlin</span><small>+01:00</small></li>
+                    <li role="option" id="tz-europe-kyiv" data-value="Europe/Kyiv" data-label="Europe / Kyiv" data-find="eet ukraine kiev"><span>Kyiv</span><small>+02:00</small></li>
+                    <li role="option" id="tz-europe-lisbon" data-value="Europe/Lisbon" data-label="Europe / Lisbon" data-find="wet portugal"><span>Lisbon</span><small>+00:00</small></li>
+                    <li role="option" id="tz-europe-london" data-value="Europe/London" data-label="Europe / London" data-find="gmt uk britain"><span>London</span><small>+00:00</small></li>
+                    <li role="option" id="tz-europe-madrid" data-value="Europe/Madrid" data-label="Europe / Madrid" data-find="cet spain"><span>Madrid</span><small>+01:00</small></li>
+                    <li role="option" id="tz-europe-moscow" data-value="Europe/Moscow" data-label="Europe / Moscow" data-find="msk russia"><span>Moscow</span><small>+03:00</small></li>
+                    <li role="option" id="tz-europe-paris" data-value="Europe/Paris" data-label="Europe / Paris" data-find="cet france"><span>Paris</span><small>+01:00</small></li>
+                    <li role="option" id="tz-europe-rome" data-value="Europe/Rome" data-label="Europe / Rome" data-find="cet italy"><span>Rome</span><small>+01:00</small></li>
+                    <li role="option" id="tz-europe-warsaw" data-value="Europe/Warsaw" data-label="Europe / Warsaw" data-find="cet poland"><span>Warsaw</span><small>+01:00</small></li>
+                    <li role="presentation">Indian</li>
+                    <li role="option" id="tz-indian-maldives" data-value="Indian/Maldives" data-label="Indian / Maldives" data-find="mvt"><span>Maldives</span><small>+05:00</small></li>
+                    <li role="option" id="tz-indian-mauritius" data-value="Indian/Mauritius" data-label="Indian / Mauritius" data-find="mut"><span>Mauritius</span><small>+04:00</small></li>
+                    <li role="presentation">Pacific</li>
+                    <li role="option" id="tz-pacific-auckland" data-value="Pacific/Auckland" data-label="Pacific / Auckland" data-find="nzdt new zealand"><span>Auckland</span><small>+13:00</small></li>
+                    <li role="option" id="tz-pacific-fiji" data-value="Pacific/Fiji" data-label="Pacific / Fiji" data-find="fjt"><span>Fiji</span><small>+12:00</small></li>
+                    <li role="option" id="tz-pacific-honolulu" data-value="Pacific/Honolulu" data-label="Pacific / Honolulu" data-find="hst hawaii"><span>Honolulu</span><small>−10:00</small></li>
+                    <li role="presentation">Universal</li>
+                    <li role="option" id="tz-utc" data-value="UTC" data-label="UTC" data-find="gmt zulu"><span>UTC</span><small>+00:00</small></li>
                 </ul>
                 <label>
                     Queue order

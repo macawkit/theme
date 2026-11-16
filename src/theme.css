@@ -387,8 +387,10 @@ input[role=combobox][inputmode=none] {
     list-style: none;
 }
 
+/* it scrolls on its own, the page behind it stays */
 [role=listbox][popover] {
     max-height: calc(var(--element-height) * 8);
+    overscroll-behavior: contain;
 }
 
 [role=option] {
@@ -404,19 +406,43 @@ input[role=combobox][inputmode=none] {
     padding: var(--margin-tight) var(--margin-tight) var(--margin-minimal);
 }
 
+/* a caption stays over its options as they scroll under it, so an option the keyboard reaches stops below it */
+[role=listbox][popover] {
+    /* as tall as a caption: its padding and a line */
+    &:has(> [role=presentation]) {
+        scroll-padding-block-start: calc(var(--margin-tight) + var(--line-height) + var(--margin-minimal));
+    }
+
+    > [role=presentation] {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+}
+
+/* what a list says when a search finds nothing */
+[role=listbox][data-empty]:not(:has(> [role=option]:not([hidden])))::after {
+    content: attr(data-empty);
+    display: flex;
+    align-items: center;
+    min-height: var(--element-height);
+    padding: 0 var(--margin-tight);
+}
+
 /* Without anchors the browser shows the list in the middle of the window */
 @supports (anchor-name: --mtt-combobox) {
     [role=combobox][aria-expanded=true] {
         anchor-name: --mtt-combobox;
     }
 
-    /* under its field, or above it where there is no room below */
+    /* on the side of its field with more room, and no taller than that room, so it never covers the field */
     [role=listbox][popover] {
         position-anchor: --mtt-combobox;
         position-area: block-end span-inline-end;
-        position-try-fallbacks: flip-block;
+        position-try: most-block-size flip-block;
         inset: auto;
         width: anchor-size(width);
+        max-height: min(calc(var(--element-height) * 8), 100% - 2 * var(--margin-minimal));
         margin: var(--margin-minimal) 0;
     }
 }
