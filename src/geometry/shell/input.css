@@ -125,6 +125,8 @@ textarea {
             pointer-events: none;
             background: var(--ticks);
             background-repeat: no-repeat;
+            /* one for the shine, one for the glow */
+            filter: var(--unlit) var(--unlit);
 
             transition:
                 background var(--transition),

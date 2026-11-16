@@ -40,6 +40,11 @@
     --transition-fast: var(--animation-duration-fast) var(--animation-ease);
     --press-scale: 0.99;
     --press-translate: 1px;
+    /*
+        The rest of a filter that fades a shine or a glow in. Their colors are mixed, and Chrome
+        fades from no filter to a mixed color through black, so the color would come in at the end
+    */
+    --unlit: drop-shadow(0 0 0 color(srgb 0 0 0 / 0));
     --chipped-corner: polygon(
         0 0,
         100% 0,
