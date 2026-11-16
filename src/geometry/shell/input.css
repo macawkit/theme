@@ -156,7 +156,7 @@ textarea {
     label:has(> :is(input:not([type="checkbox"], [type="radio"], :disabled, [aria-disabled=true]), select, textarea):is(:focus, .focus))::after {
         --glow-source: var(--tick-color);
         filter:
-            drop-shadow(0 0 var(--shine-radius) var(--tick-color))
+            drop-shadow(0 0 var(--shine-radius) color-mix(in srgb, var(--tick-color) var(--shining), #0000))
             drop-shadow(0 0 var(--glow-radius) var(--glow-color));
     }
 }

@@ -61,10 +61,13 @@
     from the inputs of the element it is used on:
 
     --glow-source            ->  --glow-color, a soft halo of that color
+    --shine-radius           ->  --shining, 100% or 0%, the opacity of a shine. With no
+                                 radius a shine would still be a sharp copy, inking the edges
     --tick-color, --tick-size ->  --ticks, a background of four corner marks
 */
 *, ::before, ::after {
     --glow-color: color-mix(in srgb, var(--glow-source) var(--glow-strength), #0000);
+    --shining: calc(sign(var(--shine-radius)) * 100%);
     --tick: linear-gradient(var(--tick-color), var(--tick-color));
     --ticks:
         var(--tick) 0 0 / var(--tick-size) 1px,
