@@ -69,9 +69,12 @@
 :is(select, input[role=combobox]) {
     padding-inline-end: 34px;
 
+    /* two halves of the chevron, each a diagonal with a pixel of fade, so its edges are smooth */
     --field-extra-background:
-        conic-gradient(from -45deg at 50% 100%, var(--mtt-color-text-muted) 90deg, #0000 0)
-            calc(100% - 10px) calc(50%) / 10px 6px;
+        linear-gradient(to bottom left, var(--mtt-color-text-muted) calc(50% - .5px), #0000 calc(50% + .5px))
+            calc(100% - 15px) 50% / 5px 5px,
+        linear-gradient(to bottom right, var(--mtt-color-text-muted) calc(50% - .5px), #0000 calc(50% + .5px))
+            calc(100% - 10px) 50% / 5px 5px;
 }
 
 textarea {

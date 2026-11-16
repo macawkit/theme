@@ -1,9 +1,9 @@
 :root {
-    --mtt-color-body: #f4eee2;
-    --mtt-color-panel: #fbf8f1;
+    --mtt-color-body: #f7f3ea;
+    --mtt-color-panel: #fdfbf7;
 
-    --mtt-color-main-dimmed: #dce8e4;
-    --mtt-color-button: #c5dbd6;
+    --mtt-color-main-dimmed: #dbeeeb;
+    --mtt-color-button: #c3e0dc;
     --mtt-color-main: #2a6f77;
     --mtt-color-main-highlight: #1a7f89;
 
@@ -13,9 +13,9 @@
     --mtt-color-text-bright: #231e17;
     --mtt-color-text-brightest: #ffffff;
 
-    --mtt-color-line: #d3c8b2;
-    --mtt-color-line-dimmed: #e4dccb;
-    --mtt-color-line-highlight: #86a6a4;
+    --mtt-color-line: #ddd4c2;
+    --mtt-color-line-dimmed: #e8e1d3;
+    --mtt-color-line-highlight: #b3c6c2;
     --mtt-color-line-decorated: #1a8a94;
 
     --color-info: var(--mtt-color-main-dimmed);
