@@ -68,10 +68,9 @@
 select {
     padding-inline-end: 34px;
 
-    /* odd width: the tip is one whole pixel, the edges never split a pixel */
     --field-extra-background:
         conic-gradient(from -45deg at 50% 100%, var(--mtt-color-text-muted) 90deg, #0000 0)
-            calc(100% - 10px) calc(50% - 2px) / 11px 6px;
+            calc(100% - 10px) calc(50%) / 10px 6px;
 }
 
 textarea {
