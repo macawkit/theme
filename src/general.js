@@ -76,8 +76,8 @@ for (const meter of document.querySelectorAll('div[role="meter"]')) {
 
 /*
     Combobox: an input and the listbox its aria-controls names, the option chosen
-    gives the input its data-value or its text. A readonly one is a dropdown,
-    any other filters the options by what is typed and marks the match.
+    gives the input its data-value or its text. One with inputmode=none is a
+    dropdown that takes no typing, any other filters the options by what is typed and marks the match.
 */
 function listOf (field) {
     return document.getElementById(field.getAttribute('aria-controls'));
@@ -87,6 +87,10 @@ function isCombobox (target) {
     return target instanceof HTMLInputElement
         && target.matches('[role="combobox"][aria-controls]')
         && Boolean(listOf(target)?.hasAttribute('popover'));
+}
+
+function isDropdown (field) {
+    return field.inputMode === 'none';
 }
 
 function shownOptions (list) {
@@ -173,6 +177,12 @@ function choose (field, option) {
     field.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
+// A dropdown stays a field the browser validates, so required works, but nothing is typed or pasted into it
+document.addEventListener('beforeinput', event => {
+    if (isCombobox(event.target) && isDropdown(event.target))
+        event.preventDefault();
+});
+
 document.addEventListener('input', event => {
     if (!isCombobox(event.target))
         return;
@@ -196,7 +206,7 @@ document.addEventListener('click', event => {
             choose(field, option);
     } else if (isCombobox(event.target)) {
         const field = event.target;
-        expand(field, !field.readOnly || field.getAttribute('aria-expanded') !== 'true');
+        expand(field, !isDropdown(field) || field.getAttribute('aria-expanded') !== 'true');
     }
 });
 
@@ -227,11 +237,11 @@ document.addEventListener('keydown', event => {
     } else if (event.key === 'Escape' && open) {
         event.preventDefault();
         expand(field, false);
-    } else if (event.key === 'Enter' || (field.readOnly && event.key === ' ')) {
+    } else if (event.key === 'Enter' || (isDropdown(field) && event.key === ' ')) {
         if (open && active) {
             event.preventDefault();
             choose(field, active);
-        } else if (field.readOnly) {
+        } else if (isDropdown(field)) {
             event.preventDefault();
             expand(field, !open);
         }

@@ -375,8 +375,8 @@ legend {
     named by its aria-controls, opened and filtered by general.js.
 */
 
-/* a readonly one is the dropdown: it is clicked, not typed in */
-input[role=combobox][readonly] {
+/* one with inputmode=none is the dropdown: it is clicked, not typed in */
+input[role=combobox][inputmode=none] {
     cursor: pointer;
     caret-color: transparent;
 }
