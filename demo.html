@@ -6,7 +6,13 @@
     <title>Document</title>
     <link rel="stylesheet" href="src/theme.css">
     <link rel="stylesheet" href="src/geometry/shell/index.css">
-    <link rel="stylesheet" href="src/palette/hyacinth.css">
+    <link rel="stylesheet" href="src/palette/hyacinth.css" id="palette">
+    <script>
+        // The look comes from the query, ?palette=cream, so a link to the page keeps it. Applied here, before the page is painted
+        const look = new URLSearchParams(location.search);
+        if (/^[a-z]+$/.test(look.get('palette') ?? ''))
+            document.getElementById('palette').href = `src/palette/${look.get('palette')}.css`;
+    </script>
     <link rel="stylesheet" href="src/icon.css">
     <style>
         .demo {
@@ -32,6 +38,11 @@
         .demo > dialog {
             position: relative;
             margin: var(--margin) auto;
+        }
+
+        /* the header of the demo itself, with the pickers of the look */
+        .look {
+            margin: var(--margin) var(--margin) 0;
         }
 
         .grid {
@@ -148,6 +159,21 @@
     <script src="src/general.js" defer></script>
 </head>
 <body>
+
+<header class="look">
+    <h1>@macawkit/theme</h1>
+    <form id="look" class="row">
+        <fieldset>
+            <label>
+                Palette
+                <select name="palette">
+                    <option value="hyacinth">Hyacinth · dark</option>
+                    <option value="cream">Cream · light</option>
+                </select>
+            </label>
+        </fieldset>
+    </form>
+</header>
 
 <main class="grid">
     <section class="panel">
@@ -1232,5 +1258,22 @@
 <script>
     const dmarc = document.getElementById('dmarc');
     dmarc.indeterminate = true;
+
+    // The look picked in the header: the page takes it at once and keeps it in the query
+    const form = document.getElementById('look');
+    const palette = form.elements.palette;
+    palette.value = look.get('palette') ?? palette.value;
+    if (palette.value === '')
+        palette.selectedIndex = 0;
+
+    function apply () {
+        document.getElementById('palette').href = `src/palette/${palette.value}.css`;
+        history.replaceState(null, '', `?${new URLSearchParams(new FormData(form))}`);
+    }
+
+    if (look.has('palette'))
+        apply();
+
+    form.addEventListener('change', apply);
 </script>
 </html>
