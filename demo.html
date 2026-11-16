@@ -689,6 +689,29 @@
                 </div>
                 <span class="small">secondary · ghost</span>
             </div>
+            <div class="row">
+                <div class="row" role="radiogroup" aria-label="Retry after">
+                    <label class="button alt"><input type="radio" name="retry" value="5" checked required>5 min</label>
+                    <label class="button alt"><input type="radio" name="retry" value="15" required>15 min</label>
+                    <label class="button alt hover"><input type="radio" name="retry" value="60" required>1 hour</label>
+                    <label class="button alt"><input type="radio" name="retry" value="0" disabled>Never</label>
+                </div>
+                <span class="small">radios in label.button · hover · disabled</span>
+            </div>
+            <div class="row">
+                <div class="row" role="group" aria-label="Checks">
+                    <label class="button"><input type="checkbox" checked>SPF</label>
+                    <label class="button"><input type="checkbox">DKIM</label>
+                    <label class="button focus"><input type="checkbox">DMARC</label>
+                    <label class="button"><input type="checkbox" checked disabled>ARC</label>
+                </div>
+                <span class="small">checkboxes · focus · no script</span>
+            </div>
+            <div class="row">
+                <button hidden>Hidden button</button>
+                <label class="button" hidden>Hidden label</label>
+                <span class="small">a button and a label with hidden sit here · nothing shows</span>
+            </div>
         </div>
     </section>
 

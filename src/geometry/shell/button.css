@@ -48,10 +48,10 @@ nav.tabs > a,
     }
 }
 
-/* Lit: the current tab, a pressed toggle and whatever the pointer is on */
+/* Lit: the current tab, a pressed toggle, a label around a checked input and whatever the pointer is on */
 nav.tabs > a[aria-current=page],
 :is(button, .button)[role=tab][aria-selected=true],
-:is(button, .button)[aria-pressed=true]:not(.ghost),
+:is(button, .button):is([aria-pressed=true], :has(> input:checked)):not(.ghost),
 :is(button, .button):not(.ghost, :disabled, [aria-disabled=true], [role=tab]):is(.hover, :hover) {
     --background-color: var(--mtt-color-main-highlight);
     --glow-source: var(--background-color);
@@ -99,7 +99,7 @@ nav.tabs > a:is(.hover, :hover),
     --background-color: var(--mtt-color-main-dimmed);
     background-color: var(--background-color);
 
-    &[aria-pressed=true],
+    &:is([aria-pressed=true], :has(> input:checked)),
     &:is(.hover, :hover):not(:disabled, [aria-disabled=true]) {
         --background-color: var(--mtt-color-button);
         border-color: var(--mtt-color-line-highlight);
@@ -122,7 +122,7 @@ nav.tabs > a:is(.hover, :hover),
         background var(--transition);
 }
 
-:is(button, .button).alt[aria-pressed=true]::before,
+:is(button, .button).alt:is([aria-pressed=true], :has(> input:checked))::before,
 :is(button, .button).alt:is(.hover, :hover):not(:disabled, [aria-disabled=true])::before,
 .box.active::before {
     --tick-color: var(--mtt-color-line-decorated);
@@ -151,7 +151,7 @@ nav.tabs > a:is(.hover, :hover),
         --background-color: var(--color-danger);
         color: var(--color-danger-text);
 
-        &[aria-pressed=true],
+        &:is([aria-pressed=true], :has(> input:checked)),
         &:is(.hover, :hover):not(:disabled, [aria-disabled=true]) {
             --background-color: var(--color-danger-highlight);
             color: var(--mtt-color-text-brightest);
@@ -163,7 +163,7 @@ nav.tabs > a:is(.hover, :hover),
         --background-color: transparent;
         color: var(--mtt-color-text);
 
-        &[aria-pressed=true],
+        &:is([aria-pressed=true], :has(> input:checked)),
         &:is(.hover, :hover):not(:disabled, [aria-disabled=true]) {
             --background-color: var(--background);
             color: var(--mtt-color-text-bright);
@@ -171,7 +171,7 @@ nav.tabs > a:is(.hover, :hover),
     }
 }
 
-:is(button, .button).ghost[aria-pressed=true]::after,
+:is(button, .button).ghost:is([aria-pressed=true], :has(> input:checked))::after,
 :is(button, .button).ghost:is(.hover, :hover):not(:disabled, [aria-disabled=true])::after,
 nav:not(.tabs, .crumbs) a[aria-current]::after,
 [role=option][aria-selected=true]::after {

@@ -47,6 +47,11 @@
     box-sizing: border-box;
 }
 
+/* Whatever display an element is given below, hidden still hides it */
+[hidden]:not([hidden=until-found]) {
+    display: none !important;
+}
+
 html {
     -webkit-font-smoothing: antialiased;
     width: 100%;
@@ -337,6 +342,23 @@ label > span {
     display: flex;
     flex-direction: column;
     line-height: var(--heading-line-height);
+}
+
+/*
+    A radio or a checkbox inside a .button gives the button its state.
+    It is out of sight, but still in reach of the keyboard and of validation.
+*/
+.button > input:is([type=radio], [type=checkbox]) {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* The label is not :disabled itself, so this is what keeps its hover quiet */
+.button:has(> input:disabled) {
+    pointer-events: none;
 }
 
 fieldset {

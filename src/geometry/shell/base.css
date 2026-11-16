@@ -144,7 +144,8 @@ a {
 }
 
 /* Keyboard focus: one ring for everything but the text fields, those light up on their own, see input.css */
-:is(a, button, input:is([type="checkbox"], [type="radio"])):is(:focus-visible, .focus) {
+:is(a, button, .button, input:is([type="checkbox"], [type="radio"])):is(:focus-visible, .focus),
+.button:has(> input:focus-visible) {
     outline: var(--highlight-thickness) solid var(--mtt-color-line-decorated);
     outline-offset: var(--highlight-thickness);
 }
