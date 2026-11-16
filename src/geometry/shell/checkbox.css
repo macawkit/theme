@@ -47,8 +47,8 @@ input[type="checkbox"]:not(.switch) {
         --glow-source: var(--mtt-color-main-highlight);
         box-shadow:
             inset 0 0 var(--shine-radius) var(--mtt-color-text-decorated),
-            0 0 0 calc(var(--shine-radius) / 2) var(--mtt-color-text-decorated),
-            inset 0 0 0 calc(var(--shine-radius) / 2) var(--mtt-color-text-decorated),
+            0 0 0 1px var(--mtt-color-text-decorated),
+            inset 0 0 0 1px var(--mtt-color-text-decorated),
             0 0 var(--glow-radius) var(--glow-color);
 
         &::before {
@@ -66,8 +66,8 @@ input[type="checkbox"]:not(.switch) {
             --glow-source: var(--mtt-color-text-decorated);
             box-shadow:
                 inset 0 0 calc(var(--shine-radius) * 2) var(--mtt-color-text-decorated),
-                0 0 0 calc(var(--shine-radius) / 2) var(--mtt-color-text-decorated),
-                inset 0 0 0 calc(var(--shine-radius) / 2) var(--mtt-color-text-decorated),
+                0 0 0 1px var(--mtt-color-text-decorated),
+                inset 0 0 0 1px var(--mtt-color-text-decorated),
                 0 0 var(--glow-radius) var(--glow-color);
 
             &::before {
@@ -78,7 +78,7 @@ input[type="checkbox"]:not(.switch) {
     }
 }
 
-/* Switch and radio: a solid knob */
+/* Switch and radio: a solid knob, on the main color once checked it takes the ink of the checkbox tick */
 input[type="checkbox"].switch {
     width: calc(var(--element-height-tiny) * 2);
     height: var(--element-height-tiny);
@@ -88,7 +88,7 @@ input[type="radio"]::before,
 input[type="checkbox"].switch::before {
     content: '';
     position: absolute;
-    background-color: var(--mtt-color-text-bright);
+    background-color: var(--mtt-color-text-muted);
     transition:
         background-color var(--transition),
         transform var(--transition);
@@ -104,6 +104,7 @@ input[type="checkbox"].switch {
 
     &:checked::before {
         transform: translateX(100%);
+        background-color: var(--mtt-color-text-brightest);
     }
 }
 
@@ -118,16 +119,12 @@ input[type="radio"] {
     }
 
     &:checked::before {
-        background-color: var(--mtt-color-text-bright);
+        background-color: var(--mtt-color-text-brightest);
         transform: scale(1);
     }
 
-    &:is(:hover, .hover):not(:disabled, [aria-disabled=true])::before {
+    &:is(:hover, .hover):not(:disabled, [aria-disabled=true], :checked)::before {
         background-color: var(--mtt-color-line-highlight);
-    }
-
-    &:is(:hover, .hover):checked:not(:disabled, [aria-disabled=true])::before {
-        background-color: var(--mtt-color-text-brightest);
     }
 }
 
@@ -141,7 +138,7 @@ input[type="radio"]:is(:hover, .hover):not(:disabled, [aria-disabled=true], :che
 input[type="checkbox"]:is(:hover, .hover):not(:disabled, [aria-disabled=true], :checked) {
     --glow-source: var(--mtt-color-line-highlight);
     box-shadow:
-        0 0 0 calc(var(--shine-radius) / 2) var(--glow-color),
+        0 0 0 1px var(--glow-color),
         0 0 var(--glow-radius) var(--glow-color);
 }
 
@@ -151,7 +148,7 @@ input[type="checkbox"]:checked {
     --glow-source: var(--background-color);
     background-color: var(--background-color);
     box-shadow:
-        0 0 0 calc(var(--shine-radius) / 2) var(--background-color),
+        0 0 0 1px var(--background-color),
         0 0 var(--glow-radius) var(--glow-color);
 }
 

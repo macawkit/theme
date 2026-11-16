@@ -65,8 +65,8 @@
     }
 }
 
-select,
-input[role=combobox] {
+/* as heavy as the padding of the fields above, so the room for the chevron stays */
+:is(select, input[role=combobox]) {
     padding-inline-end: 34px;
 
     --field-extra-background:

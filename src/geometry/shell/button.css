@@ -99,10 +99,12 @@ nav.tabs > a:is(.hover, :hover),
     --background-color: var(--mtt-color-main-dimmed);
     background-color: var(--background-color);
 
+    /* lit, it takes the body of a plain button and so the text of one */
     &:is([aria-pressed=true], :has(> input:checked)),
     &:is(.hover, :hover):not(:disabled, [aria-disabled=true]) {
         --background-color: var(--mtt-color-button);
         border-color: var(--mtt-color-line-highlight);
+        color: var(--mtt-color-text-bright);
     }
 }
 
