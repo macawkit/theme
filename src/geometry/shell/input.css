@@ -1,6 +1,5 @@
 /* Text fields. `label:has(> &)` is the label wrapping the field, it mirrors the state of the field */
 :is(input:not([type="checkbox"], [type="radio"]), select, textarea) {
-    --field-extra-background: none;
     --field-corners: var(--ticks);
 
     inline-size: 100%;
@@ -17,7 +16,7 @@
 
     background:
         var(--field-corners),
-        var(--field-extra-background),
+        var(--field-extra-background, none),
         var(--field-surface);
     background-repeat: no-repeat;
 
@@ -69,11 +68,10 @@
 select {
     padding-inline-end: 34px;
 
+    /* odd width: the tip is one whole pixel, the edges never split a pixel */
     --field-extra-background:
-        linear-gradient(45deg, transparent 50%, var(--mtt-color-text-muted) 50%)
-            calc(100% - 15px) calc(50% - 2px) / 6px 6px,
-        linear-gradient(135deg, var(--mtt-color-text-muted) 50%, transparent 50%)
-            calc(100% - 10px) calc(50% - 2px) / 6px 6px;
+        conic-gradient(from -45deg at 50% 100%, var(--mtt-color-text-muted) 90deg, #0000 0)
+            calc(100% - 10px) calc(50% - 2px) / 11px 6px;
 }
 
 textarea {

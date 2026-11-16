@@ -109,6 +109,16 @@ input {
     -moz-appearance: none;
 }
 
+select:not([multiple]) :is(option, optgroup) {
+    background-color: Menu;
+    color: MenuText;
+    font-family: system-ui;
+
+    &:disabled {
+        color: GrayText;
+    }
+}
+
 nav.tabs > a > svg,
 nav.tabs > a > img,
 :is(button, .button) > svg,
