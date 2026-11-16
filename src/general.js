@@ -78,6 +78,11 @@ for (const meter of document.querySelectorAll('div[role="meter"]')) {
     Combobox: an input and the listbox its aria-controls names, the option chosen
     gives the input its data-value or its text. One with inputmode=none is a
     dropdown that takes no typing, any other filters the options by what is typed and marks the match.
+
+    A hidden input right after the field makes it a choice of the options and of nothing else: the
+    hidden input takes the data-value of the option chosen, the field its data-label or its text, and
+    what is typed only searches. An option is also found by its data-find, and a list with data-empty
+    says that when nothing is. A script chooses an option by clicking it.
 */
 function listOf (field) {
     return document.getElementById(field.getAttribute('aria-controls'));
@@ -93,15 +98,34 @@ function isDropdown (field) {
     return field.inputMode === 'none';
 }
 
+function valueOf (field) {
+    const next = field.nextElementSibling;
+    return next?.matches('input[type="hidden"]') ? next : null;
+}
+
+function labelOf (option) {
+    return option.dataset.label ?? option.textContent.trim();
+}
+
+// What a search reads: the text of the option, its label and its data-find
+function matches (option, needle) {
+    return `${option.textContent} ${option.dataset.label ?? ''} ${option.dataset.find ?? ''}`.toLowerCase().includes(needle);
+}
+
 function shownOptions (list) {
     return [...list.querySelectorAll('[role="option"]:not([hidden])')];
+}
+
+function currentOf (field) {
+    return listOf(field).querySelector('[role="option"][aria-current="true"]');
 }
 
 function activate (field, option) {
     for (const row of listOf(field).querySelectorAll('[role="option"]'))
         row.setAttribute('aria-selected', String(row === option));
 
-    option?.scrollIntoView({ block: 'nearest' });
+    // only the list scrolls to it, not the page
+    option?.scrollIntoView({ block: 'nearest', container: 'nearest' });
     if (option?.id)
         field.setAttribute('aria-activedescendant', option.id);
     else
@@ -110,11 +134,19 @@ function activate (field, option) {
 
 function expand (field, open) {
     const list = listOf(field);
-    const shown = open && shownOptions(list).length > 0;
+    const shown = open && (shownOptions(list).length > 0 || list.hasAttribute('data-empty'));
     field.setAttribute('aria-expanded', String(shown));
     list.togglePopover(shown);
     if (!shown)
         activate(field, null);
+}
+
+// Opened without a search, the list starts at the option the field holds
+function showList (field) {
+    expand(field, true);
+    const current = currentOf(field);
+    if (current && !current.hidden)
+        activate(field, current);
 }
 
 // Only inside an element of the row: the row is a flex box, a mark in its own text would split it into items
@@ -143,29 +175,37 @@ function mark (row, needle) {
     }
 }
 
-// A caption shows while an option after it does
+// A caption shows while an option after it does. A choice is only searched, so Enter takes its first match
 function filter (field, query) {
     const needle = query.trim().toLowerCase();
+    const list = listOf(field);
     let caption = null;
-    for (const row of listOf(field).children) {
+    for (const row of list.children) {
         if (row.getAttribute('role') === 'presentation') {
             caption = row;
             caption.hidden = true;
             continue;
         }
 
-        row.hidden = !row.textContent.toLowerCase().includes(needle);
+        row.hidden = !matches(row, needle);
         if (caption && !row.hidden)
             caption.hidden = false;
 
         mark(row, needle);
     }
 
-    activate(field, null);
+    activate(field, valueOf(field) && needle !== '' ? shownOptions(list)[0] : null);
 }
 
+// With no option a choice is cleared
 function choose (field, option) {
-    field.value = option.dataset.value ?? option.textContent.trim();
+    const value = valueOf(field);
+    if (value) {
+        value.value = option ? option.dataset.value ?? labelOf(option) : '';
+        field.value = option ? labelOf(option) : '';
+    } else
+        field.value = option.dataset.value ?? option.textContent.trim();
+
     for (const row of listOf(field).querySelectorAll('[role="option"]'))
         if (row === option)
             row.setAttribute('aria-current', 'true');
@@ -177,6 +217,34 @@ function choose (field, option) {
     field.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
+// Leaving a choice takes the option named in full, or else the only one found. Emptied it is cleared, else it goes back
+function settle (field) {
+    if (!valueOf(field))
+        return;
+
+    const typed = field.value.trim().toLowerCase();
+    const current = currentOf(field);
+    const options = [...listOf(field).querySelectorAll('[role="option"]')];
+    const named = options.find(option => [labelOf(option), option.dataset.value].some(name => name?.toLowerCase() === typed));
+    const found = typed === '' ? [] : options.filter(option => matches(option, typed));
+    const option = named ?? (found.length === 1 ? found[0] : undefined);
+
+    if (typed === '' && current)
+        choose(field, null);
+    else if (option && option !== current)
+        choose(field, option);
+    else {
+        field.value = current ? labelOf(current) : '';
+        filter(field, '');
+    }
+}
+
+// The text of a choice is only its search, so the change the browser sees in it is not the choice's, choose says that
+document.addEventListener('change', event => {
+    if (event.isTrusted && isCombobox(event.target) && valueOf(event.target))
+        event.stopImmediatePropagation();
+}, true);
+
 // A dropdown stays a field the browser validates, so required works, but nothing is typed or pasted into it
 document.addEventListener('beforeinput', event => {
     if (isCombobox(event.target) && isDropdown(event.target))
@@ -187,8 +255,10 @@ document.addEventListener('input', event => {
     if (!isCombobox(event.target))
         return;
 
+    // a new search starts at its first match
     filter(event.target, event.target.value);
     expand(event.target, true);
+    listOf(event.target).scrollTop = 0;
 });
 
 // The list keeps the focus in its field
@@ -197,6 +267,7 @@ document.addEventListener('mousedown', event => {
         event.preventDefault();
 });
 
+// A choice opened by the pointer has its text selected, so what is typed next searches anew
 document.addEventListener('click', event => {
     const option = event.target.closest('[role="listbox"][popover] [role="option"]');
     if (option) {
@@ -206,14 +277,29 @@ document.addEventListener('click', event => {
             choose(field, option);
     } else if (isCombobox(event.target)) {
         const field = event.target;
-        expand(field, !isDropdown(field) || field.getAttribute('aria-expanded') !== 'true');
+        if (field.getAttribute('aria-expanded') !== 'true') {
+            showList(field);
+            if (valueOf(field) && !isDropdown(field))
+                field.select();
+        } else if (isDropdown(field))
+            expand(field, false);
     }
 });
 
 document.addEventListener('focusout', event => {
-    if (isCombobox(event.target))
-        expand(event.target, false);
+    if (!isCombobox(event.target))
+        return;
+
+    expand(event.target, false);
+    settle(event.target);
 });
+
+// Enter in a field sends its form without leaving it, so a choice with a search in it is settled first
+document.addEventListener('submit', event => {
+    for (const field of event.target.elements)
+        if (isCombobox(field))
+            settle(field);
+}, true);
 
 document.addEventListener('keydown', event => {
     const field = event.target;
@@ -221,19 +307,30 @@ document.addEventListener('keydown', event => {
         return;
 
     const open = field.getAttribute('aria-expanded') === 'true';
-    const options = shownOptions(listOf(field));
+    const list = listOf(field);
+    const options = shownOptions(list);
     const active = options.find(option => option.getAttribute('aria-selected') === 'true');
+    const index = options.indexOf(active);
 
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
         event.preventDefault();
         if (!open) {
-            expand(field, true);
+            showList(field);
             return;
         }
 
         const step = event.key === 'ArrowDown' ? 1 : -1;
-        const index = active ? options.indexOf(active) + step : Math.min(step, 0);
-        activate(field, options.at(index % options.length));
+        activate(field, options.at(active ? (index + step) % options.length : Math.min(step, 0)));
+    } else if ((event.key === 'PageDown' || event.key === 'PageUp') && open && options.length > 0) {
+        // as many rows as the list shows
+        event.preventDefault();
+        const page = Math.max(1, Math.floor(list.clientHeight / options[0].offsetHeight));
+        const to = (active ? index : -1) + (event.key === 'PageDown' ? page : -page);
+        activate(field, options[Math.min(Math.max(to, 0), options.length - 1)]);
+    } else if ((event.key === 'Home' || event.key === 'End') && open && isDropdown(field)) {
+        // a field that is typed in keeps these for its caret
+        event.preventDefault();
+        activate(field, options.at(event.key === 'Home' ? 0 : -1));
     } else if (event.key === 'Escape' && open) {
         event.preventDefault();
         expand(field, false);
@@ -243,7 +340,10 @@ document.addEventListener('keydown', event => {
             choose(field, active);
         } else if (isDropdown(field)) {
             event.preventDefault();
-            expand(field, !open);
+            if (open)
+                expand(field, false);
+            else
+                showList(field);
         }
     }
 });

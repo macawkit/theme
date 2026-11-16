@@ -42,6 +42,27 @@
     --color-danger-highlight: #d33650;
     --color-danger-text: #ff8e9c;
 
+    /*
+        Categories: sixteen marks that tell things apart, like whose a row is, and say nothing of state.
+        The first eight go round the hues, taking a color above where one sits there. The last eight go round again between them, deeper
+    */
+    --color-category-1: var(--mtt-color-text-decorated);
+    --color-category-2: var(--color-priority-highlight);
+    --color-category-3: #fb80ca;
+    --color-category-4: var(--color-danger-text);
+    --color-category-5: var(--color-warning-highlight);
+    --color-category-6: #cede35;
+    --color-category-7: var(--color-success-highlight);
+    --color-category-8: var(--color-signature-highlight);
+    --color-category-9: #685acb;
+    --color-category-10: #a0429f;
+    --color-category-11: #ba3661;
+    --color-category-12: #ad5002;
+    --color-category-13: #836d03;
+    --color-category-14: #348302;
+    --color-category-15: #068076;
+    --color-category-16: #0677ab;
+
     --glow-radius: 10px;
     --shine-radius: 2px;
     --glow-strength: 50%;

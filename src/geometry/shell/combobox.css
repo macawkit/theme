@@ -12,6 +12,15 @@
     small {
         font-size: var(--decrease-font-size);
     }
+
+    /* the options scroll under a caption */
+    &[popover] > [role=presentation] {
+        background-color: var(--mtt-color-body);
+    }
+
+    &[data-empty]::after {
+        color: var(--mtt-color-text-muted);
+    }
 }
 
 [role=option] {
