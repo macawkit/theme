@@ -52,7 +52,9 @@ nav.tabs > a,
             background-color var(--transition);
     }
 
-    &:is(.hover, :hover):not(:disabled, [aria-disabled=true], .ghost, [role=tab])::after {
+    /* and on a toggle that is on, it is lit and so it glows. Light, so a press still puts it out */
+    &:is(.hover, :hover):not(:disabled, [aria-disabled=true], .ghost, [role=tab])::after,
+    &:is([aria-pressed=true], :has(> input:checked)):where(:not(:disabled, [aria-disabled=true], :has(> input:disabled), .ghost))::after {
         opacity: 1;
     }
 }
@@ -68,7 +70,8 @@ nav.tabs > a[aria-current=page],
     text-shadow: 0 0 calc(var(--shine-radius) / 2) color-mix(in srgb, var(--mtt-color-text-bright) var(--shining), #0000);
 }
 
-:is(button, .button):not(.alt, .ghost, :disabled, [aria-disabled=true]):is(.hover, :hover) {
+:is(button, .button):not(.alt, .ghost, :disabled, [aria-disabled=true]):is(.hover, :hover),
+:is(button, .button):is([aria-pressed=true], :has(> input:checked)):not(.alt, .ghost, :disabled, [aria-disabled=true], :has(> input:disabled)) {
     --background-color: var(--mtt-color-main-highlight);
     filter: drop-shadow(0 0 var(--shine-radius) color-mix(in srgb, var(--background-color) var(--shining), #0000));
 }

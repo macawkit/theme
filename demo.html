@@ -166,11 +166,15 @@
         <fieldset>
             <label>
                 Palette
-                <select name="palette">
-                    <option value="hyacinth">Hyacinth · dark</option>
-                    <option value="cream">Cream · light</option>
-                </select>
+                <input role="combobox" aria-controls="palettes" aria-expanded="false" inputmode="none" value="Hyacinth">
             </label>
+            <!-- by kind, then by name -->
+            <ul role="listbox" id="palettes" aria-label="Palette" popover="manual">
+                <li role="presentation">Dark</li>
+                <li role="option" id="palette-hyacinth" data-palette="hyacinth" aria-current="true">Hyacinth</li>
+                <li role="presentation">Light</li>
+                <li role="option" id="palette-cream" data-palette="cream">Cream</li>
+            </ul>
         </fieldset>
     </form>
 </header>
@@ -472,6 +476,23 @@
                 <div class="stack tight">
                     <div class="well demo">
                         <div class="row">
+                            <div class="row" role="group" aria-label="Specimen">
+                                <button type="button" class="small" aria-pressed="true">On</button>
+                                <button type="button" class="small" aria-pressed="false">Off</button>
+                            </div>
+                            <div class="row" role="group" aria-label="Ghost specimen">
+                                <button type="button" class="ghost small" aria-pressed="true">On</button>
+                                <button type="button" class="ghost small" aria-pressed="false">Off</button>
+                            </div>
+                        </div>
+                    </div>
+                    <strong>Toggle</strong>
+                    <small><code>[aria-pressed] · label.button &gt; input</code></small>
+                    <small>A button that holds a state, plain, secondary or ghost. It is lit by being on; the pointer only hints.</small>
+                </div>
+                <div class="stack tight">
+                    <div class="well demo">
+                        <div class="row">
                             <span class="tag">Tag</span>
                             <span class="badge">Badge</span>
                             <span class="badge success">Tone</span>
@@ -623,7 +644,7 @@
         <header>
             <span class="label">05</span>
             <h3>Toggles &amp; checks</h3>
-            <span class="note">switches · checkbox · radio · segmented</span>
+            <span class="note">switches · checkbox · radio · tabs</span>
         </header>
             <div class="stack">
                 <label>
@@ -695,6 +716,70 @@
                 </nav>
                 <span class="small">links · Small variant</span>
             </div>
+        </div>
+    </section>
+
+    <section class="panel">
+        <header>
+            <span class="label">06</span>
+            <h3>Toggle buttons</h3>
+            <span class="note">aria-pressed · a radio or a checkbox in label.button</span>
+        </header>
+        <div class="stack">
+            <table>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Primary</th>
+                        <th>Secondary</th>
+                        <th>Ghost</th>
+                        <th>Checkbox</th>
+                        <th>Radio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>Off</th>
+                        <td><button type="button" aria-pressed="false"><i class="icon i-mail"></i>Mail</button></td>
+                        <td><button type="button" class="alt" aria-pressed="false">Mail</button></td>
+                        <td><button type="button" class="ghost" aria-pressed="false">Mail</button></td>
+                        <td><label class="button"><input type="checkbox" name="state-4">SPF</label></td>
+                        <td><label class="button alt"><input type="radio" name="state-5">5 min</label></td>
+                    </tr>
+                    <tr>
+                        <th>Off · hover</th>
+                        <td><button type="button" class="hover" aria-pressed="false"><i class="icon i-mail"></i>Mail</button></td>
+                        <td><button type="button" class="alt hover" aria-pressed="false">Mail</button></td>
+                        <td><button type="button" class="ghost hover" aria-pressed="false">Mail</button></td>
+                        <td><label class="button hover"><input type="checkbox" name="state-9">SPF</label></td>
+                        <td><label class="button alt hover"><input type="radio" name="state-10">5 min</label></td>
+                    </tr>
+                    <tr>
+                        <th>On</th>
+                        <td><button type="button" aria-pressed="true"><i class="icon i-mail"></i>Mail</button></td>
+                        <td><button type="button" class="alt" aria-pressed="true">Mail</button></td>
+                        <td><button type="button" class="ghost" aria-pressed="true">Mail</button></td>
+                        <td><label class="button"><input type="checkbox" name="state-14" checked>SPF</label></td>
+                        <td><label class="button alt"><input type="radio" name="state-15" checked>5 min</label></td>
+                    </tr>
+                    <tr>
+                        <th>On · hover</th>
+                        <td><button type="button" class="hover" aria-pressed="true"><i class="icon i-mail"></i>Mail</button></td>
+                        <td><button type="button" class="alt hover" aria-pressed="true">Mail</button></td>
+                        <td><button type="button" class="ghost hover" aria-pressed="true">Mail</button></td>
+                        <td><label class="button hover"><input type="checkbox" name="state-19" checked>SPF</label></td>
+                        <td><label class="button alt hover"><input type="radio" name="state-20" checked>5 min</label></td>
+                    </tr>
+                    <tr>
+                        <th>Disabled</th>
+                        <td><button type="button" aria-pressed="true" disabled><i class="icon i-mail"></i>Mail</button></td>
+                        <td><button type="button" class="alt" aria-pressed="true" disabled>Mail</button></td>
+                        <td><button type="button" class="ghost" aria-pressed="true" disabled>Mail</button></td>
+                        <td><label class="button"><input type="checkbox" name="state-24" checked disabled>SPF</label></td>
+                        <td><label class="button alt"><input type="radio" name="state-25" checked disabled>5 min</label></td>
+                    </tr>
+                </tbody>
+            </table>
             <div class="row">
                 <div class="row" role="group" aria-label="Reply by">
                     <button type="button" aria-pressed="true"><i class="icon i-mail"></i>Mail</button>
@@ -743,7 +828,7 @@
 
     <section class="panel">
         <header>
-            <span class="label">06</span>
+            <span class="label">07</span>
             <h3>Inputs</h3>
             <span class="note">default · focus · error · disabled</span>
         </header>
@@ -796,7 +881,7 @@
 
     <section class="panel">
         <header>
-            <span class="label">07</span>
+            <span class="label">08</span>
             <h3>Stat tiles</h3>
             <span class="note">Dashboard with sparks</span>
         </header>
@@ -836,7 +921,7 @@
 
     <section class="panel" style="--cols: 4;">
         <header>
-            <span class="label">08</span>
+            <span class="label">09</span>
             <h3>Tags and progress bars</h3>
             <span class="note">queue + account states</span>
         </header>
@@ -904,7 +989,7 @@
 
     <section class="panel" style="--cols: 4;">
         <header>
-            <span class="label">09</span>
+            <span class="label">10</span>
             <h3>Card</h3>
             <span class="note">composed recipe</span>
         </header>
@@ -950,7 +1035,7 @@
 
     <section class="panel" style="--cols: 4;">
         <header>
-            <span class="label">10</span>
+            <span class="label">11</span>
             <h3>Sidebar nav</h3>
             <span class="note">active · hover · counts</span>
         </header>
@@ -977,7 +1062,7 @@
 
     <section class="panel" style="--cols: 6">
         <header>
-            <span class="label">11</span>
+            <span class="label">12</span>
             <h3>Alerts</h3>
             <span class="note">.alert · ghost</span>
         </header>
@@ -1030,7 +1115,7 @@
 
     <section class="panel" style="--cols: 6">
         <header>
-            <span class="label">12</span>
+            <span class="label">13</span>
             <h3>Table</h3>
             <span class="note">domains + queue rows</span>
         </header>
@@ -1122,7 +1207,7 @@
 
     <section class="panel" style="--cols: 4;">
         <header>
-            <span class="label">13</span>
+            <span class="label">14</span>
             <h3>Links</h3>
             <span class="note">plain · crumbs · block</span>
         </header>
@@ -1150,7 +1235,7 @@
 
     <section class="panel" style="--cols: 4;">
         <header>
-            <span class="label">14</span>
+            <span class="label">15</span>
             <h3>Dialog</h3>
             <span class="note">dialog · footer</span>
         </header>
@@ -1186,7 +1271,7 @@
 
     <section class="panel" style="--cols: 4;">
         <header>
-            <span class="label">15</span>
+            <span class="label">16</span>
             <h3>Combobox</h3>
             <span class="note">combobox · dropdown</span>
         </header>
@@ -1230,7 +1315,7 @@
 
     <section class="panel">
         <header>
-            <span class="label">16</span>
+            <span class="label">17</span>
             <h3>Keyboard focus</h3>
             <span class="note">:focus-visible · .focus</span>
         </header>
@@ -1261,16 +1346,25 @@
 
     // The look picked in the header: the page takes it at once and keeps it in the query
     const form = document.getElementById('look');
-    const palette = form.elements.palette;
-    palette.value = look.get('palette') ?? palette.value;
-    if (palette.value === '')
-        palette.selectedIndex = 0;
+    const palettes = [...document.querySelectorAll('#palettes [role=option]')];
+    const picked = palettes.find(option => option.dataset.palette === look.get('palette'));
+    if (picked) {
+        for (const option of palettes)
+            if (option === picked)
+                option.setAttribute('aria-current', 'true');
+            else
+                option.removeAttribute('aria-current');
 
-    function apply () {
-        document.getElementById('palette').href = `src/palette/${palette.value}.css`;
-        history.replaceState(null, '', `?${new URLSearchParams(new FormData(form))}`);
+        form.querySelector('[aria-controls=palettes]').value = picked.textContent;
     }
 
+    function apply () {
+        const palette = palettes.find(option => option.hasAttribute('aria-current')).dataset.palette;
+        document.getElementById('palette').href = `src/palette/${palette}.css`;
+        history.replaceState(null, '', `?${new URLSearchParams({ palette })}`);
+    }
+
+    // one the query names but the list does not have falls back to the first
     if (look.has('palette'))
         apply();
 
