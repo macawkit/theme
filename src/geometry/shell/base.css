@@ -117,20 +117,6 @@ fieldset small {
     text-transform: none;
 }
 
-/* A listbox drops from its field inside the fieldset: its rows are content again, in the type of the body */
-fieldset [role=listbox] {
-    font-family: var(--font);
-    font-size: 1rem;
-    letter-spacing: normal;
-    text-transform: none;
-    color: var(--mtt-color-text);
-
-    /* a detail in a row stays small, unlike the hint under a field */
-    small {
-        font-size: var(--decrease-font-size);
-    }
-}
-
 table tbody tr:hover {
     background: linear-gradient(
         100deg, #0000, 

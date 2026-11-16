@@ -1161,25 +1161,44 @@
     <section class="panel" style="--cols: 4;">
         <header>
             <span class="label">15</span>
-            <h3>Listbox</h3>
-            <span class="note">hover · active · current · match</span>
+            <h3>Combobox</h3>
+            <span class="note">combobox · dropdown</span>
         </header>
-        <div class="stack tight">
-            <fieldset class="tight">
+        <div class="stack">
+            <fieldset>
                 <label>
                     Relay transport
-                    <input class="focus" value="tp" role="combobox" aria-expanded="true" aria-controls="transports" aria-autocomplete="list">
+                    <input role="combobox" aria-controls="transports" aria-expanded="false" aria-autocomplete="list" autocomplete="off" placeholder="smtp, lmtp…">
+                    <small>Combobox · type to filter</small>
                 </label>
-                <ul role="listbox" id="transports" aria-label="Relay transport">
+                <ul role="listbox" id="transports" aria-label="Relay transport" popover="manual">
                     <li role="presentation">Outbound</li>
-                    <li role="option"><span>sm<mark>tp</mark></span><small>default</small></li>
-                    <li role="option" class="hover"><span>sm<mark>tp</mark>:[relay.example]</span><small>hover</small></li>
-                    <li role="option" aria-selected="true"><span>sm<mark>tp</mark>:[backup.example]</span><small>aria-selected</small></li>
+                    <li role="option" id="transport-smtp" data-value="smtp"><span>smtp</span><small>default</small></li>
+                    <li role="option" id="transport-relay"><span>smtp:[relay.example]</span></li>
+                    <li role="option" id="transport-backup"><span>smtp:[backup.example]</span></li>
                     <li role="presentation">Local</li>
-                    <li role="option" aria-current="true"><span>lm<mark>tp</mark>:unix:private/dovecot</span><small>aria-current</small></li>
+                    <li role="option" id="transport-lmtp"><span>lmtp:unix:private/dovecot</span></li>
+                    <li role="option" id="transport-local"><span>local</span></li>
+                </ul>
+                <label>
+                    Queue order
+                    <input role="combobox" aria-controls="orders" aria-expanded="false" value="Oldest first" readonly>
+                    <small>Dropdown · readonly</small>
+                </label>
+                <ul role="listbox" id="orders" aria-label="Queue order" popover="manual">
+                    <li role="option" id="order-oldest" aria-current="true">Oldest first</li>
+                    <li role="option" id="order-newest">Newest first</li>
+                    <li role="option" id="order-largest">Largest first</li>
                 </ul>
             </fieldset>
-            <small>Styles only: the list sits in the fieldset of its field, the page places it and moves <code>aria-selected</code>.</small>
+            <ul role="listbox" aria-label="Rows">
+                <li role="presentation">Outbound</li>
+                <li role="option"><span>sm<mark>tp</mark></span><small>default</small></li>
+                <li role="option" class="hover"><span>sm<mark>tp</mark>:[relay.example]</span><small>hover</small></li>
+                <li role="option" aria-selected="true"><span>sm<mark>tp</mark>:[backup.example]</span><small>aria-selected</small></li>
+                <li role="option" aria-current="true"><span>lm<mark>tp</mark>:unix:private/dovecot</span><small>aria-current</small></li>
+            </ul>
+            <span class="small">the rows of an open list · typed tp</span>
         </div>
     </section>
 

@@ -95,9 +95,9 @@ footer {
     margin-top: var(--margin);
 }
 
-/* The browser gives a dialog its own text color, so the one of the body is repeated */
+/* the browser gives a dialog the text color of the canvas, not the one of the body */
 dialog {
-    width: min(100% - 2 * var(--margin), var(--tile-width) * 1.5);
+    width: min(100%, var(--column-width) * 3);
     color: var(--mtt-color-text);
 }
 
@@ -350,8 +350,6 @@ label > span {
 */
 .button > input:is([type=radio], [type=checkbox]) {
     position: absolute;
-    inset: 0;
-    margin: 0;
     opacity: 0;
     pointer-events: none;
 }
@@ -372,11 +370,25 @@ legend {
     padding: 0;
 }
 
+/*
+    Combobox and dropdown: an input[role=combobox] and the [role=listbox][popover]
+    named by its aria-controls, opened and filtered by general.js.
+*/
+
+/* a readonly one is the dropdown: it is clicked, not typed in */
+input[role=combobox][readonly] {
+    cursor: pointer;
+    caret-color: transparent;
+}
+
 [role=listbox] {
     margin: 0;
     padding: 0;
     list-style: none;
-    overflow: auto;
+}
+
+[role=listbox][popover] {
+    max-height: calc(var(--element-height) * 8);
 }
 
 [role=option] {
@@ -390,6 +402,23 @@ legend {
 
 [role=listbox] > [role=presentation] {
     padding: var(--margin-tight) var(--margin-tight) var(--margin-minimal);
+}
+
+/* Without anchors the browser shows the list in the middle of the window */
+@supports (anchor-name: --mtt-combobox) {
+    [role=combobox][aria-expanded=true] {
+        anchor-name: --mtt-combobox;
+    }
+
+    /* under its field, or above it where there is no room below */
+    [role=listbox][popover] {
+        position-anchor: --mtt-combobox;
+        position-area: block-end span-inline-end;
+        position-try-fallbacks: flip-block;
+        inset: auto;
+        width: anchor-size(width);
+        margin: var(--margin-minimal) 0;
+    }
 }
 
 .spark {

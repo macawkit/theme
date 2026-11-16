@@ -23,7 +23,7 @@ import '@macawkit/theme/theme.css';
 import '@macawkit/theme/geometry/shell.css';
 import '@macawkit/theme/palette/hyacinth.css';
 import '@macawkit/theme/icon.css';
-import '@macawkit/theme/general'; // tabs, sparks and meters behaviour, dialog buttons in older browsers
+import '@macawkit/theme/general'; // tabs, comboboxes, sparks and meters behaviour, dialog buttons in older browsers
 ```
 
 Without a bundler, link the built files:

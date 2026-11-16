@@ -1,7 +1,17 @@
-/* Listbox: the list that drops from a field. Placing and driving it is up to whoever opens it */
+/* The list of a combobox or a dropdown. It opens over the page, so it keeps the type of the body wherever it sits */
 [role=listbox] {
+    font-family: var(--font);
+    font-size: 1rem;
+    letter-spacing: normal;
+    text-transform: none;
+    color: var(--mtt-color-text);
     background-color: var(--mtt-color-body);
     border: 1px solid var(--mtt-color-line);
+
+    /* in a fieldset a small takes the size around it, a detail in a row stays small */
+    small {
+        font-size: var(--decrease-font-size);
+    }
 }
 
 [role=option] {
@@ -14,13 +24,13 @@
         color: var(--mtt-color-text-bright);
     }
 
-    /* The row the keyboard is on: marked like the current link of a navigation list, glow bar in bar.css */
+    /* The row the keyboard is on, with the glow bar of bar.css */
     &[aria-selected=true] {
         background-color: var(--mtt-color-main-dimmed);
         color: var(--mtt-color-text-bright);
     }
 
-    /* The row holding the value of the field: the tick of a checkbox at its end */
+    /* The row holding the value of the field */
     &[aria-current=true]::before {
         content: "";
         order: 1;
@@ -33,7 +43,7 @@
         mask: var(--mtt-icon-check) 50% / var(--box-size) no-repeat;
     }
 
-    /* The part of a row that matches what was typed */
+    /* What was typed */
     mark {
         background: none;
         color: var(--mtt-color-text-bright);

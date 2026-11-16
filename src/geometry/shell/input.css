@@ -65,7 +65,8 @@
     }
 }
 
-select {
+select,
+input[role=combobox] {
     padding-inline-end: 34px;
 
     --field-extra-background:
@@ -100,6 +101,11 @@ textarea {
         > :is(input:not([type="checkbox"], [type="radio"]), select, textarea) {
             anchor-name: --mtt-field-control;
             --field-corners: none;
+        }
+
+        /* an open combobox stays the anchor of its list as well, see theme.css */
+        > [role=combobox][aria-expanded=true] {
+            anchor-name: --mtt-field-control, --mtt-combobox;
         }
 
         &::after {

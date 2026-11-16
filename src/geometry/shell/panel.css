@@ -1,8 +1,3 @@
-/* A dialog is a panel too, but the browser places it, so it takes no position */
-:is(.panel, .card, .alert) {
-    position: relative;
-}
-
 :is(.panel, .card, .alert),
 dialog {
     padding: var(--margin);
@@ -19,6 +14,11 @@ dialog {
     background-repeat: no-repeat;
     background-origin: border-box;
     clip-path: var(--chipped-corner);
+}
+
+/* not a dialog, the browser places that one */
+:is(.panel, .card, .alert) {
+    position: relative;
 }
 
 .card {
@@ -50,7 +50,7 @@ dialog {
     }
 }
 
-/* A dialog scrolls, that would cut off a corner mark standing on its border, so the border itself is marked */
+/* A dialog scrolls and would cut off the corner marks of a panel, so its border carries the mark */
 dialog {
     border-image: linear-gradient(
         135deg,
