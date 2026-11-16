@@ -42,8 +42,8 @@
     --color-danger-highlight: #c0392b;
     --color-danger-text: #8c2318;
 
-    --glow-radius: 10px;
-    /* a shine is a blur of the line in its own color, on a light page that reads as a smudge, so lines stay sharp */
+    /* A glow or a shine is a blur of a thing in its own color, on a light page that reads as a smudge, so nothing blurs */
+    --glow-radius: 0px;
     --shine-radius: 0px;
     --glow-strength: 50%;
     --disabled-filter: opacity(0.5) saturate(0.5);

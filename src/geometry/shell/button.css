@@ -27,7 +27,7 @@ nav.tabs > a,
         transition: background-color var(--transition);
     }
 
-    /* halo behind the body, shown on hover */
+    /* halo behind the body, shown on hover. It starts a chip inside the body, so it blurs twice the glow to reach past the edge, and is gone with no glow */
     &:not(.ghost, [role=tab])::after {
         z-index: -2;
         content: "";
@@ -39,7 +39,7 @@ nav.tabs > a,
         pointer-events: none;
         opacity: 0;
         background-color: var(--background-color);
-        filter: drop-shadow(0 0 calc(var(--glow-radius) + var(--chip)) var(--glow-color));
+        filter: drop-shadow(0 0 calc(var(--glow-radius) * 2) var(--glow-color));
         transition: opacity var(--transition);
     }
 
