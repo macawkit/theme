@@ -1165,21 +1165,21 @@
             <span class="note">hover · active · current · match</span>
         </header>
         <div class="stack tight">
-            <fieldset>
+            <fieldset class="tight">
                 <label>
                     Relay transport
                     <input class="focus" value="tp" role="combobox" aria-expanded="true" aria-controls="transports" aria-autocomplete="list">
                 </label>
+                <ul role="listbox" id="transports" aria-label="Relay transport">
+                    <li role="presentation">Outbound</li>
+                    <li role="option"><span>sm<mark>tp</mark></span><small>default</small></li>
+                    <li role="option" class="hover"><span>sm<mark>tp</mark>:[relay.example]</span><small>hover</small></li>
+                    <li role="option" aria-selected="true"><span>sm<mark>tp</mark>:[backup.example]</span><small>aria-selected</small></li>
+                    <li role="presentation">Local</li>
+                    <li role="option" aria-current="true"><span>lm<mark>tp</mark>:unix:private/dovecot</span><small>aria-current</small></li>
+                </ul>
             </fieldset>
-            <ul role="listbox" id="transports" aria-label="Relay transport">
-                <li role="presentation">Outbound</li>
-                <li role="option"><span>sm<mark>tp</mark></span><small>default</small></li>
-                <li role="option" class="hover"><span>sm<mark>tp</mark>:[relay.example]</span><small>hover</small></li>
-                <li role="option" aria-selected="true"><span>sm<mark>tp</mark>:[backup.example]</span><small>aria-selected</small></li>
-                <li role="presentation">Local</li>
-                <li role="option" aria-current="true"><span>lm<mark>tp</mark>:unix:private/dovecot</span><small>aria-current</small></li>
-            </ul>
-            <small>Styles only: the page places the list and moves <code>aria-selected</code>.</small>
+            <small>Styles only: the list sits in the fieldset of its field, the page places it and moves <code>aria-selected</code>.</small>
         </div>
     </section>
 
