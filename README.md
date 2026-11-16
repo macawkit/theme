@@ -4,7 +4,7 @@ A small CSS kit for interface chrome — panels, controls, markers, and the layo
 
 Color lives in `palette/`. Visual treatment lives in `geometry/`. Shared structure and semantics live in `theme.css`. Icons and a few runtime helpers sit alongside.
 
-Still early; [`demo.html`](demo.html) is the best place to see what it can do.
+Still early; the [live demo](https://macawkit.github.io/theme/) (source: [`demo.html`](demo.html)) is the best place to see what it can do.
 
 ## Install
 
