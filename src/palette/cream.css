@@ -1,0 +1,54 @@
+:root {
+    --mtt-color-body: #f7f3ea;
+    --mtt-color-panel: #fdfbf7;
+
+    --mtt-color-main-dimmed: #dbeeeb;
+    --mtt-color-button: #c3e0dc;
+    --mtt-color-main: #2a6f77;
+    --mtt-color-main-highlight: #1a7f89;
+
+    --mtt-color-text-muted: #8a8070;
+    --mtt-color-text: #50483b;
+    --mtt-color-text-decorated: #1f6f78;
+    --mtt-color-text-bright: #231e17;
+    --mtt-color-text-brightest: #ffffff;
+
+    --mtt-color-line: #ddd4c2;
+    --mtt-color-line-dimmed: #e8e1d3;
+    --mtt-color-line-highlight: #b3c6c2;
+    --mtt-color-line-decorated: #1a8a94;
+
+    --color-info: var(--mtt-color-main-dimmed);
+    --color-info-highlight: var(--mtt-color-line-decorated);
+    --color-info-text: var(--mtt-color-text-decorated);
+
+    --color-signature: #dde6f5;
+    --color-signature-highlight: #2f62c4;
+    --color-signature-text: #1d3f86;
+
+    --color-success: #dcefe2;
+    --color-success-highlight: #2e8b57;
+    --color-success-text: #1d5e3a;
+
+    --color-priority: #ebe1f3;
+    --color-priority-highlight: #8250b8;
+    --color-priority-text: #5a3486;
+
+    --color-warning: #f5e6c8;
+    --color-warning-highlight: #b7791f;
+    --color-warning-text: #7a4f10;
+
+    --color-danger: #f6dcd8;
+    --color-danger-highlight: #c0392b;
+    --color-danger-text: #8c2318;
+
+    /* A glow or a shine is a blur of a thing in its own color, on a light page that reads as a smudge, so nothing blurs */
+    --glow-radius: 0px;
+    --shine-radius: 0px;
+    --glow-strength: 50%;
+    --disabled-filter: opacity(0.5) saturate(0.5);
+}
+
+html {
+    color-scheme: light;
+}

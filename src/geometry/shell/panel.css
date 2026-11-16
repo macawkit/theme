@@ -1,6 +1,6 @@
-:is(.panel, .card, .alert) {
+:is(.panel, .card, .alert),
+dialog {
     padding: var(--margin);
-    position: relative;
     background-color: var(--mtt-color-panel);
     border: 1px solid var(--mtt-color-line-dimmed);
     background-image: linear-gradient(
@@ -14,6 +14,11 @@
     background-repeat: no-repeat;
     background-origin: border-box;
     clip-path: var(--chipped-corner);
+}
+
+/* not a dialog, the browser places that one */
+:is(.panel, .card, .alert) {
+    position: relative;
 }
 
 .card {
@@ -43,6 +48,21 @@
         bottom: -1px;
         border-width: 0 1px 1px 0;
     }
+}
+
+/* A dialog scrolls and would cut off the corner marks of a panel, so its border carries the mark */
+dialog {
+    border-image: linear-gradient(
+        135deg,
+        var(--mtt-color-line-highlight) calc(var(--chip) * sin(45deg)),
+        var(--mtt-color-line-dimmed) 0
+    ) 1;
+}
+
+/* The page behind a modal dialog is out of reach, so it looks disabled */
+dialog::backdrop {
+    background-color: color-mix(in srgb, var(--mtt-color-body) var(--glow-strength), #0000);
+    backdrop-filter: var(--disabled-filter);
 }
 
 .alert {

@@ -65,12 +65,16 @@
     }
 }
 
-select {
+/* as heavy as the padding of the fields above, so the room for the chevron stays */
+:is(select, input[role=combobox]) {
     padding-inline-end: 34px;
 
+    /* two halves of the chevron, each a diagonal with a pixel of fade, so its edges are smooth */
     --field-extra-background:
-        conic-gradient(from -45deg at 50% 100%, var(--mtt-color-text-muted) 90deg, #0000 0)
-            calc(100% - 10px) calc(50%) / 10px 6px;
+        linear-gradient(to bottom left, var(--mtt-color-text-muted) calc(50% - .5px), #0000 calc(50% + .5px))
+            calc(100% - 15px) 50% / 5px 5px,
+        linear-gradient(to bottom right, var(--mtt-color-text-muted) calc(50% - .5px), #0000 calc(50% + .5px))
+            calc(100% - 10px) 50% / 5px 5px;
 }
 
 textarea {
@@ -102,6 +106,11 @@ textarea {
             --field-corners: none;
         }
 
+        /* an open combobox stays the anchor of its list as well, see theme.css */
+        > [role=combobox][aria-expanded=true] {
+            anchor-name: --mtt-field-control, --mtt-combobox;
+        }
+
         &::after {
             content: "";
             position: absolute;
@@ -116,6 +125,8 @@ textarea {
             pointer-events: none;
             background: var(--ticks);
             background-repeat: no-repeat;
+            /* one for the shine, one for the glow */
+            filter: var(--unlit) var(--unlit);
 
             transition:
                 background var(--transition),
@@ -150,7 +161,7 @@ textarea {
     label:has(> :is(input:not([type="checkbox"], [type="radio"], :disabled, [aria-disabled=true]), select, textarea):is(:focus, .focus))::after {
         --glow-source: var(--tick-color);
         filter:
-            drop-shadow(0 0 var(--shine-radius) var(--tick-color))
+            drop-shadow(0 0 var(--shine-radius) color-mix(in srgb, var(--tick-color) var(--shining), #0000))
             drop-shadow(0 0 var(--glow-radius) var(--glow-color));
     }
 }

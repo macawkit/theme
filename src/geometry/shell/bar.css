@@ -4,7 +4,8 @@
 */
 .alert::after,
 :is(button, .button).ghost::after,
-nav:not(.tabs) a::after,
+nav:not(.tabs, .crumbs) a::after,
+[role=option]::after,
 nav.tabs > a::after,
 :is(button, .button)[role=tab]::after {
     content: "";
@@ -20,7 +21,8 @@ nav.tabs > a::after,
 /* along the left edge */
 .alert::after,
 :is(button, .button).ghost::after,
-nav:not(.tabs) a::after {
+nav:not(.tabs, .crumbs) a::after,
+[role=option]::after {
     top: 0;
     width: var(--highlight-thickness);
     height: 100%;
@@ -34,9 +36,10 @@ nav.tabs > a::after,
     height: var(--highlight-thickness);
 }
 
-/* hidden until the element is hovered or current, see button.css */
+/* hidden until the element is hovered, pressed or current, see button.css */
 :is(button, .button).ghost::after,
-nav:not(.tabs) a::after,
+nav:not(.tabs, .crumbs) a::after,
+[role=option]::after,
 nav.tabs > a::after,
 :is(button, .button)[role=tab]::after {
     opacity: 0;
@@ -52,6 +55,7 @@ nav.tabs > a::after,
 }
 
 nav a::after,
+[role=option]::after,
 :is(button, .button)[role=tab]::after {
     --glow-source: var(--mtt-color-main-highlight);
 }

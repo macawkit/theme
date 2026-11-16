@@ -47,6 +47,11 @@
     box-sizing: border-box;
 }
 
+/* Whatever display an element is given below, hidden still hides it */
+[hidden]:not([hidden=until-found]) {
+    display: none !important;
+}
+
 html {
     -webkit-font-smoothing: antialiased;
     width: 100%;
@@ -81,6 +86,21 @@ header > :is(h1, h2, h3, h4, h5, h6) {
     flex: auto;
 }
 
+footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--margin-tight);
+    margin-top: var(--margin);
+}
+
+/* the browser gives a dialog the text color of the canvas, not the one of the body */
+dialog {
+    width: min(100%, var(--column-width) * 3);
+    color: var(--mtt-color-text);
+}
+
 h1, h2, h3, h4, h5, h6, b, strong {
     color: var(--mtt-color-text-bright);
 }
@@ -96,7 +116,7 @@ nav.tabs > a {
     padding: 0;
 }
 
-:is(button, .button), nav a, .box, input {
+:is(button, .button), nav a, .box, input, [role=option] {
     position: relative;
     isolation: isolate;
 }
@@ -149,7 +169,7 @@ nav.tabs > a,
     background-color: var(--mtt-color-button);
 }
 
-nav:not(.tabs) a {
+nav:not(.tabs, .crumbs) a {
     display: flex;
     color: var(--mtt-color-text);
     padding: var(--margin);
@@ -170,16 +190,38 @@ nav.tabs.small > a,
     padding: 0 var(--margin-tight);
 }
 
-nav a {
+/*
+    Plain links. The states weigh no more than a bare `a`, so nav links,
+    .button and any class with a color of its own keep it.
+*/
+a {
+    color: var(--mtt-color-text-decorated);
+
+    &:where(:visited) {
+        color: var(--mtt-color-text);
+    }
+
+    &:where(.hover, :hover) {
+        color: var(--mtt-color-text-bright);
+    }
+}
+
+nav a,
+a:is(.button, .card) {
     text-decoration: none;
 }
 
-nav:not(.tabs) {
+/* A link around a whole block leaves the colors of its text alone */
+a.card {
+    color: inherit;
+}
+
+nav:not(.tabs, .crumbs) {
     display: flex;
     flex-direction: column;
 }
 
-nav:not(.tabs) :is(ul, ol) {
+nav:not(.tabs, .crumbs) :is(ul, ol) {
     list-style: none;
     margin: 0;
     padding: 0;
@@ -187,12 +229,27 @@ nav:not(.tabs) :is(ul, ol) {
     flex-direction: column;
 }
 
-nav:not(.tabs) a small {
+nav:not(.tabs, .crumbs) a small {
     font-family: var(--mono);
 }
 
-nav:not(.tabs) a > small:last-child:not(:first-child) {
+nav:not(.tabs, .crumbs) a > small:last-child:not(:first-child) {
     margin-left: auto;
+}
+
+/* Breadcrumbs: one row of steps, the page you are on comes last */
+nav.crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: var(--margin);
+    font-weight: 700;
+}
+
+nav.crumbs > * {
+    display: flex;
+    position: relative;
+    color: var(--mtt-color-text);
 }
 
 dl {
@@ -287,6 +344,21 @@ label > span {
     line-height: var(--heading-line-height);
 }
 
+/*
+    A radio or a checkbox inside a .button gives the button its state.
+    It is out of sight, but still in reach of the keyboard and of validation.
+*/
+.button > input:is([type=radio], [type=checkbox]) {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* The label is not :disabled itself, so this is what keeps its hover quiet */
+.button:has(> input:disabled) {
+    pointer-events: none;
+}
+
 fieldset {
     min-inline-size: 0;
     margin: 0;
@@ -296,6 +368,57 @@ fieldset {
 
 legend {
     padding: 0;
+}
+
+/*
+    Combobox and dropdown: an input[role=combobox] and the [role=listbox][popover]
+    named by its aria-controls, opened and filtered by general.js.
+*/
+
+/* one with inputmode=none is the dropdown: it is clicked, not typed in */
+input[role=combobox][inputmode=none] {
+    cursor: pointer;
+    caret-color: transparent;
+}
+
+[role=listbox] {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+[role=listbox][popover] {
+    max-height: calc(var(--element-height) * 8);
+}
+
+[role=option] {
+    display: flex;
+    align-items: center;
+    gap: var(--margin-tight);
+    min-height: var(--element-height);
+    padding: 0 var(--margin-tight);
+    cursor: pointer;
+}
+
+[role=listbox] > [role=presentation] {
+    padding: var(--margin-tight) var(--margin-tight) var(--margin-minimal);
+}
+
+/* Without anchors the browser shows the list in the middle of the window */
+@supports (anchor-name: --mtt-combobox) {
+    [role=combobox][aria-expanded=true] {
+        anchor-name: --mtt-combobox;
+    }
+
+    /* under its field, or above it where there is no room below */
+    [role=listbox][popover] {
+        position-anchor: --mtt-combobox;
+        position-area: block-end span-inline-end;
+        position-try-fallbacks: flip-block;
+        inset: auto;
+        width: anchor-size(width);
+        margin: var(--margin-minimal) 0;
+    }
 }
 
 .spark {

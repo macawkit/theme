@@ -40,6 +40,11 @@
     --transition-fast: var(--animation-duration-fast) var(--animation-ease);
     --press-scale: 0.99;
     --press-translate: 1px;
+    /*
+        The rest of a filter that fades a shine or a glow in. Their colors are mixed, and Chrome
+        fades from no filter to a mixed color through black, so the color would come in at the end
+    */
+    --unlit: drop-shadow(0 0 0 color(srgb 0 0 0 / 0));
     --chipped-corner: polygon(
         0 0,
         100% 0,
@@ -61,10 +66,13 @@
     from the inputs of the element it is used on:
 
     --glow-source            ->  --glow-color, a soft halo of that color
+    --shine-radius           ->  --shining, 100% or 0%, the opacity of a shine. With no
+                                 radius a shine would still be a sharp copy, inking the edges
     --tick-color, --tick-size ->  --ticks, a background of four corner marks
 */
 *, ::before, ::after {
     --glow-color: color-mix(in srgb, var(--glow-source) var(--glow-strength), #0000);
+    --shining: calc(sign(var(--shine-radius)) * 100%);
     --tick: linear-gradient(var(--tick-color), var(--tick-color));
     --ticks:
         var(--tick) 0 0 / var(--tick-size) 1px,
@@ -77,16 +85,31 @@
         var(--tick) 100% 100% / 1px var(--tick-size);
 }
 
+/* The top of the page is lit, with a faint grid that fades out over the first screen. Half a dimmed line, so the lines of what is on it still lead */
+body::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    z-index: -1;
+    height: calc(var(--column-width) * 4);
+    pointer-events: none;
+    background:
+        radial-gradient(ellipse at top, color-mix(in srgb, var(--mtt-color-line-decorated) calc(var(--glow-strength) / 4), #0000), #0000),
+        linear-gradient(color-mix(in srgb, var(--mtt-color-line-dimmed) 50%, #0000) 1px, #0000 0) -1px -1px / 64px 64px,
+        linear-gradient(90deg, color-mix(in srgb, var(--mtt-color-line-dimmed) 50%, #0000) 1px, #0000 0) -1px -1px / 64px 64px;
+    mask-image: linear-gradient(#000, #0000);
+}
+
 th {
     text-align: left;
 }
 .label {
     color: var(--mtt-color-text-decorated);
 }
-th, .note, fieldset, .small, small {
+th, .note, fieldset, .small, small, [role=listbox] > [role=presentation] {
     color: var(--mtt-color-text-muted);
 }
-th, .note, .label, fieldset {
+th, .note, .label, fieldset, [role=listbox] > [role=presentation] {
     font-family: var(--mono);
     font-size: var(--decrease-font-size);
     font-weight: 400;
@@ -137,6 +160,22 @@ label:has(input:disabled, [aria-disabled=true]),
 :is(:disabled, [aria-disabled=true]) {
     cursor: not-allowed;
     filter: var(--disabled-filter);
+}
+
+a {
+    transition: color var(--transition);
+}
+
+/* Keyboard focus: one ring for everything but the text fields, those light up on their own, see input.css */
+:is(a, button, .button, input:is([type="checkbox"], [type="radio"])):is(:focus-visible, .focus),
+.button:has(> input:focus-visible) {
+    outline: var(--highlight-thickness) solid var(--mtt-color-line-decorated);
+    outline-offset: var(--highlight-thickness);
+}
+
+/* a card is clipped and would cut the ring off, so there it runs inside */
+a.card:is(:focus-visible, .focus) {
+    outline-offset: calc(-1 * var(--highlight-thickness));
 }
 
 fieldset {
