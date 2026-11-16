@@ -23,7 +23,7 @@ import '@macawkit/theme/theme.css';
 import '@macawkit/theme/geometry/shell.css';
 import '@macawkit/theme/palette/hyacinth.css';
 import '@macawkit/theme/icon.css';
-import '@macawkit/theme/general'; // tabs, sparks and meters behaviour
+import '@macawkit/theme/general'; // tabs, sparks and meters behaviour, dialog buttons in older browsers
 ```
 
 Without a bundler, link the built files:
@@ -35,6 +35,8 @@ Without a bundler, link the built files:
 <link rel="stylesheet" href="node_modules/@macawkit/theme/dist/icon.css">
 <script src="node_modules/@macawkit/theme/dist/general.js" defer></script>
 ```
+
+`icon.css` embeds its icons as `data:` URIs, so a page with a strict Content-Security-Policy needs `img-src … data:`.
 
 ## Licenses
 

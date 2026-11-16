@@ -81,6 +81,21 @@ header > :is(h1, h2, h3, h4, h5, h6) {
     flex: auto;
 }
 
+footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--margin-tight);
+    margin-top: var(--margin);
+}
+
+/* The browser gives a dialog its own text color, so the one of the body is repeated */
+dialog {
+    width: min(100% - 2 * var(--margin), var(--tile-width) * 1.5);
+    color: var(--mtt-color-text);
+}
+
 h1, h2, h3, h4, h5, h6, b, strong {
     color: var(--mtt-color-text-bright);
 }
@@ -96,7 +111,7 @@ nav.tabs > a {
     padding: 0;
 }
 
-:is(button, .button), nav a, .box, input {
+:is(button, .button), nav a, .box, input, [role=option] {
     position: relative;
     isolation: isolate;
 }
@@ -149,7 +164,7 @@ nav.tabs > a,
     background-color: var(--mtt-color-button);
 }
 
-nav:not(.tabs) a {
+nav:not(.tabs, .crumbs) a {
     display: flex;
     color: var(--mtt-color-text);
     padding: var(--margin);
@@ -170,16 +185,38 @@ nav.tabs.small > a,
     padding: 0 var(--margin-tight);
 }
 
-nav a {
+/*
+    Plain links. The states weigh no more than a bare `a`, so nav links,
+    .button and any class with a color of its own keep it.
+*/
+a {
+    color: var(--mtt-color-text-decorated);
+
+    &:where(:visited) {
+        color: var(--mtt-color-text);
+    }
+
+    &:where(.hover, :hover) {
+        color: var(--mtt-color-text-bright);
+    }
+}
+
+nav a,
+a:is(.button, .card) {
     text-decoration: none;
 }
 
-nav:not(.tabs) {
+/* A link around a whole block leaves the colors of its text alone */
+a.card {
+    color: inherit;
+}
+
+nav:not(.tabs, .crumbs) {
     display: flex;
     flex-direction: column;
 }
 
-nav:not(.tabs) :is(ul, ol) {
+nav:not(.tabs, .crumbs) :is(ul, ol) {
     list-style: none;
     margin: 0;
     padding: 0;
@@ -187,12 +224,27 @@ nav:not(.tabs) :is(ul, ol) {
     flex-direction: column;
 }
 
-nav:not(.tabs) a small {
+nav:not(.tabs, .crumbs) a small {
     font-family: var(--mono);
 }
 
-nav:not(.tabs) a > small:last-child:not(:first-child) {
+nav:not(.tabs, .crumbs) a > small:last-child:not(:first-child) {
     margin-left: auto;
+}
+
+/* Breadcrumbs: one row of steps, the page you are on comes last */
+nav.crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: var(--margin);
+    font-weight: 700;
+}
+
+nav.crumbs > * {
+    display: flex;
+    position: relative;
+    color: var(--mtt-color-text);
 }
 
 dl {
@@ -296,6 +348,26 @@ fieldset {
 
 legend {
     padding: 0;
+}
+
+[role=listbox] {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    overflow: auto;
+}
+
+[role=option] {
+    display: flex;
+    align-items: center;
+    gap: var(--margin-tight);
+    min-height: var(--element-height);
+    padding: 0 var(--margin-tight);
+    cursor: pointer;
+}
+
+[role=listbox] > [role=presentation] {
+    padding: var(--margin-tight) var(--margin-tight) var(--margin-minimal);
 }
 
 .spark {

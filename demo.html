@@ -29,6 +29,11 @@
             margin: 0;
         }
 
+        .demo > dialog {
+            position: relative;
+            margin: var(--margin) auto;
+        }
+
         .grid {
             display: grid;
             grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -664,6 +669,26 @@
                 </nav>
                 <span class="small">links · Small variant</span>
             </div>
+            <div class="row">
+                <div class="row" role="group" aria-label="Reply by">
+                    <button type="button" aria-pressed="true"><i class="icon i-mail"></i>Mail</button>
+                    <button type="button" aria-pressed="false"><i class="icon i-phone"></i>Phone</button>
+                    <button type="button" aria-pressed="false" class="hover"><i class="icon i-send"></i>Chat</button>
+                </div>
+                <span class="small">toggle buttons · aria-pressed · hover</span>
+            </div>
+            <div class="row">
+                <div class="row" role="group" aria-label="Reply by">
+                    <button type="button" class="alt" aria-pressed="false" title="Mail"><i class="icon i-mail"></i></button>
+                    <button type="button" class="alt" aria-pressed="true" title="Phone"><i class="icon i-phone"></i></button>
+                    <button type="button" class="alt" aria-pressed="false" title="Chat"><i class="icon i-send"></i></button>
+                </div>
+                <div class="row" role="group" aria-label="Queue order">
+                    <button type="button" class="ghost" aria-pressed="true">Oldest</button>
+                    <button type="button" class="ghost" aria-pressed="false">Largest</button>
+                </div>
+                <span class="small">secondary · ghost</span>
+            </div>
         </div>
     </section>
 
@@ -1043,6 +1068,121 @@
                     </tbody>
                 </table>
             </div>
+        </div>
+    </section>
+
+    <section class="panel" style="--cols: 4;">
+        <header>
+            <span class="label">13</span>
+            <h3>Links</h3>
+            <span class="note">plain · crumbs · block</span>
+        </header>
+        <div class="stack">
+            <div class="row">
+                <nav class="crumbs" aria-label="Breadcrumb">
+                    <a href="#domains">Domains</a>
+                    <a href="#example" class="hover">example.com</a>
+                    <span aria-current="page">Mailboxes</span>
+                </nav>
+            </div>
+            <div class="row">
+                <a href="#default">Default</a>
+                <a href="#hover" class="hover">Hover</a>
+                <a href="">Visited</a>
+                <span class="small">plain links · the last one leads here</span>
+            </div>
+            <p>Bounces are kept for <a href="#policy">five days</a> and then returned to the sender, see the <a href="#manual">queue manual</a>.</p>
+            <a class="card tight" href="#card">
+                <strong>example.com</strong>
+                <small>A link around a whole card keeps the colors of the card.</small>
+            </a>
+        </div>
+    </section>
+
+    <section class="panel" style="--cols: 4;">
+        <header>
+            <span class="label">14</span>
+            <h3>Dialog</h3>
+            <span class="note">dialog · footer</span>
+        </header>
+        <div class="stack">
+            <div class="well demo">
+                <dialog open aria-label="Delete domain">
+                    <form method="dialog">
+                        <header><h3>Delete domain</h3></header>
+                        <p>legacy.example.org and its 9 mailboxes will be removed.</p>
+                        <footer>
+                            <button type="button" class="ghost">Cancel</button>
+                            <button class="danger">Delete</button>
+                        </footer>
+                    </form>
+                </dialog>
+            </div>
+            <div class="row">
+                <button type="button" class="alt" commandfor="delete-domain" command="show-modal">Open as modal</button>
+                <span class="small">commandfor · command · no script</span>
+            </div>
+            <dialog id="delete-domain" aria-label="Delete domain">
+                <form method="dialog">
+                    <header><h3>Delete domain</h3></header>
+                    <p>legacy.example.org and its 9 mailboxes will be removed.</p>
+                    <footer>
+                        <button type="button" class="ghost" commandfor="delete-domain" command="close">Cancel</button>
+                        <button class="danger">Delete</button>
+                    </footer>
+                </form>
+            </dialog>
+        </div>
+    </section>
+
+    <section class="panel" style="--cols: 4;">
+        <header>
+            <span class="label">15</span>
+            <h3>Listbox</h3>
+            <span class="note">hover · active · current · match</span>
+        </header>
+        <div class="stack tight">
+            <fieldset>
+                <label>
+                    Relay transport
+                    <input class="focus" value="tp" role="combobox" aria-expanded="true" aria-controls="transports" aria-autocomplete="list">
+                </label>
+            </fieldset>
+            <ul role="listbox" id="transports" aria-label="Relay transport">
+                <li role="presentation">Outbound</li>
+                <li role="option"><span>sm<mark>tp</mark></span><small>default</small></li>
+                <li role="option" class="hover"><span>sm<mark>tp</mark>:[relay.example]</span><small>hover</small></li>
+                <li role="option" aria-selected="true"><span>sm<mark>tp</mark>:[backup.example]</span><small>aria-selected</small></li>
+                <li role="presentation">Local</li>
+                <li role="option" aria-current="true"><span>lm<mark>tp</mark>:unix:private/dovecot</span><small>aria-current</small></li>
+            </ul>
+            <small>Styles only: the page places the list and moves <code>aria-selected</code>.</small>
+        </div>
+    </section>
+
+    <section class="panel">
+        <header>
+            <span class="label">16</span>
+            <h3>Keyboard focus</h3>
+            <span class="note">:focus-visible · .focus</span>
+        </header>
+        <div class="row" style="gap: var(--margin);">
+            <button class="focus">Flush</button>
+            <button class="focus alt">Requeue</button>
+            <button class="focus ghost">Cancel</button>
+            <button class="focus danger">Delete</button>
+            <a href="#focus" class="focus">Plain link</a>
+            <nav class="tabs" aria-label="Focus specimen">
+                <a href="#all">All</a>
+                <a href="#warn" class="focus" aria-current="page">Near limit</a>
+            </nav>
+            <nav class="crumbs" aria-label="Focus specimen">
+                <a href="#domains" class="focus">Domains</a>
+                <span aria-current="page">Mailboxes</span>
+            </nav>
+            <label><input type="checkbox" class="focus" checked>SPF</label>
+            <label><input type="radio" class="focus" checked>TLS required</label>
+            <label><input type="checkbox" class="switch focus" checked>Postscreen</label>
         </div>
     </section>
 </main>

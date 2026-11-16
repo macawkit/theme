@@ -73,3 +73,21 @@ for (const meter of document.querySelectorAll('div[role="meter"]')) {
 
     meter.style.setProperty('--value', `${percentage}%`);
 }
+
+// Invoker commands for the browsers that have none yet: a button with commandfor opens or closes its dialog
+if (!('commandForElement' in HTMLButtonElement.prototype))
+    document.addEventListener('click', event => {
+        const button = event.target.closest('button[commandfor]');
+        if (!button)
+            return;
+
+        const dialog = document.getElementById(button.getAttribute('commandfor'));
+        if (!(dialog instanceof HTMLDialogElement))
+            return;
+
+        const command = button.getAttribute('command');
+        if (command === 'show-modal' && !dialog.open)
+            dialog.showModal();
+        else if (command === 'close')
+            dialog.close();
+    });

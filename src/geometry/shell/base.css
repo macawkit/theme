@@ -83,10 +83,10 @@ th {
 .label {
     color: var(--mtt-color-text-decorated);
 }
-th, .note, fieldset, .small, small {
+th, .note, fieldset, .small, small, [role=listbox] > [role=presentation] {
     color: var(--mtt-color-text-muted);
 }
-th, .note, .label, fieldset {
+th, .note, .label, fieldset, [role=listbox] > [role=presentation] {
     font-family: var(--mono);
     font-size: var(--decrease-font-size);
     font-weight: 400;
@@ -137,6 +137,21 @@ label:has(input:disabled, [aria-disabled=true]),
 :is(:disabled, [aria-disabled=true]) {
     cursor: not-allowed;
     filter: var(--disabled-filter);
+}
+
+a {
+    transition: color var(--transition);
+}
+
+/* Keyboard focus: one ring for everything but the text fields, those light up on their own, see input.css */
+:is(a, button, input:is([type="checkbox"], [type="radio"])):is(:focus-visible, .focus) {
+    outline: var(--highlight-thickness) solid var(--mtt-color-line-decorated);
+    outline-offset: var(--highlight-thickness);
+}
+
+/* a card is clipped and would cut the ring off, so there it runs inside */
+a.card:is(:focus-visible, .focus) {
+    outline-offset: calc(-1 * var(--highlight-thickness));
 }
 
 fieldset {
