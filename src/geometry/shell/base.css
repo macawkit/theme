@@ -77,6 +77,21 @@
         var(--tick) 100% 100% / 1px var(--tick-size);
 }
 
+/* The top of the page is lit, with a faint grid that fades out over the first screen */
+body::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    z-index: -1;
+    height: calc(var(--column-width) * 4);
+    pointer-events: none;
+    background:
+        radial-gradient(ellipse at top, color-mix(in srgb, var(--mtt-color-line-decorated) calc(var(--glow-strength) / 4), #0000), #0000),
+        linear-gradient(var(--mtt-color-line-dimmed) 1px, #0000 0) -1px -1px / 64px 64px,
+        linear-gradient(90deg, var(--mtt-color-line-dimmed) 1px, #0000 0) -1px -1px / 64px 64px;
+    mask-image: linear-gradient(#000, #0000);
+}
+
 th {
     text-align: left;
 }
