@@ -40,9 +40,15 @@
             margin: var(--margin) auto;
         }
 
-        /* the header of the demo itself, with the pickers of the look */
+        /* a page in a box: as tall as a short window, not as the one the demo is in */
+        .demo > :is(.app, .center) {
+            min-height: calc(var(--element-height) * 9);
+        }
+
+        /* the header of the demo itself, with the pickers of the look, lined up with the panels under it */
         .look {
-            margin: var(--margin) var(--margin) 0;
+            width: min(100% - 2 * var(--margin), 1680px - 2 * var(--margin));
+            margin: var(--margin) auto 0;
         }
 
         .grid {
@@ -86,10 +92,10 @@
             display: block;
         }
 
+        /* Stat tiles: five across, a 3 + 2 on a tablet, and on a phone the first one leads over two pairs */
         .stripe {
             display: grid;
-            grid-auto-flow: column;
-            grid-auto-columns: minmax(0, 1fr);
+            grid-template-columns: repeat(5, minmax(0, 1fr));
             padding: 0;
         }
 
@@ -100,19 +106,54 @@
             align-items: start;
             gap: var(--margin-tight);
             padding: var(--margin-tight);
-            border-left: 1px solid var(--mtt-color-line-dimmed);
+            /* a hairline above and to the left of every tile, the ones on the edge of the panel fall on its border */
+            box-shadow: -1px -1px 0 var(--mtt-color-line-dimmed);
         }
 
         .stripe > div > :not(.spark, .note) {
             grid-column: 1 / -1;
         }
 
-        .stripe > div:first-child {
-            border-left: none;
+        @media (width < 1024px) {
+            .stripe {
+                grid-template-columns: repeat(6, minmax(0, 1fr));
+            }
+
+            .stripe > div {
+                grid-column: span 2;
+            }
+
+            .stripe > div:nth-child(-n + 2) {
+                grid-column: span 3;
+            }
         }
 
-        .stripe > div:first-child {
-            border-left: none;
+        @media (width < 600px) {
+            .stripe {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .stripe > div,
+            .stripe > div:nth-child(-n + 2) {
+                grid-column: span 1;
+            }
+
+            .stripe > div:first-child {
+                grid-column: span 2;
+            }
+        }
+
+        /* The six tones: three by two, a phone has room for two */
+        .tones {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: var(--margin-tight);
+        }
+
+        @media (width < 600px) {
+            .tones {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
         }
 
         .card header {
@@ -143,16 +184,38 @@
             border-left: 1px solid var(--mtt-color-line-dimmed);
         }
 
-        .num {
-            text-align: right;
+        /*
+            The page: one column on a phone. On a tablet the narrow panels, --cols of 4, pair up
+            and the rest keep the whole width, they hold wide things. The desktop takes --cols as it is.
+            A wide screen stops growing, a line of panels further apart than that no longer reads as one page.
+            The look above lines up with them
+        */
+        .grid {
+            grid-auto-flow: dense;
         }
 
-        @media (min-width: 1280px) {
+        .grid {
+            max-width: 1680px;
+            margin-inline: auto;
+        }
+
+        @media (width >= 720px) {
             .grid > section {
-                --cols: 12;
-                --rows: 1;
-                grid-column: span var(--cols);
-                grid-row: span var(--rows);
+                grid-column: span min(12, round(up, calc(var(--cols, 12) * 1.5), 6));
+            }
+        }
+
+        @media (width >= 1280px) {
+            .grid > section {
+                grid-column: span var(--cols, 12);
+                grid-row: span var(--rows, 1);
+            }
+        }
+
+        /* the swatches go two abreast on a phone */
+        @media (width < 600px) {
+            .swatches {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
         }
     </style>
@@ -589,42 +652,44 @@
                     <small>Inline markers. A tag names something; a badge reports a state and carries a light.</small>
                 </div>
             </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Layer</th>
-                        <th>Applies to</th>
-                        <th>Surface</th>
-                        <th>Role</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Ground</td>
-                        <td><code>body · .well · .card</code></td>
-                        <td><code>--mtt-color-body</code></td>
-                        <td><small>The page itself, and anything sunk back down to it</small></td>
-                    </tr>
-                    <tr>
-                        <td>Surface</td>
-                        <td><code>.panel</code></td>
-                        <td><code>--mtt-color-panel</code></td>
-                        <td><small>Raised from the ground; frames a region</small></td>
-                    </tr>
-                    <tr>
-                        <td>Marked</td>
-                        <td><code>.box · [aria-current] · [aria-selected]</code></td>
-                        <td><code>--mtt-color-main-dimmed</code></td>
-                        <td><small>Where you are, what is chosen, what stands alone</small></td>
-                    </tr>
-                    <tr>
-                        <td>Toned</td>
-                        <td><code>.info … .danger</code></td>
-                        <td><code>--background</code></td>
-                        <td><small>Re-tones a whole subtree through three variables</small></td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Layer</th>
+                            <th>Applies to</th>
+                            <th>Surface</th>
+                            <th>Role</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Ground</td>
+                            <td><code>body · .well · .card</code></td>
+                            <td><code>--mtt-color-body</code></td>
+                            <td><small>The page itself, and anything sunk back down to it</small></td>
+                        </tr>
+                        <tr>
+                            <td>Surface</td>
+                            <td><code>.panel</code></td>
+                            <td><code>--mtt-color-panel</code></td>
+                            <td><small>Raised from the ground; frames a region</small></td>
+                        </tr>
+                        <tr>
+                            <td>Marked</td>
+                            <td><code>.box · [aria-current] · [aria-selected]</code></td>
+                            <td><code>--mtt-color-main-dimmed</code></td>
+                            <td><small>Where you are, what is chosen, what stands alone</small></td>
+                        </tr>
+                        <tr>
+                            <td>Toned</td>
+                            <td><code>.info … .danger</code></td>
+                            <td><code>--background</code></td>
+                            <td><small>Re-tones a whole subtree through three variables</small></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </section>
 
@@ -664,6 +729,14 @@
 
             <dt><b>Mono data</b><code class="small">code</code></dt>
             <dd><code>4F2A91C3B7 · 198.51.100.23 · 250 2.0.0</code></dd>
+
+            <dt><b>List</b><code class="small">ul · ol</code></dt>
+            <dd>
+                <ul>
+                    <li>Mail to a full mailbox is deferred, not bounced.</li>
+                    <li>Deferred mail is retried for five days.</li>
+                </ul>
+            </dd>
         </dl>
     </section>
 
@@ -674,47 +747,49 @@
             <span class="note">primary · secondary · ghost · danger</span>
         </header>
         <div class="stack">
-            <table>
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Primary</th>
-                        <th>Secondary</th>
-                        <th>Ghost</th>
-                        <th>Danger</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th>Default</th>
-                        <td><button><i class="icon i-send"></i>Flush</button></td>
-                        <td><button class="alt">Requeue</button></td>
-                        <td><button class="ghost">Cancel</button></td>
-                        <td><button class="danger"><i class="icon i-trash"></i>Delete</button></td>
-                    </tr>
-                    <tr>
-                    <th>Hover</th>
-                        <td><button class="hover"><i class="icon i-send"></i>Flush</button></td>
-                        <td><button class="hover alt">Requeue</button></td>
-                        <td><button class="hover ghost">Cancel</button></td>
-                        <td><button class="hover danger"><i class="icon i-trash"></i>Delete</button></td>
-                    </tr>
-                    <tr>
-                    <th>Pressed</th>
-                        <td><button class="active hover"><i class="icon i-send"></i>Flush</button></td>
-                        <td><button class="active hover alt">Requeue</button></td>
-                        <td><button class="active hover ghost">Cancel</button></td>
-                        <td><button class="active hover danger"><i class="icon i-trash"></i>Delete</button></td>
-                    </tr>
-                    <tr>
-                    <th>Disabled</th>
-                        <td><button disabled><i class="icon i-send"></i>Flush</button></td>
-                        <td><button class="alt" disabled>Requeue</button></td>
-                        <td><button class="ghost" disabled>Cancel</button></td>
-                        <td><button class="danger" disabled><i class="icon i-trash"></i>Delete</button></td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Primary</th>
+                            <th>Secondary</th>
+                            <th>Ghost</th>
+                            <th>Danger</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>Default</th>
+                            <td><button><i class="icon i-send"></i>Flush</button></td>
+                            <td><button class="alt">Requeue</button></td>
+                            <td><button class="ghost">Cancel</button></td>
+                            <td><button class="danger"><i class="icon i-trash"></i>Delete</button></td>
+                        </tr>
+                        <tr>
+                        <th>Hover</th>
+                            <td><button class="hover"><i class="icon i-send"></i>Flush</button></td>
+                            <td><button class="hover alt">Requeue</button></td>
+                            <td><button class="hover ghost">Cancel</button></td>
+                            <td><button class="hover danger"><i class="icon i-trash"></i>Delete</button></td>
+                        </tr>
+                        <tr>
+                        <th>Pressed</th>
+                            <td><button class="active hover"><i class="icon i-send"></i>Flush</button></td>
+                            <td><button class="active hover alt">Requeue</button></td>
+                            <td><button class="active hover ghost">Cancel</button></td>
+                            <td><button class="active hover danger"><i class="icon i-trash"></i>Delete</button></td>
+                        </tr>
+                        <tr>
+                        <th>Disabled</th>
+                            <td><button disabled><i class="icon i-send"></i>Flush</button></td>
+                            <td><button class="alt" disabled>Requeue</button></td>
+                            <td><button class="ghost" disabled>Cancel</button></td>
+                            <td><button class="danger" disabled><i class="icon i-trash"></i>Delete</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
             <div class="row">
                 <button class="small">Small</button>
                 <button class="alt small"><i class="icon i-plus"></i>Add domain</button>
@@ -812,60 +887,62 @@
             <span class="note">aria-pressed · a radio or a checkbox in label.button</span>
         </header>
         <div class="stack">
-            <table>
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Primary</th>
-                        <th>Secondary</th>
-                        <th>Ghost</th>
-                        <th>Checkbox</th>
-                        <th>Radio</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th>Off</th>
-                        <td><button type="button" aria-pressed="false"><i class="icon i-mail"></i>Mail</button></td>
-                        <td><button type="button" class="alt" aria-pressed="false">Mail</button></td>
-                        <td><button type="button" class="ghost" aria-pressed="false">Mail</button></td>
-                        <td><label class="button"><input type="checkbox" name="state-4">SPF</label></td>
-                        <td><label class="button alt"><input type="radio" name="state-5">5 min</label></td>
-                    </tr>
-                    <tr>
-                        <th>Off · hover</th>
-                        <td><button type="button" class="hover" aria-pressed="false"><i class="icon i-mail"></i>Mail</button></td>
-                        <td><button type="button" class="alt hover" aria-pressed="false">Mail</button></td>
-                        <td><button type="button" class="ghost hover" aria-pressed="false">Mail</button></td>
-                        <td><label class="button hover"><input type="checkbox" name="state-9">SPF</label></td>
-                        <td><label class="button alt hover"><input type="radio" name="state-10">5 min</label></td>
-                    </tr>
-                    <tr>
-                        <th>On</th>
-                        <td><button type="button" aria-pressed="true"><i class="icon i-mail"></i>Mail</button></td>
-                        <td><button type="button" class="alt" aria-pressed="true">Mail</button></td>
-                        <td><button type="button" class="ghost" aria-pressed="true">Mail</button></td>
-                        <td><label class="button"><input type="checkbox" name="state-14" checked>SPF</label></td>
-                        <td><label class="button alt"><input type="radio" name="state-15" checked>5 min</label></td>
-                    </tr>
-                    <tr>
-                        <th>On · hover</th>
-                        <td><button type="button" class="hover" aria-pressed="true"><i class="icon i-mail"></i>Mail</button></td>
-                        <td><button type="button" class="alt hover" aria-pressed="true">Mail</button></td>
-                        <td><button type="button" class="ghost hover" aria-pressed="true">Mail</button></td>
-                        <td><label class="button hover"><input type="checkbox" name="state-19" checked>SPF</label></td>
-                        <td><label class="button alt hover"><input type="radio" name="state-20" checked>5 min</label></td>
-                    </tr>
-                    <tr>
-                        <th>Disabled</th>
-                        <td><button type="button" aria-pressed="true" disabled><i class="icon i-mail"></i>Mail</button></td>
-                        <td><button type="button" class="alt" aria-pressed="true" disabled>Mail</button></td>
-                        <td><button type="button" class="ghost" aria-pressed="true" disabled>Mail</button></td>
-                        <td><label class="button"><input type="checkbox" name="state-24" checked disabled>SPF</label></td>
-                        <td><label class="button alt"><input type="radio" name="state-25" checked disabled>5 min</label></td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Primary</th>
+                            <th>Secondary</th>
+                            <th>Ghost</th>
+                            <th>Checkbox</th>
+                            <th>Radio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>Off</th>
+                            <td><button type="button" aria-pressed="false"><i class="icon i-mail"></i>Mail</button></td>
+                            <td><button type="button" class="alt" aria-pressed="false">Mail</button></td>
+                            <td><button type="button" class="ghost" aria-pressed="false">Mail</button></td>
+                            <td><label class="button"><input type="checkbox" name="state-4">SPF</label></td>
+                            <td><label class="button alt"><input type="radio" name="state-5">5 min</label></td>
+                        </tr>
+                        <tr>
+                            <th>Off · hover</th>
+                            <td><button type="button" class="hover" aria-pressed="false"><i class="icon i-mail"></i>Mail</button></td>
+                            <td><button type="button" class="alt hover" aria-pressed="false">Mail</button></td>
+                            <td><button type="button" class="ghost hover" aria-pressed="false">Mail</button></td>
+                            <td><label class="button hover"><input type="checkbox" name="state-9">SPF</label></td>
+                            <td><label class="button alt hover"><input type="radio" name="state-10">5 min</label></td>
+                        </tr>
+                        <tr>
+                            <th>On</th>
+                            <td><button type="button" aria-pressed="true"><i class="icon i-mail"></i>Mail</button></td>
+                            <td><button type="button" class="alt" aria-pressed="true">Mail</button></td>
+                            <td><button type="button" class="ghost" aria-pressed="true">Mail</button></td>
+                            <td><label class="button"><input type="checkbox" name="state-14" checked>SPF</label></td>
+                            <td><label class="button alt"><input type="radio" name="state-15" checked>5 min</label></td>
+                        </tr>
+                        <tr>
+                            <th>On · hover</th>
+                            <td><button type="button" class="hover" aria-pressed="true"><i class="icon i-mail"></i>Mail</button></td>
+                            <td><button type="button" class="alt hover" aria-pressed="true">Mail</button></td>
+                            <td><button type="button" class="ghost hover" aria-pressed="true">Mail</button></td>
+                            <td><label class="button hover"><input type="checkbox" name="state-19" checked>SPF</label></td>
+                            <td><label class="button alt hover"><input type="radio" name="state-20" checked>5 min</label></td>
+                        </tr>
+                        <tr>
+                            <th>Disabled</th>
+                            <td><button type="button" aria-pressed="true" disabled><i class="icon i-mail"></i>Mail</button></td>
+                            <td><button type="button" class="alt" aria-pressed="true" disabled>Mail</button></td>
+                            <td><button type="button" class="ghost" aria-pressed="true" disabled>Mail</button></td>
+                            <td><label class="button"><input type="checkbox" name="state-24" checked disabled>SPF</label></td>
+                            <td><label class="button alt"><input type="radio" name="state-25" checked disabled>5 min</label></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
             <div class="row">
                 <div class="row" role="group" aria-label="Reply by">
                     <button type="button" aria-pressed="true"><i class="icon i-mail"></i>Mail</button>
@@ -918,7 +995,7 @@
             <h3>Inputs</h3>
             <span class="note">default · focus · error · disabled · date · time</span>
         </header>
-        <div class="cols">
+        <div class="tiles" style="--tile-width: 240px;">
             <fieldset>
                 <label>
                     Hostname
@@ -988,31 +1065,31 @@
         <div class="panel stripe">
             <div>
                 <span class="note">Queued</span>
-                <div class="spark signature" data-values="45,50,43,59,69,65,79,75,84,90,81,100"></div>
+                <div class="spark signature" aria-label="Queued, rising" data-values="45,50,43,59,69,65,79,75,84,90,81,100"></div>
                 <strong class="hero">128</strong>
                 <div class="small row"><code class="delta info">+12</code>23 active · 4 on hold</div>
             </div>
             <div>
                 <span class="note">Delivered · 24h</span>
-                <div class="spark success" data-values="40,45,44,55,62,70,66,77,85,81,91,100"></div>
+                <div class="spark success" aria-label="Delivered, rising" data-values="40,45,44,55,62,70,66,77,85,81,91,100"></div>
                 <strong class="hero">48,213</strong>
                 <div class="small row"><code class="success">+6.2%</code>vs 45,402 yesterday</div>
             </div>
             <div>
                 <span class="note">Rejected spam</span>
-                <div class="spark priority" data-values="60,66,63,75,72,84,78,81,90,87,93,100"></div>
+                <div class="spark priority" aria-label="Rejected spam, rising" data-values="60,66,63,75,72,84,78,81,90,87,93,100"></div>
                 <strong class="hero">2,941</strong>
                 <div class="small row"><code class="success">+14%</code>81% via RBL checks</div>
             </div>
             <div>
                 <span class="note">Deferred</span>
-                <div class="spark warning" data-values="96,93,100,88,80,83,75,70,74,64,67,59"></div>
+                <div class="spark warning" aria-label="Deferred, falling" data-values="96,93,100,88,80,83,75,70,74,64,67,59"></div>
                 <strong class="hero">37</strong>
                 <div class="small row"><code class="warning">−8</code>oldest 2h 03m</div>
             </div>
             <div>
                 <span class="note">Bounced</span>
-                <div class="spark danger" data-values="60,66,63,75,72,84,78,81,90,87,93,100"></div>
+                <div class="spark danger" aria-label="Bounced, rising" data-values="60,66,63,75,72,84,78,81,90,87,93,100"></div>
                 <strong class="hero">112</strong>
                 <div class="small row"><code class="danger">+3</code>0.23% bounce rate</div>
             </div>
@@ -1199,9 +1276,19 @@
                 </div>
                 <button class="ghost small">Renew</button>
             </div>
+            <div class="alert danger" role="alert">
+                <i class="icon i-error"></i>
+                <div class="stack">
+                    <strong>Not saved</strong>
+                    <ul class="small">
+                        <li>The domain name has two dots in a row.</li>
+                        <li>The relay host does not answer on port 25.</li>
+                    </ul>
+                </div>
+            </div>
             <div class="well stack tight">
                 <span class="label">Ghost buttons · hover takes the tone</span>
-                <div class="cols">
+                <div class="tones">
                     <button class="ghost info">Info</button>
                     <button class="ghost signature">Signature</button>
                     <button class="ghost success">Success</button>
@@ -1220,87 +1307,91 @@
             <span class="note">domains + queue rows</span>
         </header>
         <div class="stack">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Domain</th>
-                        <th class="num">Mailboxes</th>
-                        <th>DKIM</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>example.com</strong></td>
-                        <td class="num"><code>42</code></td>
-                        <td><span class="tag">DKIM pass</span></td>
-                        <td><span class="badge signature">Active</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>example.net</strong></td>
-                        <td class="num"><code>118</code></td>
-                        <td><span class="tag">DKIM pass</span></td>
-                        <td><span class="badge signature">Active</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>shop.example</strong></td>
-                        <td class="num"><code>9</code></td>
-                        <td><span class="tag">DKIM pass</span></td>
-                        <td><span class="badge signature">Active</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>legacy.example.org</strong></td>
-                        <td class="num"><code>0</code></td>
-                        <td><span class="tag danger">DKIM fail</span></td>
-                        <td><span class="badge priority">Suspended</span></td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="stack tight">
-                <span class="note">Queue table · from admin screen</span>
+            <div class="scroll">
                 <table>
                     <thead>
                         <tr>
-                            <th>Queue ID</th>
-                            <th>Sender → Recipient</th>
-                            <th class="num">Size</th>
-                            <th class="num">Age</th>
+                            <th>Domain</th>
+                            <th class="num">Mailboxes</th>
+                            <th>DKIM</th>
                             <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td><code>4F2A91C3B7</code></td>
-                            <td>
-                                billing@acme.example
-                                <small style="display: block">→ ops@example.org</small>
-                            </td>
-                            <td class="num"><code>47.1 KB</code></td>
-                            <td class="num"><code>12s</code></td>
-                            <td><span class="badge success">Delivered</span></td>
-                        </tr>
-                        <tr>
-                            <td><code>9C1E07A2D4</code></td>
-                            <td>
-                                noreply@shop.example
-                                <small style="display: block">→ j.doe@example.com</small>
-                            </td>
-                            <td class="num"><code>12.8 KB</code></td>
-                            <td class="num"><code>4m 20s</code></td>
-                            <td><span class="badge warning">Deferred</span></td>
-                        </tr>
-                        <tr>
-                            <td><code>B83D5F10E2</code></td>
-                            <td>
-                                alerts@monitor.example.net
-                                <small style="display: block">→ oncall@example.org</small>
-                            </td>
-                            <td class="num"><code>3.2 KB</code></td>
-                            <td class="num"><code>18s</code></td>
+                            <td><strong>example.com</strong></td>
+                            <td class="num"><code>42</code></td>
+                            <td><span class="tag">DKIM pass</span></td>
                             <td><span class="badge signature">Active</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>example.net</strong></td>
+                            <td class="num"><code>118</code></td>
+                            <td><span class="tag">DKIM pass</span></td>
+                            <td><span class="badge signature">Active</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>shop.example</strong></td>
+                            <td class="num"><code>9</code></td>
+                            <td><span class="tag">DKIM pass</span></td>
+                            <td><span class="badge signature">Active</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>legacy.example.org</strong></td>
+                            <td class="num"><code>0</code></td>
+                            <td><span class="tag danger">DKIM fail</span></td>
+                            <td><span class="badge priority">Suspended</span></td>
                         </tr>
                     </tbody>
                 </table>
+            </div>
+            <div class="stack tight">
+                <span class="note">Queue table · from admin screen</span>
+                <div class="scroll">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Queue ID</th>
+                                <th>Sender → Recipient</th>
+                                <th class="num">Size</th>
+                                <th class="num">Age</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>4F2A91C3B7</code></td>
+                                <td>
+                                    billing@acme.example
+                                    <small style="display: block">→ ops@example.org</small>
+                                </td>
+                                <td class="num"><code>47.1 KB</code></td>
+                                <td class="num"><code>12s</code></td>
+                                <td><span class="badge success">Delivered</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>9C1E07A2D4</code></td>
+                                <td>
+                                    noreply@shop.example
+                                    <small style="display: block">→ j.doe@example.com</small>
+                                </td>
+                                <td class="num"><code>12.8 KB</code></td>
+                                <td class="num"><code>4m 20s</code></td>
+                                <td><span class="badge warning">Deferred</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>B83D5F10E2</code></td>
+                                <td>
+                                    alerts@monitor.example.net
+                                    <small style="display: block">→ oncall@example.org</small>
+                                </td>
+                                <td class="num"><code>3.2 KB</code></td>
+                                <td class="num"><code>18s</code></td>
+                                <td><span class="badge signature">Active</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </section>
@@ -1501,6 +1592,149 @@
             <label><input type="checkbox" class="switch focus" checked>Postscreen</label>
         </div>
     </section>
+    <section class="panel" style="--cols: 6;">
+        <header>
+            <span class="label">18</span>
+            <h3>Details <span class="tag">dl</span></h3>
+            <span class="note">long values · markers in cells</span>
+        </header>
+        <dl>
+            <dt class="note">Queue ID</dt>
+            <dd><code>4F2A91C3B7</code></dd>
+
+            <dt class="note">Status</dt>
+            <dd><span class="badge warning">Deferred</span></dd>
+
+            <dt class="note">Sender</dt>
+            <dd>billing-notifications.quarterly-statements@accounts.payments.acme.example</dd>
+
+            <dt class="note">Message-ID</dt>
+            <dd><code>&lt;20261117T091542.6f1c0a9e3b7d4c28a5e1f0b9d2c7e4a1@mx1.example.net&gt;</code></dd>
+
+            <dt class="note">Checks</dt>
+            <dd>
+                <div class="row">
+                    <span class="tag">SPF pass</span>
+                    <span class="tag danger">DKIM fail</span>
+                </div>
+            </dd>
+
+            <dt class="note">Reason</dt>
+            <dd>
+                <p>The receiving server said:</p>
+                <ul>
+                    <li>451 4.7.1 Greylisted, try again later</li>
+                    <li>421 4.4.2 Connection timed out</li>
+                </ul>
+            </dd>
+        </dl>
+    </section>
+
+    <section class="panel" style="--cols: 6;">
+        <header>
+            <span class="label">19</span>
+            <h3>Empty state</h3>
+            <span class="note">.empty</span>
+        </header>
+        <div class="well empty">
+            <i class="icon i-globe"></i>
+            <strong>No domains yet</strong>
+            <small>Mail for a domain is taken once it is added here.</small>
+            <button class="alt small"><i class="icon i-plus"></i>Add domain</button>
+        </div>
+    </section>
+
+    <section class="panel">
+        <header>
+            <span class="label">20</span>
+            <h3>Pages</h3>
+            <span class="note">.app · .center</span>
+        </header>
+        <div class="stack">
+            <div class="stack tight">
+                <div class="well demo">
+                    <div class="app">
+                        <aside>
+                            <strong class="row"><i class="icon i-mail"></i>hyacinth</strong>
+                            <nav aria-label="Specimen">
+                                <span class="note">Mail system</span>
+                                <ul>
+                                    <li><a href="#"><small>01</small>Dashboard</a></li>
+                                    <li><a href="#" aria-current="page"><small>02</small>Domains<small>14</small></a></li>
+                                    <li><a href="#"><small>03</small>Mailboxes<small>312</small></a></li>
+                                    <li><a href="#"><small>04</small>Aliases<small>87</small></a></li>
+                                    <li><a href="#"><small>05</small>Logs</a></li>
+                                </ul>
+                            </nav>
+                            <small>Postfix 3.9 · mx1.example.net</small>
+                        </aside>
+                        <div>
+                            <header>
+                                <nav class="crumbs" aria-label="Specimen breadcrumb">
+                                    <a href="#domains">Domains</a>
+                                    <span aria-current="page">example.com</span>
+                                </nav>
+                                <small>postmaster@example.com</small>
+                            </header>
+                            <section class="panel">
+                                <header>
+                                    <h3>Mailboxes</h3>
+                                    <button class="alt small"><i class="icon i-plus"></i>Add</button>
+                                </header>
+                                <div class="scroll">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Address</th>
+                                                <th class="num">Used</th>
+                                                <th>State</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>postmaster@example.com</td>
+                                                <td class="num">1.2 GB</td>
+                                                <td><span class="badge signature">Active</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>j.doe@example.com</td>
+                                                <td class="num">48.7 GB</td>
+                                                <td><span class="badge warning">Near limit</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+                <small><code>.app &gt; aside + main</code> · a navigation column beside the page, on a phone a row over it. Here the page is a <code>div</code>, the demo has its <code>main</code> already</small>
+            </div>
+            <div class="stack tight">
+                <div class="well demo">
+                    <div class="center">
+                        <form class="panel">
+                            <header><h3>Sign in</h3></header>
+                            <fieldset>
+                                <label>
+                                    Address
+                                    <input value="postmaster@example.com" autocomplete="off">
+                                </label>
+                                <label>
+                                    Password
+                                    <input type="password" value="password" autocomplete="off">
+                                </label>
+                            </fieldset>
+                            <footer>
+                                <button type="button">Sign in</button>
+                            </footer>
+                        </form>
+                    </div>
+                </div>
+                <small><code>.center</code> · one thing in the middle of the window: a sign-in, a confirmation, an error</small>
+            </div>
+        </div>
+    </section>
 </main>
 </body>
 <script>
@@ -1523,7 +1757,10 @@
 
     function apply () {
         const palette = palettes.find(option => option.hasAttribute('aria-current')).dataset.palette;
-        document.getElementById('palette').href = `src/palette/${palette}.css`;
+        const link = document.getElementById('palette');
+        // the same href set again makes Firefox load the sheet anew, and the page flashes unstyled
+        if (link.getAttribute('href') !== `src/palette/${palette}.css`)
+            link.href = `src/palette/${palette}.css`;
         history.replaceState(null, '', `?${new URLSearchParams({ palette })}`);
     }
 

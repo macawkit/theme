@@ -41,6 +41,11 @@
     --press-scale: 0.99;
     --press-translate: 1px;
     /*
+        How far a drawing reaches past the box it belongs to: a focus ring, the visible part of a glow.
+        Whatever clips, a box that scrolls, leaves this much room around what it holds
+    */
+    --overhang: max(var(--glow-radius), var(--highlight-thickness) * 2);
+    /*
         The rest of a filter that fades a shine or a glow in. Their colors are mixed, and Chrome
         fades from no filter to a mixed color through black, so the color would come in at the end
     */
@@ -61,6 +66,21 @@
     );
 }
 
+/* A phone is held close, the page needs less air around things */
+@media (width < 600px) {
+    :root {
+        --margin: 16px;
+    }
+}
+
+/* A finger is broader than a pointer, what it taps is taller */
+@media (pointer: coarse) {
+    :root {
+        --element-height: 44px;
+        --element-height-small: 36px;
+    }
+}
+
 /*
     Mixins. These are declared on every element, so each of them is computed
     from the inputs of the element it is used on:
@@ -69,6 +89,8 @@
     --shine-radius           ->  --shining, 100% or 0%, the opacity of a shine. With no
                                  radius a shine would still be a sharp copy, inking the edges
     --tick-color, --tick-size ->  --ticks, a background of four corner marks
+    --color, --fill-lift     ->  --fill-color, what a bar or a meter is filled with: the color,
+                                 lifted that much lighter where the browser can say so
 */
 *, ::before, ::after {
     --glow-color: color-mix(in srgb, var(--glow-source) var(--glow-strength), #0000);
@@ -83,6 +105,13 @@
         var(--tick) 0 100% / 1px var(--tick-size),
         var(--tick) 100% 100% / var(--tick-size) 1px,
         var(--tick) 100% 100% / 1px var(--tick-size);
+    --fill-color: var(--color);
+}
+
+@supports (color: oklch(from red l c h)) {
+    *, ::before, ::after {
+        --fill-color: oklch(from var(--color) calc(l + var(--fill-lift, 0)) c h);
+    }
 }
 
 /* The top of the page is lit, with a faint grid that fades out over the first screen. Half a dimmed line, so the lines of what is on it still lead */
@@ -94,7 +123,7 @@ body::before {
     height: calc(var(--column-width) * 4);
     pointer-events: none;
     background:
-        radial-gradient(ellipse at top, color-mix(in srgb, var(--mtt-color-line-decorated) calc(var(--glow-strength) / 4), #0000), #0000),
+        radial-gradient(ellipse at top, color-mix(in srgb, var(--mtt-color-line-decorated) calc(var(--glow-strength) / 6), #0000), #0000),
         linear-gradient(color-mix(in srgb, var(--mtt-color-line-dimmed) 50%, #0000) 1px, #0000 0) -1px -1px / 64px 64px,
         linear-gradient(90deg, color-mix(in srgb, var(--mtt-color-line-dimmed) 50%, #0000) 1px, #0000 0) -1px -1px / 64px 64px;
     mask-image: linear-gradient(#000, #0000);
@@ -150,6 +179,14 @@ table tbody tr:hover {
 
 dt:not(:last-of-type), dd:not(:last-of-type) {
     border-bottom: 1px solid var(--mtt-color-line-dimmed);
+}
+
+/* Where a key sits over its value they are one entry, the line goes under the value only */
+@media (width < 600px) {
+    dt:not(:last-of-type) {
+        padding-bottom: 0;
+        border-bottom: none;
+    }
 }
 
 .well {

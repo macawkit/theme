@@ -1,4 +1,20 @@
+/* A row of tabs scrolls sideways when it doesn't fit, the chosen one is brought into sight in it, the page doesn't move */
+function reveal (row, item) {
+    const style = getComputedStyle(row);
+    const shown = row.getBoundingClientRect();
+    const box = item.getBoundingClientRect();
+    const start = shown.left + parseFloat(style.paddingLeft);
+    const end = shown.right - parseFloat(style.paddingRight);
+
+    if (box.left < start)
+        row.scrollLeft -= start - box.left;
+    else if (box.right > end)
+        row.scrollLeft += box.right - end;
+}
+
 function select (list, tab) {
+    reveal(list, tab);
+
     for (const candidate of list.querySelectorAll('[role="tab"]')) {
         const selected = candidate === tab;
         candidate.setAttribute('aria-selected', String(selected));
@@ -42,6 +58,31 @@ for (const list of document.querySelectorAll('[role="tablist"]')) {
         select(list, next);
         next.focus();
     });
+}
+
+/*
+    the chosen tab may start past the edge, it is brought in once the fonts have given the tabs their widths.
+    So is the current link of the navigation column of .app, a row of them on a phone
+*/
+document.fonts.ready.then(() => {
+    for (const row of document.querySelectorAll('[role="tablist"], nav.tabs, .app > aside > nav > :is(ul, ol)')) {
+        const chosen = row.querySelector(':scope > :is([aria-selected="true"], [aria-current]:not([aria-current="false"])), :scope > li > [aria-current]:not([aria-current="false"])');
+        if (chosen)
+            reveal(row, chosen);
+    }
+});
+
+/*
+    Bars mean nothing to a screen reader. A spark the page names, aria-label="Delivered, rising" say, is read as
+    one picture by that name, one it leaves unnamed is decoration and is skipped. Only the page knows what it shows
+*/
+for (const spark of document.querySelectorAll('.spark')) {
+    if (spark.hasAttribute('aria-label') || spark.hasAttribute('aria-labelledby')) {
+        if (!spark.hasAttribute('role'))
+            spark.setAttribute('role', 'img');
+    } else if (!spark.hasAttribute('aria-hidden')) {
+        spark.setAttribute('aria-hidden', 'true');
+    }
 }
 
 for (const spark of document.querySelectorAll('.spark')) {

@@ -7,10 +7,10 @@
     --mtt-color-main: #2a6f77;
     --mtt-color-main-highlight: #1a7f89;
 
-    --mtt-color-text-muted: #8a8070;
-    --mtt-color-text: #50483b;
+    --mtt-color-text-muted: #7a7060;
+    --mtt-color-text: #554c3f;
     --mtt-color-text-decorated: #1f6f78;
-    --mtt-color-text-bright: #231e17;
+    --mtt-color-text-bright: #41392e;
     --mtt-color-text-brightest: #ffffff;
 
     --mtt-color-line: #ddd4c2;
@@ -68,6 +68,9 @@
     --shine-radius: 0px;
     --glow-strength: 50%;
     --disabled-filter: opacity(0.5) saturate(0.5);
+
+    /* The state colors are inks, dark enough to be read as text. Unlit, a bar filled with one sits on the page like a stroke of marker, so a fill is lifted a step lighter */
+    --fill-lift: 0.08;
 }
 
 html {

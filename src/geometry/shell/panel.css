@@ -90,3 +90,16 @@ header {
         linear-gradient(var(--mtt-color-line-dimmed), var(--mtt-color-line-dimmed)) 0 100% / 100% 1px no-repeat;
     background-origin: border-box;
 }
+
+/* The navigation column of .app is a surface along the page, ruled off from it. On a phone it is over the page, so the rule is under it */
+.app > aside {
+    background-color: var(--mtt-color-panel);
+    border-inline-end: 1px solid var(--mtt-color-line-dimmed);
+}
+
+@media (width < 600px) {
+    .app > aside {
+        border-inline-end: 0;
+        border-bottom: 1px solid var(--mtt-color-line-dimmed);
+    }
+}

@@ -36,6 +36,16 @@ nav.tabs > a::after,
     height: var(--highlight-thickness);
 }
 
+/* On a phone the navigation column of .app is a row, see theme.css, and its links run sideways as tabs do: the bar goes under them */
+@media (width < 600px) {
+    .app > aside > nav:not(.tabs, .crumbs) a::after {
+        top: auto;
+        bottom: 0;
+        width: 100%;
+        height: var(--highlight-thickness);
+    }
+}
+
 /* hidden until the element is hovered, pressed or current, see button.css */
 :is(button, .button).ghost::after,
 nav:not(.tabs, .crumbs) a::after,

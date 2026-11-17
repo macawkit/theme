@@ -2,6 +2,10 @@
     --key-width: 120px;
     --column-width: 150px;
     --tile-width: calc(var(--column-width) * 2);
+    /* the narrowest a table in .scroll gets, narrower it would stand its words one per line */
+    --table-min-width: calc(var(--column-width) * 3);
+    /* the navigation column of .app, room for a name and a count beside it */
+    --nav-width: calc(var(--column-width) * 1.5);
     --color: var(--mtt-color-main-highlight);
     --shine-color: var(--mtt-color-line-decorated);
     --background: var(--mtt-color-main-dimmed);
@@ -72,13 +76,14 @@ textarea {
     font: inherit;
 }
 
+/* a header that runs out of room puts what follows the title under it, instead of squeezing both */
 header {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: var(--margin-tight);
     padding-bottom: var(--margin-tight);
-    margin-bottom: var(--margin);
 }
 
 header > :is(h1, h2, h3, h4, h5, h6) {
@@ -92,6 +97,14 @@ footer {
     align-items: center;
     justify-content: flex-end;
     gap: var(--margin-tight);
+}
+
+/* The space between a header or a footer and the rest weighs nothing, so a box that spaces what it holds can take it away, see .stack */
+:where(header) {
+    margin-bottom: var(--margin);
+}
+
+:where(footer) {
     margin-top: var(--margin);
 }
 
@@ -258,9 +271,30 @@ dl {
     gap: var(--margin);
 }
 
+/* A cell gives way to the grid, and a long value with no spaces in it, an address or a hash, breaks anywhere instead of running out of it */
 dt, dd {
     display: flex;
     flex-direction: column;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+/* the column of the grid places a value, the indent the browser gives it would only push it off */
+dd {
+    margin-inline-start: 0;
+}
+
+/* code is as wide as itself, as a badge is */
+:is(dt, dd) > code {
+    align-self: start;
+}
+
+/* On a phone a key sits over its value, there is no room for both side by side. The one width the kit asks about */
+@media (width < 600px) {
+    dl {
+        grid-template-columns: minmax(0, 1fr);
+        row-gap: 0;
+    }
 }
 
 code {
@@ -268,7 +302,9 @@ code {
     color: var(--mtt-color-text-decorated);
 }
 
+/* set as tight as a heading, or a second line runs into the first */
 .hero {
+    line-height: var(--heading-line-height);
     font-size: 250%;
     color: var(--mtt-color-text-bright);
     font-weight: 700;
@@ -278,6 +314,35 @@ code {
     display: flex;
     flex-direction: column;
     gap: var(--margin);
+}
+
+/*
+    A box spaces what it holds by its gap or its padding, and that is the only space there:
+    the margins of a paragraph, a list or a header would add to it. Only what the box holds itself, a form between
+    brings its own back. They weigh nothing, a page's own margins win, and a dialog or a popover keeps the margins that place it
+*/
+:where(.stack, .card, .alert, .empty, .row, .tiles, footer, .app > aside, .app > aside + *) > :where(:not(dialog, [popover])) {
+    margin-block: 0;
+}
+
+:where(.panel, .well, dt, dd) > :where(:first-child:not(dialog, [popover])) {
+    margin-block-start: 0;
+}
+
+:where(.panel, .well, dt, dd) > :where(:last-child:not(dialog, [popover])) {
+    margin-block-end: 0;
+}
+
+/*
+    A list in text is set in by one margin, a numbered one by two, its numbers are wider than a bullet.
+    A list the kit lays out, in a nav or with a role of its own, keeps its own
+*/
+:where(ul, ol):where(:not([role]), [role=list]) {
+    padding-inline-start: var(--margin);
+}
+
+:where(ol):where(:not([role]), [role=list]) {
+    padding-inline-start: calc(var(--margin) * 2);
 }
 
 .cols {
@@ -304,6 +369,44 @@ code {
     gap: var(--margin-tight);
 }
 
+/*
+    Tabs are one line, a choice along one axis. When they don't fit they scroll sideways,
+    as anything wide does in .scroll. The overhang is room for a focus ring and a glow,
+    which the scrolling box would cut off, the negative margin keeps the box where it was
+*/
+:is([role=tablist], nav.tabs) {
+    display: flex;
+    min-width: 0;
+    max-width: 100%;
+}
+
+:is([role=tablist], nav.tabs) > * {
+    flex: none;
+}
+
+:is([role=tablist], nav.tabs, .scroll) {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+}
+
+:is([role=tablist], nav.tabs) {
+    padding: var(--overhang);
+    margin: calc(-1 * var(--overhang));
+}
+
+/*
+    A table has room for a ring in its cells already, so a .scroll leaves it only above and below:
+    reaching out at the sides it would widen a page that gives it no padding there
+*/
+.scroll {
+    padding-block: var(--overhang);
+    margin-block: calc(-1 * var(--overhang));
+}
+
+.scroll > table {
+    min-width: max(100%, var(--table-min-width));
+}
+
 .row.between {
     justify-content: space-between;
 }
@@ -326,6 +429,86 @@ code {
 
 .box {
     padding: var(--margin-tight);
+}
+
+/* An empty state: in the middle of where the things would be, an icon, a line that says what is missing, a note and a way to start */
+.empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--margin-tight);
+    text-align: center;
+}
+
+/* A page of one thing, a sign-in or an error: it is in the middle of the window, as wide as a dialog */
+.center {
+    display: grid;
+    grid-template-columns: min(100%, var(--column-width) * 3);
+    place-content: center;
+    gap: var(--margin);
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: var(--margin);
+}
+
+/*
+    A page with a navigation column: .app > aside is the column on the start side, the page is what follows it,
+    a main or whatever holds it. Anything else in .app, a dialog or a script, is left as it is.
+    The last thing in the column, a note, sits at its bottom
+*/
+.app {
+    display: grid;
+    grid-template-columns: var(--nav-width) minmax(0, 1fr);
+    min-height: 100vh;
+    min-height: 100dvh;
+}
+
+.app > :is(aside, aside + *) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--margin);
+    min-width: 0;
+    padding: var(--margin);
+}
+
+.app > aside > :where(:last-child:not(:first-child, nav)) {
+    margin-block-start: auto;
+}
+
+/*
+    On a phone there is no room beside the page, the column goes over it as a row. Its links go sideways
+    and scroll when they don't fit, as tabs do, the overhang is room for the glow of the current one
+*/
+@media (width < 600px) {
+    .app {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto 1fr;
+    }
+
+    .app > aside {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .app > aside > nav {
+        flex: 1 1 100%;
+        min-width: 0;
+    }
+
+    .app > aside > nav:not(.tabs, .crumbs, :has(> :is(ul, ol))),
+    .app > aside > nav:not(.tabs, .crumbs) > :is(ul, ol) {
+        flex-direction: row;
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+        padding: var(--overhang);
+        margin: calc(-1 * var(--overhang));
+    }
+
+    .app > aside > nav > :is(ul, ol) > li,
+    .app > aside > nav > a {
+        flex: none;
+    }
 }
 .box > i.icon {
     display: block;
@@ -464,10 +647,19 @@ input[role=combobox][inputmode=none] {
     color: var(--color);
 }
 
+/* A marker is as wide as its word wherever it is, a column or a cell would stretch it. On a line it sits in the middle, by a heading too */
 .badge, .tag {
     display: inline-flex;
     align-items: center;
+    width: fit-content;
+    vertical-align: middle;
     white-space: nowrap;
     color: var(--shine-color);
     background-color: var(--background);
+}
+
+/* A number lines up with the ones over and under it: at the end, every figure as wide as any other */
+.num {
+    text-align: end;
+    font-variant-numeric: tabular-nums;
 }

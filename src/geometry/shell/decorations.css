@@ -3,9 +3,14 @@
     gap: var(--highlight-thickness)
 }
 
+/* The past is drawn in the same paint as now, only fainter, so a spark reads as one mark that ends in its brightest bar */
+.spark > i {
+    background: color-mix(in srgb, var(--fill-color) 45%, #0000);
+}
+
 .spark > i:last-child {
     --glow-source: var(--shine-color);
-    background: var(--color);
+    background: var(--fill-color);
     box-shadow: 
         0 0 calc(var(--shine-radius) * 2) var(--color),
         0 0 calc(var(--glow-radius) * 2) var(--glow-color);
@@ -21,7 +26,7 @@
     --glow-source: var(--shine-color);
     flex: var(--value);
     height: 100%;
-    background: var(--color);
+    background: var(--fill-color);
     box-shadow: 0 0 var(--glow-radius) var(--glow-color);
 }
 
@@ -64,6 +69,16 @@ div[role="meter"]:before {
     left: 0;
     width: var(--value);
     height: 100%;
-    background: var(--color);
+    background: var(--fill-color);
     box-shadow: 0 0 var(--glow-radius) var(--glow-color);
+}
+
+/* An empty state has room around it, and its icon is large and quiet, it stands for what is missing */
+.empty {
+    padding: calc(var(--margin) * 2) var(--margin);
+}
+
+.empty > .icon {
+    font-size: 200%;
+    color: var(--mtt-color-text-muted);
 }
