@@ -36,6 +36,8 @@ Without a bundler, link the built files:
 <script src="node_modules/@macawkit/theme/dist/general.js" defer></script>
 ```
 
+Every color of a palette has a name of its own next to it, the same token with `-name` at the end, `--mtt-color-main-name: "Hyacinth"`. It is a string, for a picker or a legend: `content: var(--color-category-3-name)` in CSS, or `getComputedStyle(document.documentElement).getPropertyValue('--color-category-3-name')` in a script.
+
 `icon.css` embeds its icons as `data:` URIs, so a page with a strict Content-Security-Policy needs `img-src … data:`.
 
 ## Pages and parts

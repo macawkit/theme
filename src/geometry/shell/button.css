@@ -3,12 +3,11 @@ nav.tabs > a,
     --background-color: var(--mtt-color-button);
     background-color: transparent;
     transition:
-        transform var(--transition-fast),
+        translate var(--transition-fast),
         background-color var(--transition),
         filter var(--transition),
         color var(--transition),
-        border-color var(--transition),
-        translate var(--transition);
+        border-color var(--transition);
 }
 
 /* the shines below fade in from here, weighing nothing so any other filter wins. A button has one for its shine and one for its shadow */
@@ -99,22 +98,20 @@ nav.tabs > a:is(.hover, :hover),
     }
 
     /*
-        a body rises under the pointer on its shadow, so it shows on a page where nothing glows. A ghost and a tab are
-        no bodies, and an alt is a frame, its ticks already answer the pointer: they stay down
+        a body rises under the pointer on its shadow, so it shows on a page where nothing glows, and so does the frame of an alt.
+        A ghost and a tab are no bodies: they stay down
     */
-    &:is(.hover, :hover):not(:disabled, [aria-disabled=true], .ghost, .alt, [role=tab]):where(:not(:has(> input:disabled))) {
+    &:is(.hover, :hover):not(:disabled, [aria-disabled=true], .ghost, [role=tab]):where(:not(:has(> input:disabled))) {
         --elevation: var(--raised);
     }
 
-    /* it sinks from the lift its halo shows, and a ghost with no glow is flat and only gives a little */
+    /*
+        Pressed, it sinks from its lift onto the page. It only moves, by a whole pixel, and is never scaled:
+        a scale lands between pixels, and the icon, drawn on its own for its shine, would land on others than the text and jump when it settles
+    */
     &:is(:active, .active):not(:disabled, [aria-disabled=true], [role=tab]) {
         --elevation: var(--unlit);
-        transform: translateY(calc(var(--press-translate) * sign(var(--glow-radius)))) scale(var(--press-scale));
-    }
-
-    /* a body is lifted by its shadow as well, so it sinks on any page */
-    &:is(:active, .active):not(:disabled, [aria-disabled=true], [role=tab], .ghost, .alt) {
-        transform: translateY(var(--press-translate)) scale(var(--press-scale));
+        translate: 0 var(--press-translate);
     }
 
     &:is(:active, .active):not(:disabled, [aria-disabled=true], .ghost, [role=tab])::after {

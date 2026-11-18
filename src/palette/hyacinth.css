@@ -1,67 +1,120 @@
 :root {
+    /*
+        Every color has a name beside it, a string to show where the color is offered or explained, a picker or a legend:
+        content: var(--mtt-color-main-name). The names are the palette's own, a color that is another one takes its name too
+    */
     --mtt-color-body: #050a22;
+    --mtt-color-body-name: "Midnight";
     --mtt-color-panel: #060f28;
+    --mtt-color-panel-name: "Ink";
 
     --mtt-color-main-dimmed: #0a1b51;
+    --mtt-color-main-dimmed-name: "Navy";
     --mtt-color-button: #112a73;
+    --mtt-color-button-name: "Sapphire";
     --mtt-color-main: #2456F0;
+    --mtt-color-main-name: "Hyacinth";
     --mtt-color-main-highlight: #3462ff;
+    --mtt-color-main-highlight-name: "Electric blue";
 
     --mtt-color-text-muted: #5d6c99;
+    --mtt-color-text-muted-name: "Dusk";
     --mtt-color-text: #97a6cf;
+    --mtt-color-text-name: "Moonlight";
     --mtt-color-text-decorated: #6d93ff;
+    --mtt-color-text-decorated-name: "Cornflower";
     --mtt-color-text-bright: #e8eeff;
+    --mtt-color-text-bright-name: "Starlight";
     --mtt-color-text-brightest: #ffffff;
+    --mtt-color-text-brightest-name: "White";
     
     --mtt-color-line: #182756;
+    --mtt-color-line-name: "Twilight";
     --mtt-color-line-dimmed: #101c3f;
+    --mtt-color-line-dimmed-name: "Deep sea";
     --mtt-color-line-highlight: #3e589f;
+    --mtt-color-line-highlight-name: "Denim";
     --mtt-color-line-decorated: #9db8ff;
+    --mtt-color-line-decorated-name: "Ice blue";
 
     --color-info: var(--mtt-color-main-dimmed);
+    --color-info-name: var(--mtt-color-main-dimmed-name);
     --color-info-highlight: var(--mtt-color-text-decorated);
+    --color-info-highlight-name: var(--mtt-color-text-decorated-name);
     --color-info-text: var(--mtt-color-line-decorated);
+    --color-info-text-name: var(--mtt-color-line-decorated-name);
 
     --color-signature: #0d2b41;
+    --color-signature-name: "Ocean";
     --color-signature-highlight: #3de6f2;
+    --color-signature-highlight-name: "Cyan";
     --color-signature-text: #7aedf5;
+    --color-signature-text-name: "Aquamarine";
 
     --color-success: #0f2a37;
+    --color-success-name: "Petrol";
     --color-success-highlight: #4fe3a0;
+    --color-success-highlight-name: "Spearmint";
     --color-success-text: #8eecc0;
+    --color-success-text-name: "Seafoam";
 
     --color-priority: #1e1f43;
+    --color-priority-name: "Indigo";
     --color-priority-highlight: #c48aff;
+    --color-priority-highlight-name: "Lilac";
     --color-priority-text: #dbb8ff;
+    --color-priority-text-name: "Wisteria";
 
     --color-warning: #26242b;
+    --color-warning-name: "Graphite";
     --color-warning-highlight: #ffb547;
+    --color-warning-highlight-name: "Amber";
     --color-warning-text: #ffd08a;
+    --color-warning-text-name: "Honey";
 
     --color-danger: #2e1a33;
+    --color-danger-name: "Aubergine";
     --color-danger-highlight: #d33650;
+    --color-danger-highlight-name: "Crimson";
     --color-danger-text: #ff8e9c;
+    --color-danger-text-name: "Rose";
 
     /*
         Categories: sixteen marks that tell things apart, like whose a row is, and say nothing of state.
         The first eight go round the hues, taking a color above where one sits there. The last eight go round again between them, deeper
     */
     --color-category-1: var(--mtt-color-text-decorated);
+    --color-category-1-name: var(--mtt-color-text-decorated-name);
     --color-category-2: var(--color-priority-highlight);
+    --color-category-2-name: var(--color-priority-highlight-name);
     --color-category-3: #fb80ca;
+    --color-category-3-name: "Hot pink";
     --color-category-4: var(--color-danger-text);
+    --color-category-4-name: var(--color-danger-text-name);
     --color-category-5: var(--color-warning-highlight);
+    --color-category-5-name: var(--color-warning-highlight-name);
     --color-category-6: #cede35;
+    --color-category-6-name: "Chartreuse";
     --color-category-7: var(--color-success-highlight);
+    --color-category-7-name: var(--color-success-highlight-name);
     --color-category-8: var(--color-signature-highlight);
+    --color-category-8-name: var(--color-signature-highlight-name);
     --color-category-9: #685acb;
+    --color-category-9-name: "Iris";
     --color-category-10: #a0429f;
+    --color-category-10-name: "Plum";
     --color-category-11: #ba3661;
+    --color-category-11-name: "Raspberry";
     --color-category-12: #ad5002;
+    --color-category-12-name: "Rust";
     --color-category-13: #836d03;
+    --color-category-13-name: "Olive";
     --color-category-14: #348302;
+    --color-category-14-name: "Fern";
     --color-category-15: #068076;
+    --color-category-15-name: "Teal";
     --color-category-16: #0677ab;
+    --color-category-16-name: "Cerulean";
 
     /*
         A shadow is the dark that a raised thing casts on what is under it: its ink, and how much of it shows.

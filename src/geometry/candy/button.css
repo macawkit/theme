@@ -1,7 +1,9 @@
 /*
     A button is a hard candy: a pill, glossy on its top half, set on the page by a small shadow.
-    It draws itself, its states change only what it is made of. The shadows are always four,
-    a rim, an elevation of two and a glow, so every change between them eases
+    It draws itself, its states change only what it is made of and where it sits. The shadows are always four,
+    a rim, an elevation of two and a glow, so every change between them eases.
+    It hops up to the pointer and springs back, and pressed it is squeezed: the motion goes by whole pixels
+    and a scale that ends at one, so the type is crisp again whenever it is still
 */
 nav.tabs > a,
 :is(button, .button) {
@@ -11,7 +13,11 @@ nav.tabs > a,
     --rim-width: 0px;
     --elevation: var(--raise-low);
     --glow-reach: 0px;
+    --lift: 0px;
+    --squeeze: 1;
 
+    translate: 0 var(--lift);
+    scale: var(--squeeze);
     border-radius: var(--pill);
     background: var(--gloss-layer), var(--background-color);
     box-shadow:
@@ -21,13 +27,16 @@ nav.tabs > a,
     transition:
         background-color var(--transition),
         box-shadow var(--transition),
-        color var(--transition);
+        color var(--transition),
+        translate var(--transition-bounce),
+        scale var(--transition-bounce);
 }
 
 :is(button, .button) {
-    /* It floats up to meet the pointer. Only its shadow moves, the type keeps its pixels */
-    &:is(.hover, :hover):not(.ghost, :disabled, [aria-disabled=true], [role=tab]) {
+    /* It floats up to meet the pointer, its shadow spreading as it goes */
+    &:is(.hover, :hover):not(.ghost, :disabled, [aria-disabled=true], [role=tab]):where(:not(:has(> input:disabled))) {
         --elevation: var(--raise);
+        --lift: var(--hop);
     }
 
     /* Lit: a toggle that is on, and a plain button under the pointer. A toggle is lit only by being on */
@@ -44,11 +53,24 @@ nav.tabs > a,
         --background-color: color-mix(in srgb, var(--mtt-color-button), var(--mtt-color-main-highlight));
     }
 
-    /* Pressed, it sets down on the page at once and its light dims, after the lit ones so it wins over them */
-    &:is(:active, .active):not(.ghost, :disabled, [aria-disabled=true], [role=tab]) {
+    /*
+        Pressed, it sets down on the page at once, is squeezed between the fingers and its light dims, after the lit ones so it wins over them.
+        It goes down quick and plain, and springs back from there when let go
+    */
+    &:is(:active, .active):not(.ghost, :disabled, [aria-disabled=true], [role=tab]):where(:not(:has(> input:disabled))) {
         --elevation: var(--flat);
         --glow-reach: calc(var(--glow-radius) / 2);
+        --lift: 0px;
+        --squeeze: var(--press-squeeze);
         transition-duration: var(--animation-duration-fast);
+        transition-timing-function: var(--animation-ease);
+    }
+
+    /* a ghost has no candy to lift, it only gives a little under the finger */
+    &.ghost:is(:active, .active):not(:disabled, [aria-disabled=true], [role=tab]):where(:not(:has(> input:disabled))) {
+        --squeeze: var(--press-squeeze);
+        transition-duration: var(--animation-duration-fast);
+        transition-timing-function: var(--animation-ease);
     }
 
     &.danger {

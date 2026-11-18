@@ -38,7 +38,6 @@
     --animation-ease: cubic-bezier(.4, 0, .2, 1);
     --transition: var(--animation-duration) var(--animation-ease);
     --transition-fast: var(--animation-duration-fast) var(--animation-ease);
-    --press-scale: 0.99;
     --press-translate: 1px;
     /*
         How far a drawing reaches past the box it belongs to: a focus ring, the visible part of a glow.
@@ -50,12 +49,6 @@
         fades from no filter to a mixed color through black, so the color would come in at the end
     */
     --unlit: drop-shadow(0 0 0 color(srgb 0 0 0 / 0));
-    /*
-        The palette says what a shadow is, here it is a hard ledge under what is raised, with no blur, as a console
-        would draw it. A blur spreads a shadow and a ledge has none, so it takes twice the ink.
-        On a dark page it is black on black and hardly shows, on a light one it is what lifts a thing
-    */
-    --raised: drop-shadow(0 2px 0 color-mix(in srgb, var(--shadow-color) min(var(--shadow-strength) * 2, 100%), #0000));
     --chipped-corner: polygon(
         0 0,
         100% 0,
@@ -92,6 +85,7 @@
     from the inputs of the element it is used on:
 
     --glow-source            ->  --glow-color, a soft halo of that color
+    --background-color       ->  --raised, the shadow of what is lifted, see below
     --shine-radius           ->  --shining, 100% or 0%, the opacity of a shine. With no
                                  radius a shine would still be a sharp copy, inking the edges
     --tick-color, --tick-size ->  --ticks, a background of four corner marks
@@ -100,6 +94,13 @@
 */
 *, ::before, ::after {
     --glow-color: color-mix(in srgb, var(--glow-source) var(--glow-strength), #0000);
+    /*
+        The palette says what a shadow is, here it is the soft one a lifted body casts on the page right under it.
+        A grey shadow under a colored body reads as dirt, so the ink takes a part of the body's color, as light through it would.
+        On a dark page it is black on black and hardly shows, on a light one it is what lifts a thing
+    */
+    --shadow-ink: color-mix(in oklab, var(--shadow-color), var(--background-color, var(--shadow-color)) 35%);
+    --raised: drop-shadow(0 3px 5px color-mix(in srgb, var(--shadow-ink) min(var(--shadow-strength) * 2.5, 100%), #0000));
     --shining: calc(sign(var(--shine-radius)) * 100%);
     --tick: linear-gradient(var(--tick-color), var(--tick-color));
     --ticks:

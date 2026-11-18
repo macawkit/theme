@@ -80,19 +80,44 @@
             gap: var(--margin-minimal);
         }
 
+        /*
+            A tile takes the shape of the geometry from whatever it defines, the rest fall back to nothing:
+            the chipped corner of shell, the rounded slab of candy, set in the well so that their corners are concentric, and floating in it
+        */
         .swatches > div {
             display: flex;
             flex-direction: column;
-            padding-bottom: var(--margin-minimal);
+            overflow: hidden;
+            padding-bottom: var(--margin-tight);
             background: var(--mtt-color-panel);
             gap: var(--margin-tight);
+            border-radius: max(var(--radius-small, 0px) - var(--margin-tight), var(--radius-tiny, 0px));
+            clip-path: var(--chipped-corner-small, none);
+            box-shadow: var(--raise-low, none);
         }
 
         .swatches > div > i {
-            --color: var(--mtt-color-body);
             height: 50px;
-            background: var(--color);
-            border-bottom: 1px solid var(--mtt-color-line-dimmed);
+            background: var(--color, var(--mtt-color-body));
+            box-shadow: inset 0 -1px 0 var(--mtt-color-line-dimmed);
+        }
+
+        /* the palette's own name for the color, under what it is for */
+        .swatches h4::after,
+        .name::before {
+            content: var(--name, none);
+            color: var(--mtt-color-text-muted);
+            font-weight: normal;
+        }
+
+        .swatches h4::after {
+            display: block;
+            margin-top: var(--margin-minimal);
+            font-size: var(--decrease-font-size);
+        }
+
+        .name::before {
+            content: "(" var(--name, none) ")";
         }
 
         .swatches > div > :not(i) {
@@ -271,27 +296,27 @@
             <span class="note">Defined as CSS custom properties</span>
         </header>
         <div class="stack" style="overflow: auto; height: 480px;">
-            <p>Surfaces live on the page itself: <code>--mtt-color-body</code> fills the page and wells, <code>--mtt-color-panel</code> fills panels — so they are not swatched here.</p>
+            <p>Surfaces live on the page itself: <code>--mtt-color-body</code> <span class="name" style="--name: var(--mtt-color-body-name)"></span> fills the page and wells, <code>--mtt-color-panel</code> <span class="name" style="--name: var(--mtt-color-panel-name)"></span> fills panels — so they are not swatched here. Every color has a name of its own in the palette, <code>--mtt-color-main-name</code> and so on.</p>
             <div class="stack tight swatch-group">
                 <span class="label">Main</span>
                 <div class="well swatches">
-                    <div>
-                        <i style="--color: var(--mtt-color-main-dimmed)"></i>
+                    <div style="--color: var(--mtt-color-main-dimmed); --name: var(--mtt-color-main-dimmed-name)">
+                        <i></i>
                         <h4>Main dimmed</h4>
                         <small><code>--mtt-color-main-dimmed</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--mtt-color-button)"></i>
+                    <div style="--color: var(--mtt-color-button); --name: var(--mtt-color-button-name)">
+                        <i></i>
                         <h4>Button</h4>
                         <small><code>--mtt-color-button</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--mtt-color-main)"></i>
+                    <div style="--color: var(--mtt-color-main); --name: var(--mtt-color-main-name)">
+                        <i></i>
                         <h4>Main</h4>
                         <small><code>--mtt-color-main</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--mtt-color-main-highlight)"></i>
+                    <div style="--color: var(--mtt-color-main-highlight); --name: var(--mtt-color-main-highlight-name)">
+                        <i></i>
                         <h4>Main highlight</h4>
                         <small><code>--mtt-color-main-highlight</code></small>
                     </div>
@@ -300,28 +325,28 @@
             <div class="stack tight swatch-group">
                 <span class="label">Text</span>
                 <div class="well swatches">
-                    <div>
-                        <i style="--color: var(--mtt-color-text-muted)"></i>
+                    <div style="--color: var(--mtt-color-text-muted); --name: var(--mtt-color-text-muted-name)">
+                        <i></i>
                         <h4>Text muted</h4>
                         <small><code>--mtt-color-text-muted</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--mtt-color-text)"></i>
+                    <div style="--color: var(--mtt-color-text); --name: var(--mtt-color-text-name)">
+                        <i></i>
                         <h4>Text</h4>
                         <small><code>--mtt-color-text</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--mtt-color-text-decorated)"></i>
+                    <div style="--color: var(--mtt-color-text-decorated); --name: var(--mtt-color-text-decorated-name)">
+                        <i></i>
                         <h4>Text decorated</h4>
                         <small><code>--mtt-color-text-decorated</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--mtt-color-text-bright)"></i>
+                    <div style="--color: var(--mtt-color-text-bright); --name: var(--mtt-color-text-bright-name)">
+                        <i></i>
                         <h4>Text bright</h4>
                         <small><code>--mtt-color-text-bright</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--mtt-color-text-brightest)"></i>
+                    <div style="--color: var(--mtt-color-text-brightest); --name: var(--mtt-color-text-brightest-name)">
+                        <i></i>
                         <h4>Text brightest</h4>
                         <small><code>--mtt-color-text-brightest</code></small>
                     </div>
@@ -330,23 +355,23 @@
             <div class="stack tight swatch-group">
                 <span class="label">Line</span>
                 <div class="well swatches">
-                    <div>
-                        <i style="--color: var(--mtt-color-line-dimmed)"></i>
+                    <div style="--color: var(--mtt-color-line-dimmed); --name: var(--mtt-color-line-dimmed-name)">
+                        <i></i>
                         <h4>Line dimmed</h4>
                         <small><code>--mtt-color-line-dimmed</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--mtt-color-line)"></i>
+                    <div style="--color: var(--mtt-color-line); --name: var(--mtt-color-line-name)">
+                        <i></i>
                         <h4>Line</h4>
                         <small><code>--mtt-color-line</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--mtt-color-line-highlight)"></i>
+                    <div style="--color: var(--mtt-color-line-highlight); --name: var(--mtt-color-line-highlight-name)">
+                        <i></i>
                         <h4>Line highlight</h4>
                         <small><code>--mtt-color-line-highlight</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--mtt-color-line-decorated)"></i>
+                    <div style="--color: var(--mtt-color-line-decorated); --name: var(--mtt-color-line-decorated-name)">
+                        <i></i>
                         <h4>Line decorated</h4>
                         <small><code>--mtt-color-line-decorated</code></small>
                     </div>
@@ -355,18 +380,18 @@
             <div class="stack tight swatch-group">
                 <span class="label">Info</span>
                 <div class="well swatches">
-                    <div>
-                        <i style="--color: var(--color-info)"></i>
+                    <div style="--color: var(--color-info); --name: var(--color-info-name)">
+                        <i></i>
                         <h4>Info</h4>
                         <small><code>--color-info</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--color-info-highlight)"></i>
+                    <div style="--color: var(--color-info-highlight); --name: var(--color-info-highlight-name)">
+                        <i></i>
                         <h4>Info highlight</h4>
                         <small><code>--color-info-highlight</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--color-info-text)"></i>
+                    <div style="--color: var(--color-info-text); --name: var(--color-info-text-name)">
+                        <i></i>
                         <h4>Info text</h4>
                         <small><code>--color-info-text</code></small>
                     </div>
@@ -375,18 +400,18 @@
             <div class="stack tight swatch-group">
                 <span class="label">Signature</span>
                 <div class="well swatches">
-                    <div>
-                        <i style="--color: var(--color-signature)"></i>
+                    <div style="--color: var(--color-signature); --name: var(--color-signature-name)">
+                        <i></i>
                         <h4>Signature</h4>
                         <small><code>--color-signature</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--color-signature-highlight)"></i>
+                    <div style="--color: var(--color-signature-highlight); --name: var(--color-signature-highlight-name)">
+                        <i></i>
                         <h4>Signature highlight</h4>
                         <small><code>--color-signature-highlight</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--color-signature-text)"></i>
+                    <div style="--color: var(--color-signature-text); --name: var(--color-signature-text-name)">
+                        <i></i>
                         <h4>Signature text</h4>
                         <small><code>--color-signature-text</code></small>
                     </div>
@@ -395,18 +420,18 @@
             <div class="stack tight swatch-group">
                 <span class="label">Success</span>
                 <div class="well swatches">
-                    <div>
-                        <i style="--color: var(--color-success)"></i>
+                    <div style="--color: var(--color-success); --name: var(--color-success-name)">
+                        <i></i>
                         <h4>Success</h4>
                         <small><code>--color-success</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--color-success-highlight)"></i>
+                    <div style="--color: var(--color-success-highlight); --name: var(--color-success-highlight-name)">
+                        <i></i>
                         <h4>Success highlight</h4>
                         <small><code>--color-success-highlight</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--color-success-text)"></i>
+                    <div style="--color: var(--color-success-text); --name: var(--color-success-text-name)">
+                        <i></i>
                         <h4>Success text</h4>
                         <small><code>--color-success-text</code></small>
                     </div>
@@ -415,18 +440,18 @@
             <div class="stack tight swatch-group">
                 <span class="label">Priority</span>
                 <div class="well swatches">
-                    <div>
-                        <i style="--color: var(--color-priority)"></i>
+                    <div style="--color: var(--color-priority); --name: var(--color-priority-name)">
+                        <i></i>
                         <h4>Priority</h4>
                         <small><code>--color-priority</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--color-priority-highlight)"></i>
+                    <div style="--color: var(--color-priority-highlight); --name: var(--color-priority-highlight-name)">
+                        <i></i>
                         <h4>Priority highlight</h4>
                         <small><code>--color-priority-highlight</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--color-priority-text)"></i>
+                    <div style="--color: var(--color-priority-text); --name: var(--color-priority-text-name)">
+                        <i></i>
                         <h4>Priority text</h4>
                         <small><code>--color-priority-text</code></small>
                     </div>
@@ -435,18 +460,18 @@
             <div class="stack tight swatch-group">
                 <span class="label">Warning</span>
                 <div class="well swatches">
-                    <div>
-                        <i style="--color: var(--color-warning)"></i>
+                    <div style="--color: var(--color-warning); --name: var(--color-warning-name)">
+                        <i></i>
                         <h4>Warning</h4>
                         <small><code>--color-warning</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--color-warning-highlight)"></i>
+                    <div style="--color: var(--color-warning-highlight); --name: var(--color-warning-highlight-name)">
+                        <i></i>
                         <h4>Warning highlight</h4>
                         <small><code>--color-warning-highlight</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--color-warning-text)"></i>
+                    <div style="--color: var(--color-warning-text); --name: var(--color-warning-text-name)">
+                        <i></i>
                         <h4>Warning text</h4>
                         <small><code>--color-warning-text</code></small>
                     </div>
@@ -455,18 +480,18 @@
             <div class="stack tight swatch-group">
                 <span class="label">Danger</span>
                 <div class="well swatches">
-                    <div>
-                        <i style="--color: var(--color-danger)"></i>
+                    <div style="--color: var(--color-danger); --name: var(--color-danger-name)">
+                        <i></i>
                         <h4>Danger</h4>
                         <small><code>--color-danger</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--color-danger-highlight)"></i>
+                    <div style="--color: var(--color-danger-highlight); --name: var(--color-danger-highlight-name)">
+                        <i></i>
                         <h4>Danger highlight</h4>
                         <small><code>--color-danger-highlight</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--color-danger-text)"></i>
+                    <div style="--color: var(--color-danger-text); --name: var(--color-danger-text-name)">
+                        <i></i>
                         <h4>Danger text</h4>
                         <small><code>--color-danger-text</code></small>
                     </div>
@@ -476,83 +501,83 @@
                 <span class="label">Category</span>
                 <p>Sixteen marks that tell things apart and say nothing of state, like whose a row is. The first eight go round the hues, the last eight go round again between them, each a color of its own.</p>
                 <div class="well swatches">
-                    <div>
-                        <i style="--color: var(--color-category-1)"></i>
+                    <div style="--color: var(--color-category-1); --name: var(--color-category-1-name)">
+                        <i></i>
                         <h4>Category 1</h4>
                         <small><code>--color-category-1</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--color-category-2)"></i>
+                    <div style="--color: var(--color-category-2); --name: var(--color-category-2-name)">
+                        <i></i>
                         <h4>Category 2</h4>
                         <small><code>--color-category-2</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--color-category-3)"></i>
+                    <div style="--color: var(--color-category-3); --name: var(--color-category-3-name)">
+                        <i></i>
                         <h4>Category 3</h4>
                         <small><code>--color-category-3</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--color-category-4)"></i>
+                    <div style="--color: var(--color-category-4); --name: var(--color-category-4-name)">
+                        <i></i>
                         <h4>Category 4</h4>
                         <small><code>--color-category-4</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--color-category-5)"></i>
+                    <div style="--color: var(--color-category-5); --name: var(--color-category-5-name)">
+                        <i></i>
                         <h4>Category 5</h4>
                         <small><code>--color-category-5</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--color-category-6)"></i>
+                    <div style="--color: var(--color-category-6); --name: var(--color-category-6-name)">
+                        <i></i>
                         <h4>Category 6</h4>
                         <small><code>--color-category-6</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--color-category-7)"></i>
+                    <div style="--color: var(--color-category-7); --name: var(--color-category-7-name)">
+                        <i></i>
                         <h4>Category 7</h4>
                         <small><code>--color-category-7</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--color-category-8)"></i>
+                    <div style="--color: var(--color-category-8); --name: var(--color-category-8-name)">
+                        <i></i>
                         <h4>Category 8</h4>
                         <small><code>--color-category-8</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--color-category-9)"></i>
+                    <div style="--color: var(--color-category-9); --name: var(--color-category-9-name)">
+                        <i></i>
                         <h4>Category 9</h4>
                         <small><code>--color-category-9</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--color-category-10)"></i>
+                    <div style="--color: var(--color-category-10); --name: var(--color-category-10-name)">
+                        <i></i>
                         <h4>Category 10</h4>
                         <small><code>--color-category-10</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--color-category-11)"></i>
+                    <div style="--color: var(--color-category-11); --name: var(--color-category-11-name)">
+                        <i></i>
                         <h4>Category 11</h4>
                         <small><code>--color-category-11</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--color-category-12)"></i>
+                    <div style="--color: var(--color-category-12); --name: var(--color-category-12-name)">
+                        <i></i>
                         <h4>Category 12</h4>
                         <small><code>--color-category-12</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--color-category-13)"></i>
+                    <div style="--color: var(--color-category-13); --name: var(--color-category-13-name)">
+                        <i></i>
                         <h4>Category 13</h4>
                         <small><code>--color-category-13</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--color-category-14)"></i>
+                    <div style="--color: var(--color-category-14); --name: var(--color-category-14-name)">
+                        <i></i>
                         <h4>Category 14</h4>
                         <small><code>--color-category-14</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--color-category-15)"></i>
+                    <div style="--color: var(--color-category-15); --name: var(--color-category-15-name)">
+                        <i></i>
                         <h4>Category 15</h4>
                         <small><code>--color-category-15</code></small>
                     </div>
-                    <div>
-                        <i style="--color: var(--color-category-16)"></i>
+                    <div style="--color: var(--color-category-16); --name: var(--color-category-16-name)">
+                        <i></i>
                         <h4>Category 16</h4>
                         <small><code>--color-category-16</code></small>
                     </div>

@@ -1,10 +1,10 @@
 /*
     Candy: everything is round, light and a little sweet. Surfaces are soft slabs that float on the palette's shadow,
     controls are pills, and what is filled is a hard candy with a gloss on its top half. Under the pointer a control
-    floats higher and pressed it settles back, by its shadow alone: nothing moves, so the type stays crisp.
+    hops up and floats higher on its shadow, and pressed it is squeezed back down onto the page.
 
-    A control draws itself, no layers under it: its states only change what it is made of,
-    --background-color, --gloss-layer, --rim-color and --rim-width, --elevation, and --glow-reach for a light
+    A control draws itself, no layers under it: its states only change what it is made of and where it sits,
+    --background-color, --gloss-layer, --rim-color and --rim-width, --elevation, --glow-reach for a light, and --lift and --squeeze
 */
 @font-face {
     font-family: 'Nunito';
@@ -50,6 +50,9 @@
     --transition: var(--animation-duration) var(--animation-ease);
     /* overshoots and settles, only for a small mark that pops in, a tick or a knob. Color and text never bounce */
     --transition-bounce: var(--animation-duration) cubic-bezier(.34, 1.56, .64, 1);
+    /* how high a control hops to the pointer, in whole pixels so the type lands on them, and how much a press squeezes it */
+    --hop: -2px;
+    --press-squeeze: 0.96;
     /* How far a drawing reaches past the box it belongs to, a focus ring or a glow. Whatever clips leaves this much room around what it holds */
     --overhang: max(var(--glow-radius), var(--highlight-thickness) * 2);
 
