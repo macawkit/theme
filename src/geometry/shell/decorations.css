@@ -73,6 +73,11 @@ div[role="meter"]:before {
     box-shadow: 0 0 var(--glow-radius) var(--glow-color);
 }
 
+/* A swatch is a flat square of its color, with an edge of ink so a pale one still stands off the page. It carries no light, a list holds many. A quiet one keeps its edge */
+.swatch {
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--mtt-color-text-bright) 22%, #0000);
+}
+
 /* An empty state has room around it, and its icon is large and quiet, it stands for what is missing */
 .empty {
     padding: calc(var(--margin) * 2) var(--margin);

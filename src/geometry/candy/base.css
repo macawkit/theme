@@ -44,6 +44,7 @@
     --element-height-small: 30px;
     --element-height-tiny: 20px;
     --box-size: 18px;
+    --box-size-small: 10px;
     --animation-duration: 240ms;
     --animation-duration-fast: 120ms;
     --animation-ease: cubic-bezier(.3, .7, .4, 1);

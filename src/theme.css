@@ -658,6 +658,31 @@ input[role=combobox][inputmode=none] {
     background-color: var(--background);
 }
 
+/*
+    A swatch shows one color, a category's most of all, beside the name of what wears it: an empty element,
+    decoration only, the name says it all. The color is --color, on it or on anything around it, and one that comes to nothing,
+    a token the palette has not got, leaves a line where it would be. .small is for a dense spot, a day of a calendar,
+    and .quiet is for a thing that is over, it fades into the page
+*/
+.swatch {
+    --background-color: var(--color, var(--mtt-color-line-highlight));
+    display: inline-block;
+    flex: none;
+    width: var(--box-size);
+    height: var(--box-size);
+    vertical-align: middle;
+    background-color: var(--background-color);
+}
+
+.swatch.small {
+    width: var(--box-size-small);
+    height: var(--box-size-small);
+}
+
+.swatch.quiet {
+    --background-color: color-mix(in srgb, var(--color, var(--mtt-color-line-highlight)) 50%, var(--mtt-color-body));
+}
+
 /* A number lines up with the ones over and under it: at the end, every figure as wide as any other */
 .num {
     text-align: end;
