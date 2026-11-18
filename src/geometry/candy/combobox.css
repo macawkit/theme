@@ -1,0 +1,69 @@
+/* The list of a combobox or a dropdown: a little candy box high over the page, its rows soft pills. It keeps the type of the body wherever it sits */
+[role=listbox] {
+    font-family: var(--font);
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: normal;
+    text-transform: none;
+    color: var(--mtt-color-text);
+    background-color: var(--mtt-color-panel);
+    border: 1px solid var(--mtt-color-line);
+    border-radius: var(--radius-small);
+    box-shadow: var(--raise-high);
+
+    /* in a fieldset a small takes the size around it, a detail in a row stays small */
+    small {
+        font-size: var(--decrease-font-size);
+    }
+}
+
+/* it opens over the page, the rows are kept off its rounded edge, and scroll under a caption */
+[role=listbox][popover] {
+    padding: var(--margin-minimal);
+
+    > [role=presentation] {
+        background-color: var(--mtt-color-panel);
+    }
+}
+
+[role=listbox][data-empty]::after {
+    color: var(--mtt-color-text-muted);
+}
+
+[role=option] {
+    border-radius: calc(var(--radius-small) - var(--margin-minimal));
+    transition:
+        background-color var(--transition),
+        color var(--transition);
+
+    &:is(.hover, :hover) {
+        background-color: color-mix(in srgb, var(--mtt-color-main-dimmed) calc(var(--glow-strength) / 2), #0000);
+        color: var(--mtt-color-text-bright);
+    }
+
+    /* The row the keyboard is on */
+    &[aria-selected=true] {
+        background-color: var(--mtt-color-main-dimmed);
+        color: var(--mtt-color-text-bright);
+    }
+
+    /* The row holding the value of the field */
+    &[aria-current=true]::before {
+        content: "";
+        order: 1;
+        flex: none;
+        width: var(--box-size);
+        height: var(--box-size);
+        margin-left: auto;
+        background: var(--mtt-color-text-decorated);
+        -webkit-mask: var(--mtt-icon-check) 50% / var(--box-size) no-repeat;
+        mask: var(--mtt-icon-check) 50% / var(--box-size) no-repeat;
+    }
+
+    /* What was typed */
+    mark {
+        background: none;
+        color: var(--mtt-color-text-bright);
+        font-weight: 800;
+    }
+}

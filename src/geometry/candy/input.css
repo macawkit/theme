@@ -1,0 +1,137 @@
+/*
+    Text fields are pills set into the page, ringed by a soft rim. Focused, the rim takes the decorated color
+    and a jelly halo of it spreads around. The shadows are always two, so the change eases
+*/
+:is(input:not([type="checkbox"], [type="radio"]), select, textarea) {
+    --field-surface: var(--mtt-color-body);
+    --rim-color: var(--mtt-color-line);
+    --halo: color-mix(in srgb, var(--rim-color) 0%, #0000);
+
+    inline-size: 100%;
+    min-inline-size: 0;
+    min-block-size: var(--element-height);
+    margin: 0;
+    padding: 0 calc(var(--margin-tight) + var(--margin-minimal));
+    border: 0;
+    border-radius: var(--pill);
+
+    color: var(--mtt-color-text-bright);
+    caret-color: var(--mtt-color-line-decorated);
+    font-family: var(--font);
+    font-weight: 600;
+
+    background: var(--field-extra-background, none), var(--field-surface);
+    background-repeat: no-repeat;
+    box-shadow:
+        inset 0 0 0 var(--rim) var(--rim-color),
+        0 0 0 4px var(--halo);
+
+    transition:
+        background-color var(--transition),
+        box-shadow var(--transition);
+
+    &:is(:focus, .focus) {
+        --rim-color: var(--mtt-color-line-decorated);
+        --halo: color-mix(in srgb, var(--mtt-color-line-decorated) calc(var(--glow-strength) / 2), #0000);
+    }
+}
+
+:is(input, select, textarea) {
+    &:is(:user-invalid, [aria-invalid="true"], .error) {
+        --rim-color: var(--color-danger-highlight);
+
+        &:is(:focus, .focus) {
+            --field-surface: var(--color-danger);
+            --halo: color-mix(in srgb, var(--color-danger-highlight) calc(var(--glow-strength) / 2), #0000);
+        }
+
+        label:has(> &) > small {
+            color: var(--color-danger-text);
+        }
+    }
+
+    &:is(:disabled, [aria-disabled=true]) {
+        --field-surface: transparent;
+        --rim-color: var(--mtt-color-line-dimmed);
+    }
+}
+
+/* room for the chevron, a rounded one: two halves, each a diagonal with a pixel of fade */
+:is(select, input[role=combobox]) {
+    padding-inline-end: 40px;
+
+    --field-extra-background:
+        linear-gradient(to bottom left, var(--mtt-color-text-muted) calc(50% - .75px), #0000 calc(50% + .75px))
+            calc(100% - 21px) 50% / 6px 6px,
+        linear-gradient(to bottom right, var(--mtt-color-text-muted) calc(50% - .75px), #0000 calc(50% + .75px))
+            calc(100% - 15px) 50% / 6px 6px;
+}
+
+/* The date and time fields keep the browser's picker, Chrome lets its icon be reached, so that is the kit's */
+input:is([type=date], [type=datetime-local], [type=month], [type=week], [type=time]) {
+    &::-webkit-calendar-picker-indicator {
+        inline-size: var(--box-size);
+        block-size: var(--box-size);
+        padding: 0;
+        cursor: pointer;
+        background: var(--mtt-color-text-muted);
+        -webkit-mask: var(--mtt-icon-calendar) 50% / contain no-repeat;
+        mask: var(--mtt-icon-calendar) 50% / contain no-repeat;
+        transition: background-color var(--transition);
+    }
+
+    &::-webkit-calendar-picker-indicator:hover {
+        background-color: var(--mtt-color-text-bright);
+    }
+}
+
+input[type=time]::-webkit-calendar-picker-indicator {
+    -webkit-mask-image: var(--mtt-icon-clock);
+    mask-image: var(--mtt-icon-clock);
+}
+
+/* a box of text is too tall for a pill, it is a rounded slab */
+textarea {
+    min-block-size: 64px;
+    padding-block: var(--margin-tight);
+    border-radius: var(--radius-small);
+    line-height: var(--line-height);
+    resize: vertical;
+}
+
+:is(input, textarea)::placeholder {
+    color: var(--mtt-color-text-muted);
+    font-weight: 500;
+    opacity: 1;
+}
+
+/* The search icon is set by the label, over the field, wherever the label puts it */
+@supports (anchor-name: --mtt-field-control) {
+    label:has(> input[type="search"]) {
+        position: relative;
+        anchor-scope: --mtt-field-control;
+
+        > input[type="search"] {
+            anchor-name: --mtt-field-control;
+            padding-inline-start: var(--element-height);
+        }
+
+        &::before {
+            content: "";
+            position: absolute;
+            position-anchor: --mtt-field-control;
+            z-index: 1;
+
+            inset-inline-start: calc(anchor(start) + var(--margin-tight) + 2px);
+            inset-block-start: anchor(center);
+            inline-size: var(--element-height-tiny);
+            block-size: var(--element-height-tiny);
+            transform: translateY(-50%);
+
+            pointer-events: none;
+            background-color: var(--mtt-color-text-muted);
+            -webkit-mask: var(--mtt-icon-search) center / contain no-repeat;
+            mask: var(--mtt-icon-search) center / contain no-repeat;
+        }
+    }
+}

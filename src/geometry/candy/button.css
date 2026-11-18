@@ -1,0 +1,191 @@
+/*
+    A button is a hard candy: a pill, glossy on its top half, set on the page by a small shadow.
+    It draws itself, its states change only what it is made of. The shadows are always four,
+    a rim, an elevation of two and a glow, so every change between them eases
+*/
+nav.tabs > a,
+:is(button, .button) {
+    --background-color: var(--mtt-color-button);
+    --gloss-layer: var(--gloss);
+    --rim-color: #0000;
+    --rim-width: 0px;
+    --elevation: var(--raise-low);
+    --glow-reach: 0px;
+
+    border-radius: var(--pill);
+    background: var(--gloss-layer), var(--background-color);
+    box-shadow:
+        inset 0 0 0 var(--rim-width) var(--rim-color),
+        var(--elevation),
+        0 0 var(--glow-reach) var(--glow-color);
+    transition:
+        background-color var(--transition),
+        box-shadow var(--transition),
+        color var(--transition);
+}
+
+:is(button, .button) {
+    /* It floats up to meet the pointer. Only its shadow moves, the type keeps its pixels */
+    &:is(.hover, :hover):not(.ghost, :disabled, [aria-disabled=true], [role=tab]) {
+        --elevation: var(--raise);
+    }
+
+    /* Lit: a toggle that is on, and a plain button under the pointer. A toggle is lit only by being on */
+    &:is([aria-pressed=true], :has(> input:checked)):not(.ghost, .alt),
+    &:not(.ghost, .alt, :disabled, [aria-disabled=true], [role=tab], [aria-pressed], :has(> input)):is(.hover, :hover) {
+        --background-color: var(--mtt-color-main-highlight);
+        --glow-source: var(--background-color);
+        --glow-reach: var(--glow-radius);
+        color: var(--mtt-color-text-brightest);
+    }
+
+    /* a toggle that is off goes only half way under the pointer */
+    &:is([aria-pressed], :has(> input)):not([aria-pressed=true], :has(> input:checked), .alt, .ghost, .danger, :disabled, [aria-disabled=true]):is(.hover, :hover) {
+        --background-color: color-mix(in srgb, var(--mtt-color-button), var(--mtt-color-main-highlight));
+    }
+
+    /* Pressed, it sets down on the page at once and its light dims, after the lit ones so it wins over them */
+    &:is(:active, .active):not(.ghost, :disabled, [aria-disabled=true], [role=tab]) {
+        --elevation: var(--flat);
+        --glow-reach: calc(var(--glow-radius) / 2);
+        transition-duration: var(--animation-duration-fast);
+    }
+
+    &.danger {
+        --background-color: var(--color-danger);
+        color: var(--color-danger-text);
+
+        &:is([aria-pressed=true], :has(> input:checked)),
+        &:is(.hover, :hover):not(:disabled, [aria-disabled=true]) {
+            --background-color: var(--color-danger-highlight);
+            color: var(--mtt-color-text-brightest);
+        }
+    }
+
+    /* Alt: a soft candy, matte, with a rim in place of the gloss. Lit, it takes the body of a plain button */
+    &.alt {
+        --background-color: var(--mtt-color-main-dimmed);
+        --gloss-layer: none;
+        --rim-color: var(--mtt-color-line);
+        --rim-width: var(--rim);
+
+        &:is(.hover, :hover):not(:disabled, [aria-disabled=true]) {
+            --rim-color: var(--mtt-color-line-highlight);
+            color: var(--mtt-color-text-bright);
+        }
+
+        &:is([aria-pressed=true], :has(> input:checked)),
+        &:not([aria-pressed], :has(> input), :disabled, [aria-disabled=true]):is(.hover, :hover) {
+            --background-color: var(--mtt-color-button);
+        }
+
+        &:is([aria-pressed=true], :has(> input:checked)) {
+            --rim-color: var(--mtt-color-line-decorated);
+        }
+    }
+
+    /* Ghost: no candy until the pointer comes, then a soft pill of its tone. On, it keeps the pill and a rim */
+    &.ghost {
+        --background-color: transparent;
+        --gloss-layer: none;
+        --elevation: var(--flat);
+        color: var(--mtt-color-text);
+
+        &:is([aria-pressed=true], :has(> input:checked)),
+        &:is(.hover, :hover):not(:disabled, [aria-disabled=true]) {
+            --background-color: var(--background);
+            color: var(--mtt-color-text-bright);
+        }
+
+        &:is([aria-pressed=true], :has(> input:checked)) {
+            --rim-color: var(--color);
+            --rim-width: var(--rim);
+        }
+    }
+}
+
+/* A box is a gumdrop: a rounded square for one glyph or one value. Active, it is held up to the light */
+.box {
+    border-radius: var(--radius-small);
+    background-color: var(--mtt-color-main-dimmed);
+    box-shadow: inset 0 0 0 var(--rim) var(--mtt-color-line);
+}
+
+.box.active {
+    --glow-source: var(--mtt-color-line-decorated);
+    background: var(--gloss), var(--mtt-color-button);
+    box-shadow:
+        inset 0 0 0 2px var(--mtt-color-line-decorated),
+        var(--raise-low),
+        0 0 var(--glow-radius) var(--glow-color);
+}
+
+/* Tabs: a row of them is a groove, the chosen one is a candy sitting in it. The groove is painted on the content of the row, inside the room it keeps for the glow */
+:is([role=tablist], nav.tabs) {
+    border-radius: var(--pill);
+    background: color-mix(in srgb, var(--mtt-color-main-dimmed) var(--glow-strength), #0000) content-box;
+}
+
+nav.tabs > a,
+:is(button, .button)[role=tab] {
+    --background-color: transparent;
+    --gloss-layer: none;
+    --elevation: var(--flat);
+    color: var(--mtt-color-text);
+
+    &:is(.hover, :hover):not(:disabled, [aria-disabled=true]) {
+        color: var(--mtt-color-text-bright);
+    }
+}
+
+nav.tabs > a[aria-current=page],
+:is(button, .button)[role=tab][aria-selected=true] {
+    --background-color: var(--mtt-color-button);
+    --gloss-layer: var(--gloss);
+    --elevation: var(--raise-low);
+    color: var(--mtt-color-text-bright);
+}
+
+/* Navigation list: a soft pill under the link the pointer is on, and the current one is a candy, glossy, in the main tone */
+nav:not(.tabs, .crumbs) a {
+    border-radius: var(--radius-small);
+    transition:
+        background-color var(--transition),
+        color var(--transition);
+
+    &:is(.hover, :hover) {
+        color: var(--mtt-color-text-bright);
+    }
+
+    &:not([aria-current]):is(.hover, :hover) {
+        background-color: color-mix(in srgb, var(--mtt-color-main-dimmed) calc(var(--glow-strength) / 2), #0000);
+    }
+
+    &[aria-current] {
+        color: var(--mtt-color-text-bright);
+        background: var(--gloss), var(--mtt-color-main-dimmed);
+
+        small {
+            color: var(--mtt-color-text-decorated);
+        }
+    }
+}
+
+/* Breadcrumbs: the steps are parted by a little round sweet */
+nav.crumbs > * {
+    &:is(a.hover, a:hover, [aria-current]) {
+        color: var(--mtt-color-text-bright);
+    }
+
+    &:not(:last-child)::after {
+        content: "";
+        position: absolute;
+        top: calc(50% - 3px);
+        left: calc(100% + var(--margin) / 2 - 3px);
+        width: 6px;
+        height: 6px;
+        pointer-events: none;
+        border-radius: 50%;
+        background: var(--mtt-color-line-highlight);
+    }
+}

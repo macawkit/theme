@@ -16,7 +16,7 @@ bun add @macawkit/theme
 
 ## Use
 
-Pick one geometry and one palette, they are interchangeable. The palettes are `hyacinth`, dark, and `cream`, light:
+Pick one geometry and one palette, they are interchangeable. The geometries are `shell`, sharp, chipped and lit like a console, and `candy`, round, glossy and soft. The palettes are `hyacinth`, dark, and `cream`, light:
 
 ```js
 import '@macawkit/theme/theme.css';
@@ -61,7 +61,7 @@ The kit makes its parts hold up at any width. Arranging the page is up to the pa
 
 ## Licenses
 
-The code is MIT. The bundled fonts, Space Grotesk and JetBrains Mono, are under the SIL Open Font License, the texts are next to the font files.
+The code is MIT. The bundled fonts, Space Grotesk, Nunito and JetBrains Mono, are under the SIL Open Font License, the texts are next to the font files.
 
 ## Develop
 

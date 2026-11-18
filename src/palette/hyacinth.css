@@ -63,6 +63,13 @@
     --color-category-15: #068076;
     --color-category-16: #0677ab;
 
+    /*
+        A shadow is the dark that a raised thing casts on what is under it: its ink, and how much of it shows.
+        The geometry gives it its shape. On a page this dark there is little to darken, a glow lifts things here
+    */
+    --shadow-color: #000000;
+    --shadow-strength: 55%;
+
     --glow-radius: 10px;
     --shine-radius: 2px;
     --glow-strength: 50%;

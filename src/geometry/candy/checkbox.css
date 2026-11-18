@@ -1,0 +1,131 @@
+/*
+    A checkbox is a gummy, a radio is a round candy, a switch is a candy rolling in a groove.
+    Off, they are set into the page. On, they are hard candy in the main color, and what marks them pops in with a bounce.
+    As a button, each draws itself and its states change only what it is made of
+*/
+input[type="radio"],
+input[type="checkbox"] {
+    --background-color: var(--mtt-color-body);
+    --gloss-layer: none;
+    --rim-color: var(--mtt-color-line);
+    --elevation: var(--flat);
+    --glow-reach: 0px;
+
+    border-radius: var(--radius-tiny);
+    background: var(--gloss-layer), var(--background-color);
+    box-shadow:
+        inset 0 0 0 var(--rim) var(--rim-color),
+        var(--elevation),
+        0 0 var(--glow-reach) var(--glow-color);
+    transition:
+        background-color var(--transition),
+        box-shadow var(--transition);
+}
+
+input[type="radio"],
+input[type="checkbox"]:not(.switch) {
+    width: var(--box-size);
+    height: var(--box-size);
+}
+
+input[type="radio"],
+input[type="checkbox"].switch {
+    border-radius: var(--pill);
+}
+
+input[type="radio"]::before,
+input[type="checkbox"]::before {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+    transition:
+        transform var(--transition-bounce),
+        background-color var(--transition),
+        opacity var(--transition);
+}
+
+/* Under the pointer an empty one brightens its rim */
+input:is([type="radio"], [type="checkbox"]):is(:hover, .hover):not(:disabled, [aria-disabled=true], :checked, :indeterminate) {
+    --rim-color: var(--mtt-color-line-highlight);
+}
+
+/* On: a hard candy in the main color, lit */
+input:is([type="radio"], [type="checkbox"]):checked {
+    --background-color: var(--mtt-color-main);
+    --gloss-layer: var(--gloss);
+    --rim-color: var(--background-color);
+    --elevation: var(--raise-low);
+    --glow-source: var(--background-color);
+    --glow-reach: var(--glow-radius);
+
+    &:is(.hover, :hover):not(:disabled, [aria-disabled=true]) {
+        --background-color: var(--mtt-color-main-highlight);
+    }
+}
+
+/* Checkbox: a tick that pops in, a candy stick across it when it is neither */
+input[type="checkbox"]:not(.switch) {
+    &::before {
+        inset: 0;
+        background: var(--mtt-color-text-brightest);
+        -webkit-mask: var(--mtt-icon-check) 50% / calc(var(--box-size) - 2px) no-repeat;
+        mask: var(--mtt-icon-check) 50% / calc(var(--box-size) - 2px) no-repeat;
+        opacity: 0;
+        transform: scale(.3);
+    }
+
+    &:is(:checked, :indeterminate)::before {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    &:indeterminate {
+        --background-color: var(--mtt-color-main-dimmed);
+        --rim-color: var(--mtt-color-text-decorated);
+
+        &::before {
+            inset: calc(50% - 1.5px) var(--element-inner-margin);
+            border-radius: var(--pill);
+            background: var(--mtt-color-line-decorated);
+            -webkit-mask: none;
+            mask: none;
+        }
+    }
+}
+
+/* Radio: a white center pops in. A swirl was tried, at this size its stripes only alias */
+input[type="radio"] {
+    &::before {
+        inset: 5px;
+        border-radius: 50%;
+        background: var(--mtt-color-text-brightest);
+        opacity: 0;
+        transform: scale(0);
+    }
+
+    &:checked::before {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Switch: a round knob, glossy, rolling over with a bounce */
+input[type="checkbox"].switch {
+    width: calc(var(--element-height-tiny) * 2);
+    height: var(--element-height-tiny);
+
+    &::before {
+        top: var(--element-inner-margin);
+        left: var(--element-inner-margin);
+        width: calc(var(--element-height-tiny) - var(--element-inner-margin) * 2);
+        height: calc(var(--element-height-tiny) - var(--element-inner-margin) * 2);
+        border-radius: 50%;
+        background: var(--gloss), var(--mtt-color-text-muted);
+        box-shadow: var(--raise-low);
+    }
+
+    &:checked::before {
+        transform: translateX(var(--element-height-tiny));
+        background-color: var(--mtt-color-text-brightest);
+    }
+}

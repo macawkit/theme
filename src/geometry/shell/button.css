@@ -11,8 +11,12 @@ nav.tabs > a,
         translate var(--transition);
 }
 
-/* the shines below fade in from here, weighing nothing so any other filter wins */
-:where(button, .button),
+/* the shines below fade in from here, weighing nothing so any other filter wins. A button has one for its shine and one for its shadow */
+:where(button, .button) {
+    --elevation: var(--unlit);
+    filter: var(--unlit) var(--elevation);
+}
+
 :where(button, .button) > * {
     filter: var(--unlit);
 }
@@ -73,7 +77,9 @@ nav.tabs > a[aria-current=page],
 :is(button, .button):not(.alt, .ghost, :disabled, [aria-disabled=true]):is(.hover, :hover),
 :is(button, .button):is([aria-pressed=true], :has(> input:checked)):not(.alt, .ghost, :disabled, [aria-disabled=true], :has(> input:disabled)) {
     --background-color: var(--mtt-color-main-highlight);
-    filter: drop-shadow(0 0 var(--shine-radius) color-mix(in srgb, var(--background-color) var(--shining), #0000));
+    filter:
+        drop-shadow(0 0 var(--shine-radius) color-mix(in srgb, var(--background-color) var(--shining), #0000))
+        var(--elevation);
 }
 
 /* a toggle that is off goes only half way to lit under the pointer */
@@ -92,9 +98,23 @@ nav.tabs > a:is(.hover, :hover),
         filter: drop-shadow(0 0 var(--shine-radius) color-mix(in srgb, var(--mtt-color-text-bright) var(--shining), #0000));
     }
 
-    /* it sinks from the lift its halo shows, with no glow it is flat and only gives a little */
+    /*
+        a body rises under the pointer on its shadow, so it shows on a page where nothing glows. A ghost and a tab are
+        no bodies, and an alt is a frame, its ticks already answer the pointer: they stay down
+    */
+    &:is(.hover, :hover):not(:disabled, [aria-disabled=true], .ghost, .alt, [role=tab]):where(:not(:has(> input:disabled))) {
+        --elevation: var(--raised);
+    }
+
+    /* it sinks from the lift its halo shows, and a ghost with no glow is flat and only gives a little */
     &:is(:active, .active):not(:disabled, [aria-disabled=true], [role=tab]) {
+        --elevation: var(--unlit);
         transform: translateY(calc(var(--press-translate) * sign(var(--glow-radius)))) scale(var(--press-scale));
+    }
+
+    /* a body is lifted by its shadow as well, so it sinks on any page */
+    &:is(:active, .active):not(:disabled, [aria-disabled=true], [role=tab], .ghost, .alt) {
+        transform: translateY(var(--press-translate)) scale(var(--press-scale));
     }
 
     &:is(:active, .active):not(:disabled, [aria-disabled=true], .ghost, [role=tab])::after {

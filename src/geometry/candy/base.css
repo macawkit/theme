@@ -1,0 +1,271 @@
+/*
+    Candy: everything is round, light and a little sweet. Surfaces are soft slabs that float on the palette's shadow,
+    controls are pills, and what is filled is a hard candy with a gloss on its top half. Under the pointer a control
+    floats higher and pressed it settles back, by its shadow alone: nothing moves, so the type stays crisp.
+
+    A control draws itself, no layers under it: its states only change what it is made of,
+    --background-color, --gloss-layer, --rim-color and --rim-width, --elevation, and --glow-reach for a light
+*/
+@font-face {
+    font-family: 'Nunito';
+    src: url('../../font/nunito.woff2') format('woff2');
+    font-weight: 200 1000;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'JetBrains Mono';
+    src: url('../../font/jetbrainsmono.woff2') format('woff2');
+    font-weight: 100 800;
+    font-display: swap;
+}
+
+:root {
+    --font: 'Nunito', ui-rounded, sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+    --line-height: 1.55em;
+    --heading-line-height: 1.15em;
+    --letter-spacing-wide: 0.1em;
+    /* a surface, a thing inside one, a small thing, and a pill: as round as its height allows */
+    --radius: 24px;
+    --radius-small: 16px;
+    --radius-tiny: 6px;
+    --pill: 999px;
+    --rim: 1.5px;
+    --highlight-thickness: 3px;
+    --bar-thickness: 10px;
+    --bar-thickness-small: 8px;
+    --element-inner-margin: 3px;
+    --margin: 20px;
+    --margin-tight: calc(var(--margin) / 2);
+    --margin-minimal: calc(var(--margin) / 4);
+    --decrease-font-size: 75%;
+    --element-height: 40px;
+    --element-height-small: 30px;
+    --element-height-tiny: 20px;
+    --box-size: 18px;
+    --animation-duration: 240ms;
+    --animation-duration-fast: 120ms;
+    --animation-ease: cubic-bezier(.3, .7, .4, 1);
+    --transition: var(--animation-duration) var(--animation-ease);
+    /* overshoots and settles, only for a small mark that pops in, a tick or a knob. Color and text never bounce */
+    --transition-bounce: var(--animation-duration) cubic-bezier(.34, 1.56, .64, 1);
+    /* How far a drawing reaches past the box it belongs to, a focus ring or a glow. Whatever clips leaves this much room around what it holds */
+    --overhang: max(var(--glow-radius), var(--highlight-thickness) * 2);
+
+    /*
+        Elevations: the palette says what a shadow is, this says how high a thing floats. Each is two shadows,
+        a close one that sets it down and a soft one that lifts it, so one eases into another
+    */
+    --shadow: color-mix(in srgb, var(--shadow-color) var(--shadow-strength), #0000);
+    --flat: 0 0 0 #0000, 0 0 0 #0000;
+    --raise-low: 0 1px 2px var(--shadow), 0 3px 8px -4px var(--shadow);
+    --raise: 0 2px 4px -2px var(--shadow), 0 10px 24px -12px var(--shadow);
+    --raise-high: 0 4px 8px -4px var(--shadow), 0 24px 48px -16px var(--shadow);
+
+    /* the shine on the top half of a hard candy, in the brightest ink of the palette */
+    --gloss: linear-gradient(
+        color-mix(in srgb, var(--mtt-color-text-brightest) 30%, #0000),
+        color-mix(in srgb, var(--mtt-color-text-brightest) 0%, #0000) 55%
+    );
+    /* a lollipop stripe, laid over a fill */
+    --candy-stripes: repeating-linear-gradient(
+        -45deg,
+        color-mix(in srgb, var(--mtt-color-text-brightest) 30%, #0000) 0 4px,
+        #0000 4px 8px
+    );
+}
+
+/* A phone is held close, the page needs less air around things */
+@media (width < 600px) {
+    :root {
+        --margin: 16px;
+        --radius: 20px;
+    }
+}
+
+/* A finger is broader than a pointer, what it taps is taller */
+@media (pointer: coarse) {
+    :root {
+        --element-height: 44px;
+        --element-height-small: 36px;
+    }
+}
+
+/*
+    Mixins, declared on every element so each is computed from the inputs of the element it is used on:
+
+    --glow-source            ->  --glow-color, a soft halo of that color
+    --color, --fill-lift     ->  --fill-color, what a bar or a meter is filled with
+*/
+*, ::before, ::after {
+    --glow-color: color-mix(in srgb, var(--glow-source, #0000) var(--glow-strength), #0000);
+    --fill-color: var(--color);
+}
+
+@supports (color: oklch(from red l c h)) {
+    *, ::before, ::after {
+        --fill-color: oklch(from var(--color) calc(l + var(--fill-lift, 0)) c h);
+    }
+}
+
+/* The top of the page is a cotton candy sky: soft clouds in the colors of the palette that lean pink and lilac. It fades out over the first screen */
+body::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    z-index: -1;
+    height: calc(var(--column-width) * 4);
+    pointer-events: none;
+    --cloud: calc(var(--glow-strength) / 1.6);
+    background:
+        radial-gradient(30% 55% at 8% 0%, color-mix(in srgb, var(--color-category-3) var(--cloud), #0000), #0000 70%),
+        radial-gradient(26% 45% at 30% 10%, color-mix(in srgb, var(--color-category-3) calc(var(--cloud) / 2), #0000), #0000 70%),
+        radial-gradient(32% 60% at 52% 0%, color-mix(in srgb, var(--color-priority-highlight) var(--cloud), #0000), #0000 70%),
+        radial-gradient(26% 45% at 74% 12%, color-mix(in srgb, var(--color-priority-highlight) calc(var(--cloud) / 2), #0000), #0000 70%),
+        radial-gradient(32% 60% at 94% 0%, color-mix(in srgb, var(--mtt-color-main-highlight) var(--cloud), #0000), #0000 70%);
+    mask-image: linear-gradient(#000 10%, #0000);
+}
+
+/* Rounded type is set a little heavier, its strokes are soft and thin ones would wash out */
+body {
+    font-weight: 500;
+}
+
+h1, h2, h3, h4, .hero,
+nav a,
+:is(button, .button) {
+    font-weight: 800;
+}
+
+h1, h2, h3, .hero {
+    letter-spacing: -0.01em;
+}
+
+th {
+    text-align: left;
+}
+.label {
+    color: var(--mtt-color-text-decorated);
+}
+th, .note, fieldset, .small, small, [role=listbox] > [role=presentation] {
+    color: var(--mtt-color-text-muted);
+}
+/* the labels of a wrapper: small, round, heavy and spaced out */
+th, .note, .label, fieldset, [role=listbox] > [role=presentation] {
+    font-size: var(--decrease-font-size);
+    font-weight: 800;
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+}
+fieldset small {
+    font-size: inherit;
+    font-weight: 500;
+    letter-spacing: normal;
+    text-transform: none;
+}
+
+th, td {
+    padding: var(--margin-tight);
+}
+dt, dd {
+    padding: var(--margin-tight) 0;
+}
+
+/* separate, so a row under the pointer can be a rounded pill */
+table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+thead th,
+tbody tr:not(:last-of-type) > td,
+dt:not(:last-of-type), dd:not(:last-of-type) {
+    border-bottom: 1px solid var(--mtt-color-line-dimmed);
+}
+
+/* the whole row lights, its label too when it starts with one */
+tbody :is(td, th) {
+    transition: background-color var(--transition);
+}
+
+tbody tr:hover > :is(td, th) {
+    background-color: color-mix(in srgb, var(--mtt-color-main-dimmed) var(--glow-strength), #0000);
+
+    &:first-child {
+        border-start-start-radius: var(--radius-small);
+        border-end-start-radius: var(--radius-small);
+    }
+
+    &:last-child {
+        border-start-end-radius: var(--radius-small);
+        border-end-end-radius: var(--radius-small);
+    }
+}
+
+/* Where a key sits over its value they are one entry, the line goes under the value only */
+@media (width < 600px) {
+    dt:not(:last-of-type) {
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+}
+
+/* A header needs no rule, the type says it. Its index is a little candy */
+header {
+    padding-bottom: 0;
+}
+
+header > .label {
+    display: inline-flex;
+    align-items: center;
+    height: var(--element-height-tiny);
+    padding: 0 var(--margin-tight);
+    border-radius: var(--pill);
+    background-color: var(--mtt-color-main-dimmed);
+}
+
+.well {
+    border-radius: var(--radius-small);
+    box-shadow: inset 0 0 0 1px var(--mtt-color-line-dimmed);
+}
+
+label:has(input:disabled, [aria-disabled=true]),
+:is(:disabled, [aria-disabled=true]) {
+    cursor: not-allowed;
+    filter: var(--disabled-filter);
+}
+
+a {
+    transition: color var(--transition);
+}
+
+/* Keyboard focus: a round ring that follows the shape, for everything but the text fields, those have their own, see input.css */
+:is(a, button, .button, input:is([type="checkbox"], [type="radio"])):is(:focus-visible, .focus),
+.button:has(> input:focus-visible) {
+    outline: var(--highlight-thickness) solid color-mix(in srgb, var(--mtt-color-line-decorated) 70%, #0000);
+    outline-offset: 2px;
+}
+
+/* a card is clipped and would cut the ring off, so there it runs inside */
+a.card:is(:focus-visible, .focus) {
+    outline-offset: calc(-1 * var(--highlight-thickness));
+}
+
+/* a link in text is a short run of letters, the ring around it is a little rounded */
+a:not(.button, .card, nav.tabs > a):is(:focus-visible, .focus) {
+    border-radius: var(--radius-tiny);
+}
+
+fieldset {
+    display: grid;
+    gap: var(--margin);
+    align-items: start;
+}
+fieldset label {
+    display: grid;
+    gap: var(--margin-minimal);
+}
+fieldset label i {
+    vertical-align: middle;
+    margin: 0 var(--margin-minimal);
+}

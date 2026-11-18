@@ -1,0 +1,104 @@
+/* A spark is a row of lollipop sticks. The last one, now, is the brightest and wears the candy */
+.spark {
+    --width: 4px;
+    gap: 3px;
+}
+
+.spark > i {
+    position: relative;
+    min-height: var(--width);
+    border-radius: var(--pill);
+    background: color-mix(in srgb, var(--fill-color) 45%, #0000);
+}
+
+.spark > i:last-child {
+    --glow-source: var(--shine-color);
+    background: var(--fill-color);
+}
+
+.spark > i:last-child::before {
+    content: "";
+    position: absolute;
+    top: -4px;
+    left: calc(50% - 5px);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--gloss), var(--fill-color);
+    box-shadow: 0 0 var(--glow-radius) var(--glow-color);
+}
+
+/* A share is a string of candy, one bead for each part */
+.share {
+    display: flex;
+    gap: var(--element-inner-margin);
+    height: var(--bar-thickness);
+}
+
+.share > i {
+    --glow-source: var(--shine-color);
+    flex: var(--value);
+    height: 100%;
+    border-radius: var(--pill);
+    background: var(--gloss), var(--fill-color);
+    box-shadow: 0 0 var(--glow-radius) var(--glow-color);
+}
+
+/* A meter is a groove filled with a candy cane */
+div[role="meter"] {
+    position: relative;
+    height: var(--bar-thickness-small);
+    border-radius: var(--pill);
+    background: var(--background);
+}
+
+div[role="meter"]::before {
+    --glow-source: var(--shine-color);
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: var(--value);
+    min-width: var(--bar-thickness-small);
+    height: 100%;
+    border-radius: var(--pill);
+    background: var(--candy-stripes), var(--gloss), var(--fill-color);
+    box-shadow: 0 0 var(--glow-radius) var(--glow-color);
+}
+
+/* Markers are pills. A badge carries a light, a little round sweet before its word */
+.badge, .tag {
+    height: var(--element-height-tiny);
+    padding: 0 var(--margin-tight);
+    border-radius: var(--pill);
+    font-weight: 800;
+    font-size: var(--decrease-font-size);
+}
+
+.badge {
+    gap: var(--margin-minimal);
+    padding-inline-start: calc(var(--margin-tight) - 2px);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+}
+
+.badge::before {
+    --glow-source: var(--shine-color);
+    content: "";
+    flex: none;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--gloss), var(--shine-color);
+    box-shadow: 0 0 calc(var(--glow-radius) / 2) var(--glow-color);
+}
+
+/* An empty state has room around it, and its icon is large and quiet, it stands for what is missing */
+.empty {
+    padding: calc(var(--margin) * 2) var(--margin);
+}
+
+.empty > .icon {
+    font-size: 200%;
+    color: var(--mtt-color-text-muted);
+}

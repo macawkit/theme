@@ -50,6 +50,12 @@
         fades from no filter to a mixed color through black, so the color would come in at the end
     */
     --unlit: drop-shadow(0 0 0 color(srgb 0 0 0 / 0));
+    /*
+        The palette says what a shadow is, here it is a hard ledge under what is raised, with no blur, as a console
+        would draw it. A blur spreads a shadow and a ledge has none, so it takes twice the ink.
+        On a dark page it is black on black and hardly shows, on a light one it is what lifts a thing
+    */
+    --raised: drop-shadow(0 2px 0 color-mix(in srgb, var(--shadow-color) min(var(--shadow-strength) * 2, 100%), #0000));
     --chipped-corner: polygon(
         0 0,
         100% 0,

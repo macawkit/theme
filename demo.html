@@ -5,13 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="src/theme.css">
-    <link rel="stylesheet" href="src/geometry/shell/index.css">
+    <link rel="stylesheet" href="src/geometry/shell/index.css" id="geometry">
     <link rel="stylesheet" href="src/palette/hyacinth.css" id="palette">
     <script>
-        // The look comes from the query, ?palette=cream, so a link to the page keeps it. Applied here, before the page is painted
+        /*
+            The look comes from the query, ?geometry=candy&palette=cream, so a link to the page keeps it. Applied here, before the page is painted.
+            The new name takes the place of the old one in the href, so the same works on the sources and on the built site
+        */
         const look = new URLSearchParams(location.search);
-        if (/^[a-z]+$/.test(look.get('palette') ?? ''))
-            document.getElementById('palette').href = `src/palette/${look.get('palette')}.css`;
+        function wear (kind, name) {
+            const link = document.getElementById(kind);
+            const href = link.getAttribute('href').replace(new RegExp(`${kind}/[a-z]+`), `${kind}/${name}`);
+            // the same href set again makes Firefox load the sheet anew, and the page flashes unstyled
+            if (link.getAttribute('href') !== href)
+                link.href = href;
+        }
+        for (const kind of ['geometry', 'palette'])
+            if (/^[a-z]+$/.test(look.get(kind) ?? ''))
+                wear(kind, look.get(kind));
     </script>
     <link rel="stylesheet" href="src/icon.css">
     <style>
@@ -226,6 +237,16 @@
 <header class="look">
     <h1>@macawkit/theme</h1>
     <form id="look" class="row">
+        <fieldset>
+            <label>
+                Geometry
+                <input role="combobox" aria-controls="geometries" aria-expanded="false" inputmode="none" value="Shell">
+            </label>
+            <ul role="listbox" id="geometries" aria-label="Geometry" popover="manual">
+                <li role="option" id="geometry-shell" data-geometry="shell" aria-current="true">Shell</li>
+                <li role="option" id="geometry-candy" data-geometry="candy">Candy</li>
+            </ul>
+        </fieldset>
         <fieldset>
             <label>
                 Palette
@@ -453,7 +474,7 @@
             </div>
             <div class="stack tight swatch-group">
                 <span class="label">Category</span>
-                <p>Sixteen marks that tell things apart and say nothing of state, like whose a row is. The first eight go round the hues, the last eight go round again between them, deeper.</p>
+                <p>Sixteen marks that tell things apart and say nothing of state, like whose a row is. The first eight go round the hues, the last eight go round again between them, each a color of its own.</p>
                 <div class="well swatches">
                     <div>
                         <i style="--color: var(--color-category-1)"></i>
@@ -1743,29 +1764,37 @@
 
     // The look picked in the header: the page takes it at once and keeps it in the query
     const form = document.getElementById('look');
-    const palettes = [...document.querySelectorAll('#palettes [role=option]')];
-    const picked = palettes.find(option => option.dataset.palette === look.get('palette'));
-    if (picked) {
-        for (const option of palettes)
+    const kinds = {
+        geometry: [...document.querySelectorAll('#geometries [role=option]')],
+        palette: [...document.querySelectorAll('#palettes [role=option]')]
+    };
+
+    for (const [kind, options] of Object.entries(kinds)) {
+        const picked = options.find(option => option.dataset[kind] === look.get(kind));
+        if (!picked)
+            continue;
+
+        for (const option of options)
             if (option === picked)
                 option.setAttribute('aria-current', 'true');
             else
                 option.removeAttribute('aria-current');
 
-        form.querySelector('[aria-controls=palettes]').value = picked.textContent;
+        form.querySelector(`[aria-controls=${options[0].parentElement.id}]`).value = picked.textContent;
     }
 
     function apply () {
-        const palette = palettes.find(option => option.hasAttribute('aria-current')).dataset.palette;
-        const link = document.getElementById('palette');
-        // the same href set again makes Firefox load the sheet anew, and the page flashes unstyled
-        if (link.getAttribute('href') !== `src/palette/${palette}.css`)
-            link.href = `src/palette/${palette}.css`;
-        history.replaceState(null, '', `?${new URLSearchParams({ palette })}`);
+        const query = new URLSearchParams();
+        for (const [kind, options] of Object.entries(kinds)) {
+            const name = options.find(option => option.hasAttribute('aria-current')).dataset[kind];
+            wear(kind, name);
+            query.set(kind, name);
+        }
+        history.replaceState(null, '', `?${query}`);
     }
 
     // one the query names but the list does not have falls back to the first
-    if (look.has('palette'))
+    if (look.has('geometry') || look.has('palette'))
         apply();
 
     form.addEventListener('change', apply);

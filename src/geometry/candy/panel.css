@@ -1,0 +1,91 @@
+/*
+    A surface is a soft slab with a faint rim, floating on the palette's shadow. It is round, so it clips what
+    it holds to its shape: a row of tiles or a table that runs to its edge would show its square corners
+*/
+:is(.panel, .card, .alert),
+dialog {
+    padding: var(--margin);
+    background-color: var(--mtt-color-panel);
+    border: 1px solid var(--mtt-color-line-dimmed);
+    border-radius: var(--radius);
+    box-shadow: var(--raise);
+}
+
+/* not a dialog, the browser places that one */
+:is(.panel, .card, .alert) {
+    position: relative;
+    overflow: clip;
+}
+
+/* a card sits inside a panel, a size rounder in and set back on the ground */
+.card {
+    background-color: var(--mtt-color-body);
+    border-radius: calc(var(--radius) - var(--margin-minimal));
+    box-shadow: var(--raise-low);
+}
+
+/* a card that is a link floats higher under the pointer, by its shadow, the text in it stays put */
+a.card {
+    transition: box-shadow var(--transition);
+
+    &:is(.hover, :hover) {
+        box-shadow: var(--raise);
+    }
+}
+
+dialog {
+    box-shadow: var(--raise-high);
+}
+
+/* The page behind a modal dialog is out of reach: it goes soft, as if seen through spun sugar */
+dialog::backdrop {
+    background-color: color-mix(in srgb, var(--mtt-color-body) var(--glow-strength), #0000);
+    backdrop-filter: blur(6px) var(--disabled-filter);
+}
+
+/* An alert is a smaller slab in its tone, flat on the page. A candy stick along its start says which */
+.alert {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--margin-tight);
+    min-width: 0;
+    border-color: color-mix(in srgb, var(--color) calc(var(--glow-strength) / 2), var(--background));
+    border-radius: var(--radius-small);
+    background-color: var(--background);
+    box-shadow: none;
+}
+
+.alert > .stack {
+    gap: 0;
+    min-width: 0;
+}
+
+.alert::after {
+    --glow-source: var(--color);
+    content: "";
+    position: absolute;
+    inset-block: var(--margin-tight);
+    inset-inline-start: var(--margin-minimal);
+    width: 4px;
+    pointer-events: none;
+    border-radius: var(--pill);
+    background: var(--gloss), var(--color);
+    box-shadow: 0 0 var(--glow-radius) var(--glow-color);
+}
+
+/* The navigation column of .app is a sheet along the page, rounded where it meets it. On a phone it is over the page */
+.app > aside {
+    background-color: var(--mtt-color-panel);
+    border-inline-end: 1px solid var(--mtt-color-line-dimmed);
+    border-start-end-radius: var(--radius);
+    border-end-end-radius: var(--radius);
+}
+
+@media (width < 600px) {
+    .app > aside {
+        border-inline-end: 0;
+        border-bottom: 1px solid var(--mtt-color-line-dimmed);
+        border-radius: 0 0 var(--radius) var(--radius);
+    }
+}
