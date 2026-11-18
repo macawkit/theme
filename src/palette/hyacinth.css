@@ -126,6 +126,8 @@
     --glow-radius: 10px;
     --shine-radius: 2px;
     --glow-strength: 50%;
+    /* How much of its color a quiet thing keeps, one that is over: the past bars of a spark, the swatch of a lesson that happened */
+    --quiet-strength: 45%;
     --disabled-filter: brightness(0.7) contrast(0.9) saturate(0.7);
 
     /* The state colors here are bright already, and a fill glows, so it is not lifted: lighter would only bleach it */

@@ -661,8 +661,9 @@ input[role=combobox][inputmode=none] {
 /*
     A swatch shows one color, a category's most of all, beside the name of what wears it: an empty element,
     decoration only, the name says it all. The color is --color, on it or on anything around it, and one that comes to nothing,
-    a token the palette has not got, leaves a line where it would be. .small is for a dense spot, a day of a calendar,
-    and .quiet is for a thing that is over, it fades into the page
+    a token the palette has not got, leaves a line where it would be. It is --background-color, what it is made of, for the geometry to draw with.
+    Small, it is as thick as a bar, for a dense spot, a day of a month.
+    Quiet, it is a thing that is over: as faint as the past of a spark, and whatever a geometry lays on it, a light, a lift or a gloss, is gone
 */
 .swatch {
     --background-color: var(--color, var(--mtt-color-line-highlight));
@@ -675,12 +676,14 @@ input[role=combobox][inputmode=none] {
 }
 
 .swatch.small {
-    width: var(--box-size-small);
-    height: var(--box-size-small);
+    width: var(--bar-thickness);
+    height: var(--bar-thickness);
 }
 
 .swatch.quiet {
-    --background-color: color-mix(in srgb, var(--color, var(--mtt-color-line-highlight)) 50%, var(--mtt-color-body));
+    background-color: color-mix(in srgb, var(--background-color) var(--quiet-strength), #0000);
+    background-image: none;
+    box-shadow: none;
 }
 
 /* A number lines up with the ones over and under it: at the end, every figure as wide as any other */

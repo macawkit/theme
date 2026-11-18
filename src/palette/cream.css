@@ -129,6 +129,8 @@
     --glow-radius: 0px;
     --shine-radius: 0px;
     --glow-strength: 50%;
+    /* How much of its color a quiet thing keeps, one that is over: the past bars of a spark, the swatch of a lesson that happened */
+    --quiet-strength: 45%;
     --disabled-filter: opacity(0.5) saturate(0.5);
 
     /* The state colors are inks, dark enough to be read as text. Unlit, a bar filled with one sits on the page like a stroke of marker, so a fill is lifted a step lighter */
