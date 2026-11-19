@@ -148,12 +148,15 @@ h1, h2, h3, .hero {
 th {
     text-align: left;
 }
+
 .label {
     color: var(--mtt-color-text-decorated);
 }
+
 th, .note, fieldset, .small, small, [role=listbox] > [role=presentation] {
     color: var(--mtt-color-text-muted);
 }
+
 /* the labels of a wrapper: small, round, heavy and spaced out */
 th, .note, .label, fieldset, [role=listbox] > [role=presentation] {
     font-size: var(--decrease-font-size);
@@ -161,6 +164,7 @@ th, .note, .label, fieldset, [role=listbox] > [role=presentation] {
     letter-spacing: var(--letter-spacing-wide);
     text-transform: uppercase;
 }
+
 fieldset small {
     font-size: inherit;
     font-weight: 500;
@@ -171,6 +175,7 @@ fieldset small {
 th, td {
     padding: var(--margin-tight);
 }
+
 dt, dd {
     padding: var(--margin-tight) 0;
 }
@@ -180,6 +185,7 @@ table {
     border-collapse: separate;
     border-spacing: 0;
 }
+
 thead th,
 tbody tr:not(:last-of-type) > td,
 dt:not(:last-of-type), dd:not(:last-of-type) {
@@ -243,7 +249,7 @@ a {
 }
 
 /* Keyboard focus: a round ring that follows the shape, for everything but the text fields, those have their own, see input.css */
-:is(a, button, .button, input:is([type="checkbox"], [type="radio"])):is(:focus-visible, .focus),
+:is(a, button, .button, input:is([type=checkbox], [type=radio])):is(:focus-visible, .focus),
 .button:has(> input:focus-visible) {
     outline: var(--highlight-thickness) solid color-mix(in srgb, var(--mtt-color-line-decorated) 70%, #0000);
     outline-offset: 2px;
@@ -264,10 +270,12 @@ fieldset {
     gap: var(--margin);
     align-items: start;
 }
+
 fieldset label {
     display: grid;
     gap: var(--margin-minimal);
 }
+
 fieldset label i {
     vertical-align: middle;
     margin: 0 var(--margin-minimal);

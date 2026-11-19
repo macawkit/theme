@@ -1,5 +1,5 @@
 /* Text fields. `label:has(> &)` is the label wrapping the field, it mirrors the state of the field */
-:is(input:not([type="checkbox"], [type="radio"]), select, textarea) {
+:is(input:not([type=checkbox], [type=radio]), select, textarea) {
     --field-corners: var(--ticks);
 
     inline-size: 100%;
@@ -41,7 +41,7 @@
 }
 
 :is(input, select, textarea) {
-    &:is(:user-invalid, [aria-invalid="true"], .error) {
+    &:is(:user-invalid, [aria-invalid=true], .error) {
         &,
         label:has(> &) {
             --tick-color: var(--color-danger-highlight);
@@ -65,16 +65,20 @@
     }
 }
 
-/* as heavy as the padding of the fields above, so the room for the chevron stays */
+/*
+    The chevron: two halves, each a square of --chevron with a diagonal in it and a pixel of fade, so its edges are smooth,
+    --chevron-end from the end of the field. The text keeps clear of it. As heavy as the padding of the fields above, so the room stays
+*/
 :is(select, input[role=combobox]) {
+    --chevron: 5px;
+    --chevron-end: 10px;
     padding-inline-end: 34px;
 
-    /* two halves of the chevron, each a diagonal with a pixel of fade, so its edges are smooth */
     --field-extra-background:
         linear-gradient(to bottom left, var(--mtt-color-text-muted) calc(50% - .5px), #0000 calc(50% + .5px))
-            calc(100% - 15px) 50% / 5px 5px,
+            right calc(var(--chevron-end) + var(--chevron)) center / var(--chevron) var(--chevron),
         linear-gradient(to bottom right, var(--mtt-color-text-muted) calc(50% - .5px), #0000 calc(50% + .5px))
-            calc(100% - 10px) 50% / 5px 5px;
+            right var(--chevron-end) center / var(--chevron) var(--chevron);
 }
 
 /*
@@ -89,8 +93,6 @@ input:is([type=date], [type=datetime-local], [type=month], [type=week], [type=ti
         padding: 0;
         cursor: pointer;
         background: var(--mtt-color-text-muted);
-        -webkit-mask: var(--mtt-icon-calendar) 50% / contain no-repeat;
-        mask: var(--mtt-icon-calendar) 50% / contain no-repeat;
         transition: background-color var(--transition);
     }
 
@@ -99,12 +101,8 @@ input:is([type=date], [type=datetime-local], [type=month], [type=week], [type=ti
     }
 }
 
-input[type=time]::-webkit-calendar-picker-indicator {
-    -webkit-mask-image: var(--mtt-icon-clock);
-    mask-image: var(--mtt-icon-clock);
-}
-
-textarea {
+/* a box of text, as specific as the fields above or they win: a textarea has no type, so the attribute only weighs */
+textarea:not([type]) {
     min-block-size: 64px;
     padding-block: var(--margin-tight);
     line-height: var(--line-height);
@@ -123,12 +121,12 @@ textarea {
     elements use the control's anchor box rather than label layout.
 */
 @supports (anchor-name: --mtt-field-control) {
-    label:has(> :is(input:not([type="checkbox"], [type="radio"]), select, textarea)) {
+    label:has(> :is(input:not([type=checkbox], [type=radio]), select, textarea)) {
         position: relative;
         anchor-scope: --mtt-field-control;
 
         /* the corners are drawn by the label, over the field */
-        > :is(input:not([type="checkbox"], [type="radio"]), select, textarea) {
+        > :is(input:not([type=checkbox], [type=radio]), select, textarea) {
             anchor-name: --mtt-field-control;
             --field-corners: none;
         }
@@ -161,8 +159,8 @@ textarea {
         }
     }
 
-    label:has(> input[type="search"]) {
-        > input[type="search"] {
+    label:has(> input[type=search]) {
+        > input[type=search] {
             padding-inline-start: var(--element-height);
         }
 
@@ -180,12 +178,10 @@ textarea {
 
             pointer-events: none;
             background-color: var(--field-ink);
-            -webkit-mask: var(--mtt-icon-search) center / contain no-repeat;
-            mask: var(--mtt-icon-search) center / contain no-repeat;
         }
     }
 
-    label:has(> :is(input:not([type="checkbox"], [type="radio"], :disabled, [aria-disabled=true]), select, textarea):is(:focus, .focus))::after {
+    label:has(> :is(input:not([type=checkbox], [type=radio], :disabled, [aria-disabled=true]), select, textarea):is(:focus, .focus))::after {
         --glow-source: var(--tick-color);
         filter:
             drop-shadow(0 0 var(--shine-radius) color-mix(in srgb, var(--tick-color) var(--shining), #0000))

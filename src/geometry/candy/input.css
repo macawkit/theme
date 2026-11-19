@@ -2,7 +2,7 @@
     Text fields are pills set into the page, ringed by a soft rim. Focused, the rim takes the decorated color
     and a jelly halo of it spreads around. The shadows are always two, so the change eases
 */
-:is(input:not([type="checkbox"], [type="radio"]), select, textarea) {
+:is(input:not([type=checkbox], [type=radio]), select, textarea) {
     --field-surface: var(--mtt-color-body);
     --rim-color: var(--mtt-color-line);
     --halo: color-mix(in srgb, var(--rim-color) 0%, #0000);
@@ -37,7 +37,7 @@
 }
 
 :is(input, select, textarea) {
-    &:is(:user-invalid, [aria-invalid="true"], .error) {
+    &:is(:user-invalid, [aria-invalid=true], .error) {
         --rim-color: var(--color-danger-highlight);
 
         &:is(:focus, .focus) {
@@ -56,15 +56,20 @@
     }
 }
 
-/* room for the chevron, a rounded one: two halves, each a diagonal with a pixel of fade */
+/*
+    The chevron, a rounded one: two halves, each a square of --chevron with a diagonal in it and a pixel and a half of fade,
+    --chevron-end from the end of the field. The text keeps clear of it
+*/
 :is(select, input[role=combobox]) {
+    --chevron: 6px;
+    --chevron-end: 15px;
     padding-inline-end: 40px;
 
     --field-extra-background:
         linear-gradient(to bottom left, var(--mtt-color-text-muted) calc(50% - .75px), #0000 calc(50% + .75px))
-            calc(100% - 21px) 50% / 6px 6px,
+            right calc(var(--chevron-end) + var(--chevron)) center / var(--chevron) var(--chevron),
         linear-gradient(to bottom right, var(--mtt-color-text-muted) calc(50% - .75px), #0000 calc(50% + .75px))
-            calc(100% - 15px) 50% / 6px 6px;
+            right var(--chevron-end) center / var(--chevron) var(--chevron);
 }
 
 /* The date and time fields keep the browser's picker, Chrome lets its icon be reached, so that is the kit's */
@@ -75,8 +80,6 @@ input:is([type=date], [type=datetime-local], [type=month], [type=week], [type=ti
         padding: 0;
         cursor: pointer;
         background: var(--mtt-color-text-muted);
-        -webkit-mask: var(--mtt-icon-calendar) 50% / contain no-repeat;
-        mask: var(--mtt-icon-calendar) 50% / contain no-repeat;
         transition: background-color var(--transition);
     }
 
@@ -85,13 +88,11 @@ input:is([type=date], [type=datetime-local], [type=month], [type=week], [type=ti
     }
 }
 
-input[type=time]::-webkit-calendar-picker-indicator {
-    -webkit-mask-image: var(--mtt-icon-clock);
-    mask-image: var(--mtt-icon-clock);
-}
-
-/* a box of text is too tall for a pill, it is a rounded slab */
-textarea {
+/*
+    A box of text is too tall for a pill, it is a rounded slab. As specific as the fields above, or they win:
+    a textarea has no type, so the attribute only weighs
+*/
+textarea:not([type]) {
     min-block-size: 64px;
     padding-block: var(--margin-tight);
     border-radius: var(--radius-small);
@@ -107,11 +108,11 @@ textarea {
 
 /* The search icon is set by the label, over the field, wherever the label puts it */
 @supports (anchor-name: --mtt-field-control) {
-    label:has(> input[type="search"]) {
+    label:has(> input[type=search]) {
         position: relative;
         anchor-scope: --mtt-field-control;
 
-        > input[type="search"] {
+        > input[type=search] {
             anchor-name: --mtt-field-control;
             padding-inline-start: var(--element-height);
         }
@@ -130,8 +131,6 @@ textarea {
 
             pointer-events: none;
             background-color: var(--mtt-color-text-muted);
-            -webkit-mask: var(--mtt-icon-search) center / contain no-repeat;
-            mask: var(--mtt-icon-search) center / contain no-repeat;
         }
     }
 }

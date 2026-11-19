@@ -15,7 +15,7 @@ function reveal (row, item) {
 function select (list, tab) {
     reveal(list, tab);
 
-    for (const candidate of list.querySelectorAll('[role="tab"]')) {
+    for (const candidate of list.querySelectorAll('[role=tab]')) {
         const selected = candidate === tab;
         candidate.setAttribute('aria-selected', String(selected));
         candidate.tabIndex = selected ? 0 : -1;
@@ -27,93 +27,108 @@ function select (list, tab) {
     }
 }
 
-for (const list of document.querySelectorAll('[role="tablist"]')) {
-    list.addEventListener('click', event => {
-        const tab = event.target.closest('[role="tab"]');
-        if (tab)
-            select(list, tab);
-    });
+// Tabs are listened to on the document, so a row of them the page adds later works as well
+document.addEventListener('click', event => {
+    const tab = event.target.closest('[role=tablist] [role=tab]');
+    if (tab)
+        select(tab.closest('[role=tablist]'), tab);
+});
 
-    list.addEventListener('keydown', event => {
-        const current = event.target.closest('[role="tab"]');
-        if (!current)
-            return;
+document.addEventListener('keydown', event => {
+    const current = event.target.closest('[role=tablist] [role=tab]');
+    if (!current)
+        return;
 
-        const tabs = [...list.querySelectorAll('[role="tab"]')];
-        const index = tabs.indexOf(current);
-        let next;
+    const list = current.closest('[role=tablist]');
+    const tabs = [...list.querySelectorAll('[role=tab]')];
+    const index = tabs.indexOf(current);
+    let next;
 
-        if (event.key === 'ArrowRight')
-            next = tabs[(index + 1) % tabs.length];
-        else if (event.key === 'ArrowLeft')
-            next = tabs[(index - 1 + tabs.length) % tabs.length];
-        else if (event.key === 'Home')
-            next = tabs[0];
-        else if (event.key === 'End')
-            next = tabs.at(-1);
-        else
-            return;
+    if (event.key === 'ArrowRight')
+        next = tabs[(index + 1) % tabs.length];
+    else if (event.key === 'ArrowLeft')
+        next = tabs[(index - 1 + tabs.length) % tabs.length];
+    else if (event.key === 'Home')
+        next = tabs[0];
+    else if (event.key === 'End')
+        next = tabs.at(-1);
+    else
+        return;
 
-        event.preventDefault();
-        select(list, next);
-        next.focus();
-    });
-}
+    event.preventDefault();
+    select(list, next);
+    next.focus();
+});
 
-/*
-    the chosen tab may start past the edge, it is brought in once the fonts have given the tabs their widths.
-    So is the current link of the navigation column of .app, a row of them on a phone
-*/
-document.fonts.ready.then(() => {
-    for (const row of document.querySelectorAll('[role="tablist"], nav.tabs, .app > aside > nav > :is(ul, ol)')) {
-        const chosen = row.querySelector(':scope > :is([aria-selected="true"], [aria-current]:not([aria-current="false"])), :scope > li > [aria-current]:not([aria-current="false"])');
+// The chosen tab may start past the edge of its row, it is brought in. So is the current link of the navigation column of .app, a row of them on a phone
+function revealChosen (root) {
+    for (const row of root.querySelectorAll('[role=tablist], nav.tabs, .app > aside > nav > :is(ul, ol)')) {
+        const chosen = row.querySelector(':scope > :is([aria-selected=true], [aria-current]:not([aria-current=false])), :scope > li > [aria-current]:not([aria-current=false])');
         if (chosen)
             reveal(row, chosen);
     }
-});
+}
 
 /*
     Bars mean nothing to a screen reader. A spark the page names, aria-label="Delivered, rising" say, is read as
-    one picture by that name, one it leaves unnamed is decoration and is skipped. Only the page knows what it shows
+    one picture by that name, one it leaves unnamed is decoration and is skipped. Only the page knows what it shows.
+    The tallest value is a full bar, the others in proportion to it. What is not a number, or below zero, is an empty bar, and so is every bar when none is above zero
 */
-for (const spark of document.querySelectorAll('.spark')) {
+function drawSpark (spark) {
     if (spark.hasAttribute('aria-label') || spark.hasAttribute('aria-labelledby')) {
         if (!spark.hasAttribute('role'))
             spark.setAttribute('role', 'img');
     } else if (!spark.hasAttribute('aria-hidden')) {
         spark.setAttribute('aria-hidden', 'true');
     }
-}
 
-for (const spark of document.querySelectorAll('.spark')) {
-    const valuesString = spark.dataset.values;
-    if (!valuesString)
-        continue;
+    if (!spark.dataset.values)
+        return;
 
-    const values = valuesString.split(',').map(Number);
-    const maxValue = Math.max(...values);
+    const values = spark.dataset.values.split(',').map(value => Math.max(Number(value) || 0, 0));
+    const top = Math.max(...values);
 
-    spark.replaceChildren();
-
-    for (const value of values) {
+    spark.replaceChildren(...values.map(value => {
         const bar = document.createElement('i');
-        bar.style.height = `${value / maxValue * 100}%`;
-        spark.append(bar);
-    }
+        bar.style.height = `${top > 0 ? value / top * 100 : 0}%`;
+        return bar;
+    }));
 }
 
-for (const meter of document.querySelectorAll('div[role="meter"]')) {
-    const value = meter.getAttribute('aria-valuenow');
-    if (!value)
-        continue;
+/*
+    A meter is filled by its aria-valuenow, between aria-valuemin and aria-valuemax, 0 and 100 when they are not given.
+    A browser that reads attributes in CSS does it there, see theme.css, and follows a change of them by itself.
+    For the others it is done here, and redone by refresh
+*/
+const metersInCSS = CSS.supports('width', 'calc(attr(data-mtt type(<number>), 0) * 1%)');
 
-    const min = meter.getAttribute('aria-valuemin') || 0;
-    const max = meter.getAttribute('aria-valuemax') || 100;
-    const range = max - min;
-    const percentage = (value - min) / range * 100;
+function fillMeter (meter) {
+    const value = Number(meter.getAttribute('aria-valuenow'));
+    const min = Number(meter.getAttribute('aria-valuemin') ?? 0);
+    const max = Number(meter.getAttribute('aria-valuemax') ?? 100);
+    const share = max > min ? (value - min) / (max - min) : 0;
 
-    meter.style.setProperty('--value', `${percentage}%`);
+    meter.style.setProperty('--value', `${Math.min(Math.max(share, 0), 1) * 100}%`);
 }
+
+/*
+    What the kit draws by script is drawn once, when the page loads. A page that adds or changes sparks or meters later,
+    or a row of tabs, calls mtt.refresh(), with the element that holds them to look only there
+*/
+function refresh (root = document) {
+    for (const spark of root.querySelectorAll('.spark'))
+        drawSpark(spark);
+
+    if (!metersInCSS)
+        for (const meter of root.querySelectorAll('div[role=meter]'))
+            fillMeter(meter);
+
+    // once the fonts have given the tabs their widths
+    document.fonts.ready.then(() => revealChosen(root));
+}
+
+globalThis.mtt = Object.assign(globalThis.mtt ?? {}, { refresh });
+refresh();
 
 /*
     Combobox: an input and the listbox its aria-controls names, the option chosen
@@ -131,7 +146,7 @@ function listOf (field) {
 
 function isCombobox (target) {
     return target instanceof HTMLInputElement
-        && target.matches('[role="combobox"][aria-controls]')
+        && target.matches('[role=combobox][aria-controls]')
         && Boolean(listOf(target)?.hasAttribute('popover'));
 }
 
@@ -141,7 +156,7 @@ function isDropdown (field) {
 
 function valueOf (field) {
     const next = field.nextElementSibling;
-    return next?.matches('input[type="hidden"]') ? next : null;
+    return next?.matches('input[type=hidden]') ? next : null;
 }
 
 function labelOf (option) {
@@ -154,15 +169,42 @@ function matches (option, needle) {
 }
 
 function shownOptions (list) {
-    return [...list.querySelectorAll('[role="option"]:not([hidden])')];
+    return [...list.querySelectorAll('[role=option]:not([hidden])')];
 }
 
+// What an option posts in a choice
+function valueOfOption (option) {
+    return option.dataset.value ?? labelOf(option);
+}
+
+// The option a field holds. In a choice it is the one with the value of its hidden input, the marked one first,
+// so of two options with one label the one chosen stays, and so does one the page set by the value alone
 function currentOf (field) {
-    return listOf(field).querySelector('[role="option"][aria-current="true"]');
+    const list = listOf(field);
+    const marked = list.querySelector('[role=option][aria-current=true]');
+    const value = valueOf(field);
+    if (!value)
+        return marked;
+
+    if (value.value === '')
+        return null;
+
+    if (marked && valueOfOption(marked) === value.value)
+        return marked;
+
+    return [...list.querySelectorAll('[role=option]')].find(option => valueOfOption(option) === value.value) ?? null;
+}
+
+function markCurrent (field, option) {
+    for (const row of listOf(field).querySelectorAll('[role=option]'))
+        if (row === option)
+            row.setAttribute('aria-current', 'true');
+        else
+            row.removeAttribute('aria-current');
 }
 
 function activate (field, option) {
-    for (const row of listOf(field).querySelectorAll('[role="option"]'))
+    for (const row of listOf(field).querySelectorAll('[role=option]'))
         row.setAttribute('aria-selected', String(row === option));
 
     // only the list scrolls to it, not the page
@@ -186,6 +228,9 @@ function expand (field, open) {
 function showList (field) {
     expand(field, true);
     const current = currentOf(field);
+    if (valueOf(field))
+        markCurrent(field, current);
+
     if (current && !current.hidden)
         activate(field, current);
 }
@@ -242,31 +287,28 @@ function filter (field, query) {
 function choose (field, option) {
     const value = valueOf(field);
     if (value) {
-        value.value = option ? option.dataset.value ?? labelOf(option) : '';
+        value.value = option ? valueOfOption(option) : '';
         field.value = option ? labelOf(option) : '';
     } else
         field.value = option.dataset.value ?? option.textContent.trim();
 
-    for (const row of listOf(field).querySelectorAll('[role="option"]'))
-        if (row === option)
-            row.setAttribute('aria-current', 'true');
-        else
-            row.removeAttribute('aria-current');
+    markCurrent(field, option);
 
     filter(field, '');
     expand(field, false);
     field.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
-// Leaving a choice takes the option named in full, or else the only one found. Emptied it is cleared, else it goes back
+// Leaving a choice takes the option named in full, the one it holds first, or else the only one found. Emptied it is cleared, else it goes back
 function settle (field) {
     if (!valueOf(field))
         return;
 
     const typed = field.value.trim().toLowerCase();
     const current = currentOf(field);
-    const options = [...listOf(field).querySelectorAll('[role="option"]')];
-    const named = options.find(option => [labelOf(option), option.dataset.value].some(name => name?.toLowerCase() === typed));
+    const options = [...listOf(field).querySelectorAll('[role=option]')];
+    const isNamed = option => [labelOf(option), option.dataset.value].some(name => name?.toLowerCase() === typed);
+    const named = current && isNamed(current) ? current : options.find(isNamed);
     const found = typed === '' ? [] : options.filter(option => matches(option, typed));
     const option = named ?? (found.length === 1 ? found[0] : undefined);
 
@@ -304,16 +346,16 @@ document.addEventListener('input', event => {
 
 // The list keeps the focus in its field
 document.addEventListener('mousedown', event => {
-    if (event.target.closest('[role="listbox"][popover]'))
+    if (event.target.closest('[role=listbox][popover]'))
         event.preventDefault();
 });
 
 // A choice opened by the pointer has its text selected, so what is typed next searches anew
 document.addEventListener('click', event => {
-    const option = event.target.closest('[role="listbox"][popover] [role="option"]');
+    const option = event.target.closest('[role=listbox][popover] [role=option]');
     if (option) {
-        const id = CSS.escape(option.closest('[role="listbox"]').id);
-        const field = document.querySelector(`[role="combobox"][aria-controls="${id}"]`);
+        const id = CSS.escape(option.closest('[role=listbox]').id);
+        const field = document.querySelector(`[role=combobox][aria-controls="${id}"]`);
         if (field)
             choose(field, option);
     } else if (isCombobox(event.target)) {

@@ -18,6 +18,11 @@ nav.tabs > a,
 
     translate: 0 var(--lift);
     scale: var(--squeeze);
+    /*
+        Kept on a layer of its own, so it is moved and squeezed as one picture. Without it the browser lifts it onto one
+        only while it moves and puts it back after, and the text, drawn anew to the whole pixel, jumps once it has settled
+    */
+    will-change: translate, scale;
     border-radius: var(--pill);
     background: var(--gloss-layer), var(--background-color);
     box-shadow:

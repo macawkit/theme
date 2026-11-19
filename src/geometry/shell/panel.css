@@ -84,7 +84,7 @@ dialog::backdrop {
 
 /* Add glow */
 header {
-    background: 
+    background:
         linear-gradient(var(--mtt-color-text-decorated), var(--mtt-color-text-decorated)) 0 100% / calc(var(--chip) * 2) 1px no-repeat,
         linear-gradient(var(--mtt-color-line-highlight), var(--mtt-color-line-highlight)) 100% 100% / var(--chip) 1px no-repeat,
         linear-gradient(var(--mtt-color-line-dimmed), var(--mtt-color-line-dimmed)) 0 100% / 100% 1px no-repeat;

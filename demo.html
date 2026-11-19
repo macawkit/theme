@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>@macawkit/theme</title>
     <link rel="stylesheet" href="src/theme.css">
     <link rel="stylesheet" href="src/geometry/shell/index.css" id="geometry">
     <link rel="stylesheet" href="src/palette/hyacinth.css" id="palette">
@@ -26,24 +26,185 @@
     </script>
     <link rel="stylesheet" href="src/icon.css">
     <style>
+        /* the navigation column, with the pickers of the look, stays in sight while the page scrolls */
+        @media (width >= 600px) {
+            .app > aside {
+                position: sticky;
+                top: 0;
+                align-self: start;
+                height: 100vh;
+                height: 100dvh;
+                overflow-y: auto;
+            }
+        }
+
+        /* on a phone the column is a row over the page, the two pickers share a line in it */
+        @media (width < 600px) {
+            #look {
+                flex: 1 1 100%;
+            }
+
+            #look > fieldset {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        /* a wide screen stops growing, a line of panels further apart than that no longer reads as one page */
+        .app > main > * {
+            width: 100%;
+            max-width: 1400px;
+        }
+
+        /* The palette: every color, the palette's own name for it in bold, what it is for under it */
+        .chips {
+            display: grid;
+            grid-template-columns: repeat(var(--n, 8), minmax(0, 1fr));
+            gap: var(--margin-minimal);
+        }
+
+        .chips > div {
+            display: grid;
+            align-content: start;
+            gap: 2px;
+            min-width: 0;
+            line-height: var(--heading-line-height);
+        }
+
+        .chips i {
+            height: var(--element-height);
+            background: var(--swatch);
+            box-shadow: inset 0 0 0 1px var(--mtt-color-line-dimmed);
+            border-radius: var(--radius-tiny, 0);
+        }
+
+        .chips b,
+        .chips code {
+            font-size: var(--decrease-font-size);
+        }
+
+        .chips code {
+            color: var(--mtt-color-text-muted);
+            overflow-wrap: anywhere;
+        }
+
+        /* the category colors, each swatch beside its name: eight round the hues, then eight between them */
+        .legend {
+            display: grid;
+            grid-template-columns: repeat(8, minmax(0, 1fr));
+            gap: var(--margin-tight) var(--margin-minimal);
+        }
+
+        .legend > span {
+            display: flex;
+            align-items: center;
+            gap: var(--margin-tight);
+            min-width: 0;
+        }
+
+        .legend b {
+            overflow: hidden;
+            font-size: var(--decrease-font-size);
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .name::before {
+            content: var(--name, none);
+        }
+
+        /* the six tones go down in pairs, info over signature and so on; in CSS, not inline, so a phone can stack them */
+        .tones {
+            --rows: 2;
+        }
+
+        @media (width < 600px) {
+            .tones {
+                --rows: 6;
+            }
+
+            dd > :is(.chips, .legend) {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                column-gap: var(--margin-tight);
+            }
+
+            dd > .chips > div {
+                grid-template: "i b" "i code" / var(--element-height-small) minmax(0, 1fr);
+                column-gap: var(--margin-tight);
+            }
+
+            dd > .chips i {
+                grid-area: i;
+                height: var(--element-height-small);
+            }
+        }
+
+        /*
+            The stat tiles: five across, two over three in a narrower panel, and one under another on a phone, each a line wide.
+            Sized by the panel, not the window, the column beside the page takes its share. In a tile the name and the spark
+            share a line, so the sparks of a row line up, and on a phone the spark sits at the end
+        */
+        #dashboard > .stack {
+            container-type: inline-size;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: var(--margin);
+        }
+
+        .stat {
+            display: grid;
+            grid-template: "note spark" "hero hero" "delta delta" / minmax(0, 1fr) auto;
+            align-items: center;
+            gap: var(--margin-tight);
+        }
+
+        .stat > * {
+            margin: 0;
+        }
+
+        .stat > .note {
+            grid-area: note;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        .stat > .spark { grid-area: spark; }
+        .stat > .hero { grid-area: hero; }
+        .stat > .row { grid-area: delta; }
+
+        @container (width < 860px) {
+            .stats {
+                grid-template-columns: repeat(6, minmax(0, 1fr));
+            }
+
+            .stat {
+                grid-column: span 2;
+            }
+
+            .stat:nth-child(-n + 2) {
+                grid-column: span 3;
+            }
+        }
+
+        @container (width < 600px) {
+            .stats {
+                grid-template-columns: minmax(0, 1fr);
+                gap: var(--margin-tight);
+            }
+
+            .stat,
+            .stat:nth-child(-n + 2) {
+                grid-column: auto;
+                grid-template: "note spark" "hero spark" "delta spark" / minmax(0, 1fr) auto;
+                row-gap: var(--margin-minimal);
+            }
+        }
+
+        /* a specimen that needs a ground of its own: a dialog shown in place, a page in a box */
         .demo {
             display: grid;
-            min-height: calc(var(--element-height) * 3);
-        }
-
-        .demo > .panel {
-            display: grid;
-            margin: 0;
-        }
-
-        .demo > .row {
-            justify-content: center;
-        }
-
-        .demo > dl {
-            --key-width: minmax(0, 1fr);
-            row-gap: 0;
-            margin: 0;
         }
 
         .demo > dialog {
@@ -52,1817 +213,1114 @@
         }
 
         /* a page in a box: as tall as a short window, not as the one the demo is in */
-        .demo > :is(.app, .center) {
+        .demo > .center {
             min-height: calc(var(--element-height) * 9);
         }
 
-        /* the header of the demo itself, with the pickers of the look, lined up with the panels under it */
-        .look {
-            width: min(100% - 2 * var(--margin), 1680px - 2 * var(--margin));
-            margin: var(--margin) auto 0;
-        }
-
-        .grid {
+        /* whose a message is: the swatch stays beside the sender, and the cell is as wide as the address, a table too wide scrolls */
+        .sender {
             display: grid;
-            grid-template-columns: repeat(12, minmax(0, 1fr));
-            gap: var(--margin);
-            padding: var(--margin);
-        }
-
-        .grid > section {
-            grid-column: span 12;
-            grid-row: span var(--rows);
-        }
-
-        .tokens {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(var(--column-width), 1fr));
-            gap: var(--margin-minimal);
-        }
-
-        /*
-            A tile takes the shape of the geometry from whatever it defines, the rest fall back to nothing:
-            the chipped corner of shell, the rounded slab of candy, set in the well so that their corners are concentric, and floating in it
-        */
-        .tokens > div {
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            padding-bottom: var(--margin-tight);
-            background: var(--mtt-color-panel);
-            gap: var(--margin-tight);
-            border-radius: max(var(--radius-small, 0px) - var(--margin-tight), var(--radius-tiny, 0px));
-            clip-path: var(--chipped-corner-small, none);
-            box-shadow: var(--raise-low, none);
-        }
-
-        .tokens > div > i {
-            height: 50px;
-            background: var(--color, var(--mtt-color-body));
-            box-shadow: inset 0 -1px 0 var(--mtt-color-line-dimmed);
-        }
-
-        /* the palette's own name for the color, under what it is for */
-        .tokens h4::after,
-        .name::before {
-            content: var(--name, none);
-            color: var(--mtt-color-text-muted);
-            font-weight: normal;
-        }
-
-        .tokens h4::after {
-            display: block;
-            margin-top: var(--margin-minimal);
-            font-size: var(--decrease-font-size);
-        }
-
-        .name::before {
-            content: "(" var(--name, none) ")";
-        }
-
-        .tokens > div > :not(i) {
-            margin: 0 var(--margin-tight);
-        }
-
-        .token-group > .label {
-            display: block;
-        }
-
-        /* the category colors as swatches, each beside its name, as many abreast as fit */
-        .legend {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(var(--key-width), 1fr));
-            gap: var(--margin-tight) var(--margin);
-        }
-
-        .legend > span {
-            display: flex;
+            grid-template-columns: auto auto;
+            justify-content: start;
             align-items: center;
-            gap: var(--margin-tight);
+            column-gap: var(--margin-tight);
         }
 
-        .legend > span::after {
-            content: var(--name, none);
+        .sender > small {
+            grid-column: 2;
         }
 
-        /* Stat tiles: five across, a 3 + 2 on a tablet, and on a phone the first one leads over two pairs */
-        .stripe {
-            display: grid;
-            grid-template-columns: repeat(5, minmax(0, 1fr));
-            padding: 0;
-        }
-
-        .stripe > div {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            grid-template-rows: auto 1fr;
-            align-items: start;
-            gap: var(--margin-tight);
-            padding: var(--margin-tight);
-            /* a hairline above and to the left of every tile, the ones on the edge of the panel fall on its border */
-            box-shadow: -1px -1px 0 var(--mtt-color-line-dimmed);
-        }
-
-        .stripe > div > :not(.spark, .note) {
-            grid-column: 1 / -1;
-        }
-
-        @media (width < 1024px) {
-            .stripe {
-                grid-template-columns: repeat(6, minmax(0, 1fr));
-            }
-
-            .stripe > div {
-                grid-column: span 2;
-            }
-
-            .stripe > div:nth-child(-n + 2) {
-                grid-column: span 3;
-            }
-        }
-
-        @media (width < 600px) {
-            .stripe {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-
-            .stripe > div,
-            .stripe > div:nth-child(-n + 2) {
-                grid-column: span 1;
-            }
-
-            .stripe > div:first-child {
-                grid-column: span 2;
-            }
-        }
-
-        /* The six tones: three by two, a phone has room for two */
-        .tones {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: var(--margin-tight);
-        }
-
-        @media (width < 600px) {
-            .tones {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-        }
-
-        .card header {
-            display: grid;
-            grid-template-columns: auto minmax(0, 1fr) auto;
-            margin-bottom: 0;
-            padding-bottom: var(--margin);
-        }
-
-        .card header > .stack {
-            gap: 0;
-        }
-
-        .card .cols {
-            border-bottom: 1px solid var(--mtt-color-line-dimmed);
-        }
-
-        .card .cols > * {
-            padding: var(--margin-tight) 0;
-            text-align: center;
-        }
-
-        .card .cols h2 {
-            margin: 0;
-        }
-
-        .card .cols > :not(:first-child) {
-            border-left: 1px solid var(--mtt-color-line-dimmed);
-        }
-
-        /*
-            The page: one column on a phone. On a tablet the narrow panels, --cols of 4, pair up
-            and the rest keep the whole width, they hold wide things. The desktop takes --cols as it is.
-            A wide screen stops growing, a line of panels further apart than that no longer reads as one page.
-            The look above lines up with them
-        */
-        .grid {
-            grid-auto-flow: dense;
-        }
-
-        .grid {
-            max-width: 1680px;
-            margin-inline: auto;
-        }
-
-        @media (width >= 720px) {
-            .grid > section {
-                grid-column: span min(12, round(up, calc(var(--cols, 12) * 1.5), 6));
-            }
-        }
-
-        @media (width >= 1280px) {
-            .grid > section {
-                grid-column: span var(--cols, 12);
-                grid-row: span var(--rows, 1);
-            }
-        }
-
-        /* the tokens go two abreast on a phone */
-        @media (width < 600px) {
-            .tokens {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
+        /* the state matrices: the state names down the side stay on one line */
+        .matrix th:first-child {
+            white-space: nowrap;
         }
     </style>
     <script src="src/general.js" defer></script>
 </head>
 <body>
-
-<header class="look">
-    <h1>@macawkit/theme</h1>
-    <form id="look" class="row">
-        <fieldset>
-            <label>
-                Geometry
-                <input role="combobox" aria-controls="geometries" aria-expanded="false" inputmode="none" value="Shell">
-            </label>
-            <ul role="listbox" id="geometries" aria-label="Geometry" popover="manual">
-                <li role="option" id="geometry-shell" data-geometry="shell" aria-current="true">Shell</li>
-                <li role="option" id="geometry-candy" data-geometry="candy">Candy</li>
+<div class="app">
+    <aside>
+        <strong>@macawkit/theme</strong>
+        <form id="look">
+            <fieldset>
+                <label>
+                    Geometry
+                    <input role="combobox" aria-controls="geometries" aria-expanded="false" inputmode="none" value="Shell">
+                </label>
+                <ul role="listbox" id="geometries" aria-label="Geometry" popover="manual">
+                    <li role="option" id="geometry-shell" data-geometry="shell" data-value="Shell" aria-current="true"><span>Shell</span><small>sharp</small></li>
+                    <li role="option" id="geometry-candy" data-geometry="candy" data-value="Candy"><span>Candy</span><small>round</small></li>
+                </ul>
+                <label>
+                    Palette
+                    <input role="combobox" aria-controls="palettes" aria-expanded="false" inputmode="none" value="Hyacinth">
+                </label>
+                <!-- by kind, then by name -->
+                <ul role="listbox" id="palettes" aria-label="Palette" popover="manual">
+                    <li role="presentation">Dark</li>
+                    <li role="option" id="palette-hyacinth" data-palette="hyacinth" aria-current="true">Hyacinth</li>
+                    <li role="presentation">Light</li>
+                    <li role="option" id="palette-cream" data-palette="cream">Cream</li>
+                </ul>
+            </fieldset>
+        </form>
+        <nav aria-label="Sections">
+            <ul>
+                <li><a href="#palette" aria-current="true"><small>01</small>Palette<small>49</small></a></li>
+                <li><a href="#dashboard"><small>02</small>Dashboard</a></li>
+                <li><a href="#buttons"><small>03</small>Buttons</a></li>
+                <li><a href="#forms"><small>04</small>Forms</a></li>
+                <li><a href="#tones"><small>05</small>Tones<small>6</small></a></li>
+                <li><a href="#alerts"><small>06</small>Alerts</a></li>
+                <li><a href="#navigation"><small>07</small>Navigation</a></li>
+                <li><a href="#queue"><small>08</small>Table</a></li>
+                <li><a href="#dialog"><small>09</small>Dialog</a></li>
+                <li><a href="#surfaces"><small>10</small>Surfaces · icons<small>22</small></a></li>
+                <li><a href="#type"><small>11</small>Typography</a></li>
+                <li><a href="#pages"><small>12</small>Pages</a></li>
+                <li><a href="#empty"><small>13</small>Empty</a></li>
             </ul>
-        </fieldset>
-        <fieldset>
-            <label>
-                Palette
-                <input role="combobox" aria-controls="palettes" aria-expanded="false" inputmode="none" value="Hyacinth">
-            </label>
-            <!-- by kind, then by name -->
-            <ul role="listbox" id="palettes" aria-label="Palette" popover="manual">
-                <li role="presentation">Dark</li>
-                <li role="option" id="palette-hyacinth" data-palette="hyacinth" aria-current="true">Hyacinth</li>
-                <li role="presentation">Light</li>
-                <li role="option" id="palette-cream" data-palette="cream">Cream</li>
-            </ul>
-        </fieldset>
-    </form>
-</header>
+        </nav>
+        <small>0.3.1 · MIT · <a href="https://github.com/macawkit/theme">Source</a><br>This page is an <code>.app</code> itself</small>
+    </aside>
 
-<main class="grid">
-    <section class="panel">
+    <main>
         <header>
-            <span class="label">01</span>
-            <h3>Color tokens</h3>
-            <span class="note">Defined as CSS custom properties</span>
+            <h1 id="look-name">Shell on Hyacinth</h1>
+            <div class="row">
+                <code>npm install @macawkit/theme</code>
+                <a class="button alt small" href="https://github.com/macawkit/theme">GitHub</a>
+            </div>
         </header>
-        <div class="stack" style="overflow: auto; height: 480px;">
-            <p>Surfaces live on the page itself: <code>--mtt-color-body</code> <span class="name" style="--name: var(--mtt-color-body-name)"></span> fills the page and wells, <code>--mtt-color-panel</code> <span class="name" style="--name: var(--mtt-color-panel-name)"></span> fills panels — so they are not swatched here. Every color has a name of its own in the palette, <code>--mtt-color-main-name</code> and so on.</p>
-            <div class="stack tight token-group">
-                <span class="label">Main</span>
-                <div class="well tokens">
-                    <div style="--color: var(--mtt-color-main-dimmed); --name: var(--mtt-color-main-dimmed-name)">
-                        <i></i>
-                        <h4>Main dimmed</h4>
-                        <small><code>--mtt-color-main-dimmed</code></small>
+        <p>A small CSS kit for interface chrome. A geometry and a palette are picked separately and go with each other in any pair. Everything on this page is the kit, the few lines of CSS of its own only lay out the specimens.</p>
+
+        <section class="panel" id="palette">
+            <header>
+                <span class="label">01</span>
+                <h2 id="palette-name">Hyacinth</h2>
+                <span class="note">every color has a name · --…-name</span>
+            </header>
+            <dl>
+                <dt class="note">Main</dt>
+                <dd>
+                    <div class="chips" style="--n: 6">
+                        <div style="--swatch: var(--mtt-color-body); --name: var(--mtt-color-body-name)" title="--mtt-color-body"><i></i><b class="name"></b><code>body</code></div>
+                        <div style="--swatch: var(--mtt-color-panel); --name: var(--mtt-color-panel-name)" title="--mtt-color-panel"><i></i><b class="name"></b><code>panel</code></div>
+                        <div style="--swatch: var(--mtt-color-main-dimmed); --name: var(--mtt-color-main-dimmed-name)" title="--mtt-color-main-dimmed"><i></i><b class="name"></b><code>main-dimmed</code></div>
+                        <div style="--swatch: var(--mtt-color-button); --name: var(--mtt-color-button-name)" title="--mtt-color-button"><i></i><b class="name"></b><code>button</code></div>
+                        <div style="--swatch: var(--mtt-color-main); --name: var(--mtt-color-main-name)" title="--mtt-color-main"><i></i><b class="name"></b><code>main</code></div>
+                        <div style="--swatch: var(--mtt-color-main-highlight); --name: var(--mtt-color-main-highlight-name)" title="--mtt-color-main-highlight"><i></i><b class="name"></b><code>main-highlight</code></div>
                     </div>
-                    <div style="--color: var(--mtt-color-button); --name: var(--mtt-color-button-name)">
-                        <i></i>
-                        <h4>Button</h4>
-                        <small><code>--mtt-color-button</code></small>
+                </dd>
+
+                <dt class="note">Text · line</dt>
+                <dd>
+                    <div class="chips" style="--n: 9">
+                        <div style="--swatch: var(--mtt-color-text-muted); --name: var(--mtt-color-text-muted-name)" title="--mtt-color-text-muted"><i></i><b class="name"></b><code>text-muted</code></div>
+                        <div style="--swatch: var(--mtt-color-text); --name: var(--mtt-color-text-name)" title="--mtt-color-text"><i></i><b class="name"></b><code>text</code></div>
+                        <div style="--swatch: var(--mtt-color-text-decorated); --name: var(--mtt-color-text-decorated-name)" title="--mtt-color-text-decorated"><i></i><b class="name"></b><code>text-decorated</code></div>
+                        <div style="--swatch: var(--mtt-color-text-bright); --name: var(--mtt-color-text-bright-name)" title="--mtt-color-text-bright"><i></i><b class="name"></b><code>text-bright</code></div>
+                        <div style="--swatch: var(--mtt-color-text-brightest); --name: var(--mtt-color-text-brightest-name)" title="--mtt-color-text-brightest"><i></i><b class="name"></b><code>text-brightest</code></div>
+                        <div style="--swatch: var(--mtt-color-line-dimmed); --name: var(--mtt-color-line-dimmed-name)" title="--mtt-color-line-dimmed"><i></i><b class="name"></b><code>line-dimmed</code></div>
+                        <div style="--swatch: var(--mtt-color-line); --name: var(--mtt-color-line-name)" title="--mtt-color-line"><i></i><b class="name"></b><code>line</code></div>
+                        <div style="--swatch: var(--mtt-color-line-highlight); --name: var(--mtt-color-line-highlight-name)" title="--mtt-color-line-highlight"><i></i><b class="name"></b><code>line-highlight</code></div>
+                        <div style="--swatch: var(--mtt-color-line-decorated); --name: var(--mtt-color-line-decorated-name)" title="--mtt-color-line-decorated"><i></i><b class="name"></b><code>line-decorated</code></div>
                     </div>
-                    <div style="--color: var(--mtt-color-main); --name: var(--mtt-color-main-name)">
-                        <i></i>
-                        <h4>Main</h4>
-                        <small><code>--mtt-color-main</code></small>
+                </dd>
+
+                <dt class="note">Tones</dt>
+                <dd>
+                    <div class="cols tones">
+                        <div class="stack tight">
+                            <code class="info">.info</code>
+                            <div class="chips" style="--n: 3">
+                                <div style="--swatch: var(--color-info); --name: var(--color-info-name)" title="--color-info"><i></i><b class="name"></b><code>info</code></div>
+                                <div style="--swatch: var(--color-info-highlight); --name: var(--color-info-highlight-name)" title="--color-info-highlight"><i></i><b class="name"></b><code>-highlight</code></div>
+                                <div style="--swatch: var(--color-info-text); --name: var(--color-info-text-name)" title="--color-info-text"><i></i><b class="name"></b><code>-text</code></div>
+                            </div>
+                        </div>
+                        <div class="stack tight">
+                            <code class="signature">.signature</code>
+                            <div class="chips" style="--n: 3">
+                                <div style="--swatch: var(--color-signature); --name: var(--color-signature-name)" title="--color-signature"><i></i><b class="name"></b><code>signature</code></div>
+                                <div style="--swatch: var(--color-signature-highlight); --name: var(--color-signature-highlight-name)" title="--color-signature-highlight"><i></i><b class="name"></b><code>-highlight</code></div>
+                                <div style="--swatch: var(--color-signature-text); --name: var(--color-signature-text-name)" title="--color-signature-text"><i></i><b class="name"></b><code>-text</code></div>
+                            </div>
+                        </div>
+                        <div class="stack tight">
+                            <code class="success">.success</code>
+                            <div class="chips" style="--n: 3">
+                                <div style="--swatch: var(--color-success); --name: var(--color-success-name)" title="--color-success"><i></i><b class="name"></b><code>success</code></div>
+                                <div style="--swatch: var(--color-success-highlight); --name: var(--color-success-highlight-name)" title="--color-success-highlight"><i></i><b class="name"></b><code>-highlight</code></div>
+                                <div style="--swatch: var(--color-success-text); --name: var(--color-success-text-name)" title="--color-success-text"><i></i><b class="name"></b><code>-text</code></div>
+                            </div>
+                        </div>
+                        <div class="stack tight">
+                            <code class="priority">.priority</code>
+                            <div class="chips" style="--n: 3">
+                                <div style="--swatch: var(--color-priority); --name: var(--color-priority-name)" title="--color-priority"><i></i><b class="name"></b><code>priority</code></div>
+                                <div style="--swatch: var(--color-priority-highlight); --name: var(--color-priority-highlight-name)" title="--color-priority-highlight"><i></i><b class="name"></b><code>-highlight</code></div>
+                                <div style="--swatch: var(--color-priority-text); --name: var(--color-priority-text-name)" title="--color-priority-text"><i></i><b class="name"></b><code>-text</code></div>
+                            </div>
+                        </div>
+                        <div class="stack tight">
+                            <code class="warning">.warning</code>
+                            <div class="chips" style="--n: 3">
+                                <div style="--swatch: var(--color-warning); --name: var(--color-warning-name)" title="--color-warning"><i></i><b class="name"></b><code>warning</code></div>
+                                <div style="--swatch: var(--color-warning-highlight); --name: var(--color-warning-highlight-name)" title="--color-warning-highlight"><i></i><b class="name"></b><code>-highlight</code></div>
+                                <div style="--swatch: var(--color-warning-text); --name: var(--color-warning-text-name)" title="--color-warning-text"><i></i><b class="name"></b><code>-text</code></div>
+                            </div>
+                        </div>
+                        <div class="stack tight">
+                            <code class="danger">.danger</code>
+                            <div class="chips" style="--n: 3">
+                                <div style="--swatch: var(--color-danger); --name: var(--color-danger-name)" title="--color-danger"><i></i><b class="name"></b><code>danger</code></div>
+                                <div style="--swatch: var(--color-danger-highlight); --name: var(--color-danger-highlight-name)" title="--color-danger-highlight"><i></i><b class="name"></b><code>-highlight</code></div>
+                                <div style="--swatch: var(--color-danger-text); --name: var(--color-danger-text-name)" title="--color-danger-text"><i></i><b class="name"></b><code>-text</code></div>
+                            </div>
+                        </div>
                     </div>
-                    <div style="--color: var(--mtt-color-main-highlight); --name: var(--mtt-color-main-highlight-name)">
-                        <i></i>
-                        <h4>Main highlight</h4>
-                        <small><code>--mtt-color-main-highlight</code></small>
+                </dd>
+
+                <dt class="note">Category</dt>
+                <dd class="stack">
+                    <div class="legend">
+                        <span style="--color: var(--color-category-1); --name: var(--color-category-1-name)" title="--color-category-1"><span class="swatch" aria-hidden="true"></span><b class="name"></b></span>
+                        <span style="--color: var(--color-category-2); --name: var(--color-category-2-name)" title="--color-category-2"><span class="swatch" aria-hidden="true"></span><b class="name"></b></span>
+                        <span style="--color: var(--color-category-3); --name: var(--color-category-3-name)" title="--color-category-3"><span class="swatch" aria-hidden="true"></span><b class="name"></b></span>
+                        <span style="--color: var(--color-category-4); --name: var(--color-category-4-name)" title="--color-category-4"><span class="swatch" aria-hidden="true"></span><b class="name"></b></span>
+                        <span style="--color: var(--color-category-5); --name: var(--color-category-5-name)" title="--color-category-5"><span class="swatch" aria-hidden="true"></span><b class="name"></b></span>
+                        <span style="--color: var(--color-category-6); --name: var(--color-category-6-name)" title="--color-category-6"><span class="swatch" aria-hidden="true"></span><b class="name"></b></span>
+                        <span style="--color: var(--color-category-7); --name: var(--color-category-7-name)" title="--color-category-7"><span class="swatch" aria-hidden="true"></span><b class="name"></b></span>
+                        <span style="--color: var(--color-category-8); --name: var(--color-category-8-name)" title="--color-category-8"><span class="swatch" aria-hidden="true"></span><b class="name"></b></span>
+                        <span style="--color: var(--color-category-9); --name: var(--color-category-9-name)" title="--color-category-9"><span class="swatch" aria-hidden="true"></span><b class="name"></b></span>
+                        <span style="--color: var(--color-category-10); --name: var(--color-category-10-name)" title="--color-category-10"><span class="swatch" aria-hidden="true"></span><b class="name"></b></span>
+                        <span style="--color: var(--color-category-11); --name: var(--color-category-11-name)" title="--color-category-11"><span class="swatch" aria-hidden="true"></span><b class="name"></b></span>
+                        <span style="--color: var(--color-category-12); --name: var(--color-category-12-name)" title="--color-category-12"><span class="swatch" aria-hidden="true"></span><b class="name"></b></span>
+                        <span style="--color: var(--color-category-13); --name: var(--color-category-13-name)" title="--color-category-13"><span class="swatch" aria-hidden="true"></span><b class="name"></b></span>
+                        <span style="--color: var(--color-category-14); --name: var(--color-category-14-name)" title="--color-category-14"><span class="swatch" aria-hidden="true"></span><b class="name"></b></span>
+                        <span style="--color: var(--color-category-15); --name: var(--color-category-15-name)" title="--color-category-15"><span class="swatch" aria-hidden="true"></span><b class="name"></b></span>
+                        <span style="--color: var(--color-category-16); --name: var(--color-category-16-name)" title="--color-category-16"><span class="swatch" aria-hidden="true"></span><b class="name"></b></span>
                     </div>
+                    <div class="row">
+                        <span class="row" style="--color: var(--color-category-5)"><span class="swatch" aria-hidden="true"></span>Ines Duarte<code class="small">.swatch</code></span>
+                        <span class="row" style="--color: var(--color-category-9)"><span class="swatch quiet" aria-hidden="true"></span>Mei Tanaka<code class="small">.quiet</code></span>
+                        <small class="row" style="--color: var(--color-category-1)"><span class="swatch small" aria-hidden="true"></span>Tom Rivers<code>.small</code></small>
+                    </div>
+                    <small>The first eight go round the hues, the last eight fall between them. They mark whose a thing is, never its state: a <code>.swatch</code> of <code>--color</code> beside the name of what wears it, decoration only, the name says it all. Quiet is a thing that is over, small is for a dense spot.</small>
+                </dd>
+            </dl>
+        </section>
+
+        <section class="panel" id="dashboard">
+            <header>
+                <span class="label">02</span>
+                <h2>Dashboard</h2>
+                <div class="row" role="radiogroup" aria-label="Period">
+                    <label class="button ghost small"><input type="radio" name="period" checked>24h</label>
+                    <label class="button ghost small"><input type="radio" name="period">7d</label>
+                    <label class="button ghost small"><input type="radio" name="period">30d</label>
                 </div>
-            </div>
-            <div class="stack tight token-group">
-                <span class="label">Text</span>
-                <div class="well tokens">
-                    <div style="--color: var(--mtt-color-text-muted); --name: var(--mtt-color-text-muted-name)">
-                        <i></i>
-                        <h4>Text muted</h4>
-                        <small><code>--mtt-color-text-muted</code></small>
+            </header>
+            <div class="stack">
+                <div class="stats">
+                    <div class="well stat">
+                        <span class="note">Queued</span>
+                        <div class="spark signature" aria-label="Queued, rising" data-values="45,50,43,59,69,65,79,75,84,90,81,100"></div>
+                        <strong class="hero">128</strong>
+                        <div class="row small"><code class="info">+12</code>23 active</div>
                     </div>
-                    <div style="--color: var(--mtt-color-text); --name: var(--mtt-color-text-name)">
-                        <i></i>
-                        <h4>Text</h4>
-                        <small><code>--mtt-color-text</code></small>
+                    <div class="well stat">
+                        <span class="note">Delivered</span>
+                        <div class="spark success" aria-label="Delivered, rising" data-values="40,45,44,55,62,70,66,77,85,81,91,100"></div>
+                        <strong class="hero">48,213</strong>
+                        <div class="row small"><code class="success">+6.2%</code>vs yesterday</div>
                     </div>
-                    <div style="--color: var(--mtt-color-text-decorated); --name: var(--mtt-color-text-decorated-name)">
-                        <i></i>
-                        <h4>Text decorated</h4>
-                        <small><code>--mtt-color-text-decorated</code></small>
+                    <div class="well stat">
+                        <span class="note">Rejected</span>
+                        <div class="spark priority" aria-label="Rejected spam, rising" data-values="60,66,63,75,72,84,78,81,90,87,93,100"></div>
+                        <strong class="hero">2,941</strong>
+                        <div class="row small"><code class="success">+14%</code>81% via RBL</div>
                     </div>
-                    <div style="--color: var(--mtt-color-text-bright); --name: var(--mtt-color-text-bright-name)">
-                        <i></i>
-                        <h4>Text bright</h4>
-                        <small><code>--mtt-color-text-bright</code></small>
+                    <div class="well stat">
+                        <span class="note">Deferred</span>
+                        <div class="spark warning" aria-label="Deferred, falling" data-values="96,93,100,88,80,83,75,70,74,64,67,59"></div>
+                        <strong class="hero">37</strong>
+                        <div class="row small"><code class="warning">−8</code>oldest 2h 03m</div>
                     </div>
-                    <div style="--color: var(--mtt-color-text-brightest); --name: var(--mtt-color-text-brightest-name)">
-                        <i></i>
-                        <h4>Text brightest</h4>
-                        <small><code>--mtt-color-text-brightest</code></small>
+                    <div class="well stat">
+                        <span class="note">Bounced</span>
+                        <div class="spark danger" aria-label="Bounced, rising" data-values="52,48,60,57,66,63,75,70,82,79,90,100"></div>
+                        <strong class="hero">112</strong>
+                        <div class="row small"><code class="danger">+3</code>0.23% of sent</div>
                     </div>
-                </div>
-            </div>
-            <div class="stack tight token-group">
-                <span class="label">Line</span>
-                <div class="well tokens">
-                    <div style="--color: var(--mtt-color-line-dimmed); --name: var(--mtt-color-line-dimmed-name)">
-                        <i></i>
-                        <h4>Line dimmed</h4>
-                        <small><code>--mtt-color-line-dimmed</code></small>
-                    </div>
-                    <div style="--color: var(--mtt-color-line); --name: var(--mtt-color-line-name)">
-                        <i></i>
-                        <h4>Line</h4>
-                        <small><code>--mtt-color-line</code></small>
-                    </div>
-                    <div style="--color: var(--mtt-color-line-highlight); --name: var(--mtt-color-line-highlight-name)">
-                        <i></i>
-                        <h4>Line highlight</h4>
-                        <small><code>--mtt-color-line-highlight</code></small>
-                    </div>
-                    <div style="--color: var(--mtt-color-line-decorated); --name: var(--mtt-color-line-decorated-name)">
-                        <i></i>
-                        <h4>Line decorated</h4>
-                        <small><code>--mtt-color-line-decorated</code></small>
-                    </div>
-                </div>
-            </div>
-            <div class="stack tight token-group">
-                <span class="label">Info</span>
-                <div class="well tokens">
-                    <div style="--color: var(--color-info); --name: var(--color-info-name)">
-                        <i></i>
-                        <h4>Info</h4>
-                        <small><code>--color-info</code></small>
-                    </div>
-                    <div style="--color: var(--color-info-highlight); --name: var(--color-info-highlight-name)">
-                        <i></i>
-                        <h4>Info highlight</h4>
-                        <small><code>--color-info-highlight</code></small>
-                    </div>
-                    <div style="--color: var(--color-info-text); --name: var(--color-info-text-name)">
-                        <i></i>
-                        <h4>Info text</h4>
-                        <small><code>--color-info-text</code></small>
-                    </div>
-                </div>
-            </div>
-            <div class="stack tight token-group">
-                <span class="label">Signature</span>
-                <div class="well tokens">
-                    <div style="--color: var(--color-signature); --name: var(--color-signature-name)">
-                        <i></i>
-                        <h4>Signature</h4>
-                        <small><code>--color-signature</code></small>
-                    </div>
-                    <div style="--color: var(--color-signature-highlight); --name: var(--color-signature-highlight-name)">
-                        <i></i>
-                        <h4>Signature highlight</h4>
-                        <small><code>--color-signature-highlight</code></small>
-                    </div>
-                    <div style="--color: var(--color-signature-text); --name: var(--color-signature-text-name)">
-                        <i></i>
-                        <h4>Signature text</h4>
-                        <small><code>--color-signature-text</code></small>
-                    </div>
-                </div>
-            </div>
-            <div class="stack tight token-group">
-                <span class="label">Success</span>
-                <div class="well tokens">
-                    <div style="--color: var(--color-success); --name: var(--color-success-name)">
-                        <i></i>
-                        <h4>Success</h4>
-                        <small><code>--color-success</code></small>
-                    </div>
-                    <div style="--color: var(--color-success-highlight); --name: var(--color-success-highlight-name)">
-                        <i></i>
-                        <h4>Success highlight</h4>
-                        <small><code>--color-success-highlight</code></small>
-                    </div>
-                    <div style="--color: var(--color-success-text); --name: var(--color-success-text-name)">
-                        <i></i>
-                        <h4>Success text</h4>
-                        <small><code>--color-success-text</code></small>
-                    </div>
-                </div>
-            </div>
-            <div class="stack tight token-group">
-                <span class="label">Priority</span>
-                <div class="well tokens">
-                    <div style="--color: var(--color-priority); --name: var(--color-priority-name)">
-                        <i></i>
-                        <h4>Priority</h4>
-                        <small><code>--color-priority</code></small>
-                    </div>
-                    <div style="--color: var(--color-priority-highlight); --name: var(--color-priority-highlight-name)">
-                        <i></i>
-                        <h4>Priority highlight</h4>
-                        <small><code>--color-priority-highlight</code></small>
-                    </div>
-                    <div style="--color: var(--color-priority-text); --name: var(--color-priority-text-name)">
-                        <i></i>
-                        <h4>Priority text</h4>
-                        <small><code>--color-priority-text</code></small>
-                    </div>
-                </div>
-            </div>
-            <div class="stack tight token-group">
-                <span class="label">Warning</span>
-                <div class="well tokens">
-                    <div style="--color: var(--color-warning); --name: var(--color-warning-name)">
-                        <i></i>
-                        <h4>Warning</h4>
-                        <small><code>--color-warning</code></small>
-                    </div>
-                    <div style="--color: var(--color-warning-highlight); --name: var(--color-warning-highlight-name)">
-                        <i></i>
-                        <h4>Warning highlight</h4>
-                        <small><code>--color-warning-highlight</code></small>
-                    </div>
-                    <div style="--color: var(--color-warning-text); --name: var(--color-warning-text-name)">
-                        <i></i>
-                        <h4>Warning text</h4>
-                        <small><code>--color-warning-text</code></small>
-                    </div>
-                </div>
-            </div>
-            <div class="stack tight token-group">
-                <span class="label">Danger</span>
-                <div class="well tokens">
-                    <div style="--color: var(--color-danger); --name: var(--color-danger-name)">
-                        <i></i>
-                        <h4>Danger</h4>
-                        <small><code>--color-danger</code></small>
-                    </div>
-                    <div style="--color: var(--color-danger-highlight); --name: var(--color-danger-highlight-name)">
-                        <i></i>
-                        <h4>Danger highlight</h4>
-                        <small><code>--color-danger-highlight</code></small>
-                    </div>
-                    <div style="--color: var(--color-danger-text); --name: var(--color-danger-text-name)">
-                        <i></i>
-                        <h4>Danger text</h4>
-                        <small><code>--color-danger-text</code></small>
-                    </div>
-                </div>
-            </div>
-            <div class="stack tight token-group">
-                <span class="label">Category</span>
-                <p>Sixteen marks that tell things apart and say nothing of state, like whose a row is. The first eight go round the hues, the last eight go round again between them, each a color of its own.</p>
-                <div class="well tokens">
-                    <div style="--color: var(--color-category-1); --name: var(--color-category-1-name)">
-                        <i></i>
-                        <h4>Category 1</h4>
-                        <small><code>--color-category-1</code></small>
-                    </div>
-                    <div style="--color: var(--color-category-2); --name: var(--color-category-2-name)">
-                        <i></i>
-                        <h4>Category 2</h4>
-                        <small><code>--color-category-2</code></small>
-                    </div>
-                    <div style="--color: var(--color-category-3); --name: var(--color-category-3-name)">
-                        <i></i>
-                        <h4>Category 3</h4>
-                        <small><code>--color-category-3</code></small>
-                    </div>
-                    <div style="--color: var(--color-category-4); --name: var(--color-category-4-name)">
-                        <i></i>
-                        <h4>Category 4</h4>
-                        <small><code>--color-category-4</code></small>
-                    </div>
-                    <div style="--color: var(--color-category-5); --name: var(--color-category-5-name)">
-                        <i></i>
-                        <h4>Category 5</h4>
-                        <small><code>--color-category-5</code></small>
-                    </div>
-                    <div style="--color: var(--color-category-6); --name: var(--color-category-6-name)">
-                        <i></i>
-                        <h4>Category 6</h4>
-                        <small><code>--color-category-6</code></small>
-                    </div>
-                    <div style="--color: var(--color-category-7); --name: var(--color-category-7-name)">
-                        <i></i>
-                        <h4>Category 7</h4>
-                        <small><code>--color-category-7</code></small>
-                    </div>
-                    <div style="--color: var(--color-category-8); --name: var(--color-category-8-name)">
-                        <i></i>
-                        <h4>Category 8</h4>
-                        <small><code>--color-category-8</code></small>
-                    </div>
-                    <div style="--color: var(--color-category-9); --name: var(--color-category-9-name)">
-                        <i></i>
-                        <h4>Category 9</h4>
-                        <small><code>--color-category-9</code></small>
-                    </div>
-                    <div style="--color: var(--color-category-10); --name: var(--color-category-10-name)">
-                        <i></i>
-                        <h4>Category 10</h4>
-                        <small><code>--color-category-10</code></small>
-                    </div>
-                    <div style="--color: var(--color-category-11); --name: var(--color-category-11-name)">
-                        <i></i>
-                        <h4>Category 11</h4>
-                        <small><code>--color-category-11</code></small>
-                    </div>
-                    <div style="--color: var(--color-category-12); --name: var(--color-category-12-name)">
-                        <i></i>
-                        <h4>Category 12</h4>
-                        <small><code>--color-category-12</code></small>
-                    </div>
-                    <div style="--color: var(--color-category-13); --name: var(--color-category-13-name)">
-                        <i></i>
-                        <h4>Category 13</h4>
-                        <small><code>--color-category-13</code></small>
-                    </div>
-                    <div style="--color: var(--color-category-14); --name: var(--color-category-14-name)">
-                        <i></i>
-                        <h4>Category 14</h4>
-                        <small><code>--color-category-14</code></small>
-                    </div>
-                    <div style="--color: var(--color-category-15); --name: var(--color-category-15-name)">
-                        <i></i>
-                        <h4>Category 15</h4>
-                        <small><code>--color-category-15</code></small>
-                    </div>
-                    <div style="--color: var(--color-category-16); --name: var(--color-category-16-name)">
-                        <i></i>
-                        <h4>Category 16</h4>
-                        <small><code>--color-category-16</code></small>
-                    </div>
-                </div>
-                <p>A <code>.swatch</code> shows one of them beside the name of what wears it, its color is <code>--color</code>. It is decoration, <code>aria-hidden</code>, the name next to it says it all.</p>
-                <div class="well legend">
-                    <span style="--color: var(--color-category-1); --name: var(--color-category-1-name)"><span class="swatch" aria-hidden="true"></span></span>
-                    <span style="--color: var(--color-category-2); --name: var(--color-category-2-name)"><span class="swatch" aria-hidden="true"></span></span>
-                    <span style="--color: var(--color-category-3); --name: var(--color-category-3-name)"><span class="swatch" aria-hidden="true"></span></span>
-                    <span style="--color: var(--color-category-4); --name: var(--color-category-4-name)"><span class="swatch" aria-hidden="true"></span></span>
-                    <span style="--color: var(--color-category-5); --name: var(--color-category-5-name)"><span class="swatch" aria-hidden="true"></span></span>
-                    <span style="--color: var(--color-category-6); --name: var(--color-category-6-name)"><span class="swatch" aria-hidden="true"></span></span>
-                    <span style="--color: var(--color-category-7); --name: var(--color-category-7-name)"><span class="swatch" aria-hidden="true"></span></span>
-                    <span style="--color: var(--color-category-8); --name: var(--color-category-8-name)"><span class="swatch" aria-hidden="true"></span></span>
-                    <span style="--color: var(--color-category-9); --name: var(--color-category-9-name)"><span class="swatch" aria-hidden="true"></span></span>
-                    <span style="--color: var(--color-category-10); --name: var(--color-category-10-name)"><span class="swatch" aria-hidden="true"></span></span>
-                    <span style="--color: var(--color-category-11); --name: var(--color-category-11-name)"><span class="swatch" aria-hidden="true"></span></span>
-                    <span style="--color: var(--color-category-12); --name: var(--color-category-12-name)"><span class="swatch" aria-hidden="true"></span></span>
-                    <span style="--color: var(--color-category-13); --name: var(--color-category-13-name)"><span class="swatch" aria-hidden="true"></span></span>
-                    <span style="--color: var(--color-category-14); --name: var(--color-category-14-name)"><span class="swatch" aria-hidden="true"></span></span>
-                    <span style="--color: var(--color-category-15); --name: var(--color-category-15-name)"><span class="swatch" aria-hidden="true"></span></span>
-                    <span style="--color: var(--color-category-16); --name: var(--color-category-16-name)"><span class="swatch" aria-hidden="true"></span></span>
                 </div>
                 <div class="tiles">
-                    <div class="stack tight">
-                        <div class="well demo">
-                            <div class="row">
-                                <span class="row" style="--color: var(--color-category-5)"><span class="swatch" aria-hidden="true"></span>Ines Duarte</span>
-                            </div>
+                    <a class="card" href="#dashboard">
+                        <header>
+                            <div class="box"><i class="icon i-globe"></i></div>
+                            <h3>example.com</h3>
+                            <span class="badge signature">Active</span>
+                        </header>
+                        <div class="cols">
+                            <div class="stack tight"><span class="note">Mailboxes</span><strong class="hero">42</strong></div>
+                            <div class="stack tight"><span class="note">Aliases</span><strong class="hero">17</strong></div>
                         </div>
-                        <strong>Swatch</strong>
-                        <small><code>.swatch · --color</code></small>
-                        <small>One color, by a name: whose a row is, what a line of a chart stands for.</small>
-                    </div>
-                    <div class="stack tight">
-                        <div class="well demo">
-                            <div class="row">
-                                <span class="row" style="--color: var(--color-category-9)"><span class="swatch quiet" aria-hidden="true"></span>Mei Tanaka</span>
-                                <span class="tag">Happened</span>
-                            </div>
+                        <div class="stack tight">
+                            <div class="row between small"><span>Storage</span><span>18.4 / 50 GB</span></div>
+                            <div role="meter" aria-label="Storage of example.com" aria-valuenow="37" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
-                        <strong>Quiet</strong>
-                        <small><code>.swatch.quiet</code></small>
-                        <small>A thing that is over, a lesson that already happened. It is as faint as the past of a spark, and unlit.</small>
-                    </div>
-                    <div class="stack tight">
-                        <div class="well demo">
-                            <div class="row">
-                                <small class="row" style="--color: var(--color-category-1)"><span class="swatch small" aria-hidden="true"></span>Tom Rivers</small>
-                                <small class="row" style="--color: var(--color-category-9)"><span class="swatch small quiet" aria-hidden="true"></span>Mei Tanaka</small>
-                            </div>
+                    </a>
+                    <a class="card" href="#dashboard">
+                        <header>
+                            <div class="box"><i class="icon i-globe"></i></div>
+                            <h3>shop.example</h3>
+                            <span class="badge signature">Active</span>
+                        </header>
+                        <div class="cols">
+                            <div class="stack tight"><span class="note">Mailboxes</span><strong class="hero">9</strong></div>
+                            <div class="stack tight"><span class="note">Aliases</span><strong class="hero">4</strong></div>
                         </div>
-                        <strong>Small</strong>
-                        <small><code>.swatch.small</code></small>
-                        <small>As thick as a bar, for a dense spot, a day of a month. A width and a height of your own work as well.</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="panel">
-        <header>
-            <span class="label">02</span>
-            <h3>Visual language</h3>
-            <span class="note">surfaces · markers · layers</span>
-        </header>
-        <div class="stack">
-            <div class="tiles">
-                <div class="stack tight">
-                    <div class="well demo">
-                        <div class="panel"></div>
-                    </div>
-                    <strong>Panel</strong>
-                    <small><code>.panel</code></small>
-                    <small>A region of the page and the outermost surface. Everything else lives inside one.</small>
-                </div>
-                <div class="stack tight">
-                    <div class="well demo">
-                        <div class="panel"><div class="well"></div></div>
-                    </div>
-                    <strong>Well</strong>
-                    <small><code>.well</code></small>
-                    <small>Sunk into a surface. Holds a group of data or controls so they read as one.</small>
-                </div>
-                <div class="stack tight">
-                    <div class="well demo">
-                        <div class="card"></div>
-                    </div>
-                    <strong>Card</strong>
-                    <small><code>.card</code></small>
-                    <small>A self-contained unit inside a panel, made to be repeated.</small>
-                </div>
-                <div class="stack tight">
-                    <div class="well demo">
+                        <div class="stack tight">
+                            <div class="row between small"><span>Storage</span><span>42 / 50 GB</span></div>
+                            <div class="warning" role="meter" aria-label="Storage of shop.example" aria-valuenow="84" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </a>
+                    <a class="card" href="#dashboard">
+                        <header>
+                            <div class="box"><i class="icon i-globe"></i></div>
+                            <h3>legacy.example.org</h3>
+                            <span class="badge priority">Suspended</span>
+                        </header>
+                        <div class="cols">
+                            <div class="stack tight"><span class="note">Mailboxes</span><strong class="hero">0</strong></div>
+                            <div class="stack tight"><span class="note">Aliases</span><strong class="hero">0</strong></div>
+                        </div>
                         <div class="row">
-                            <div class="box"><i class="icon i-user"></i></div>
-                            <div class="box active"><i class="icon i-user"></i></div>
+                            <span class="tag">SPF pass</span>
+                            <span class="tag danger">DKIM fail</span>
                         </div>
-                    </div>
-                    <strong>Box</strong>
-                    <small><code>.box · .active</code></small>
-                    <small>The smallest frame: one glyph or one value. Lights up when active.</small>
-                </div>
-                <div class="stack tight">
-                    <div class="well demo">
-                        <div class="panel">
-                            <header>
-                                <span class="label">01</span>
-                                <h4>Title</h4>
-                                <span class="note">note</span>
-                            </header>
-                        </div>
-                    </div>
-                    <strong>Header</strong>
-                    <small><code>header · .label · .note</code></small>
-                    <small>Names a region and rules it off from its content: index, title, aside.</small>
-                </div>
-                <div class="stack tight">
-                    <div class="well demo">
-                        <dl>
-                            <dt class="note">Key</dt><dd>Value</dd>
-                            <dt class="note">Key</dt><dd>Value</dd>
-                        </dl>
-                    </div>
-                    <strong>Divider</strong>
-                    <small><code>dl · table</code></small>
-                    <small>Rows are separated by hairlines, never boxed. Lines stay quieter than content.</small>
-                </div>
-                <div class="stack tight">
-                    <div class="well demo">
-                        <div class="row">
-                            <div role="tablist" class="small" aria-label="Specimen">
-                                <button type="button" role="tab" aria-selected="true">One</button>
-                                <button type="button" role="tab" aria-selected="false">Two</button>
-                                <button type="button" role="tab" aria-selected="false">Three</button>
-                            </div>
-                        </div>
-                    </div>
-                    <strong>Tabs</strong>
-                    <small><code>[role=tablist] · nav.tabs</code></small>
-                    <small>A choice along one axis. Only the selected tab is marked; the rest stay flat.</small>
-                </div>
-                <div class="stack tight">
-                    <div class="well demo">
-                        <div class="row">
-                            <div class="row" role="group" aria-label="Specimen">
-                                <button type="button" class="small" aria-pressed="true">On</button>
-                                <button type="button" class="small" aria-pressed="false">Off</button>
-                            </div>
-                            <div class="row" role="group" aria-label="Ghost specimen">
-                                <button type="button" class="ghost small" aria-pressed="true">On</button>
-                                <button type="button" class="ghost small" aria-pressed="false">Off</button>
-                            </div>
-                        </div>
-                    </div>
-                    <strong>Toggle</strong>
-                    <small><code>[aria-pressed] · label.button &gt; input</code></small>
-                    <small>A button that holds a state, plain, secondary or ghost. It is lit by being on; the pointer only hints.</small>
-                </div>
-                <div class="stack tight">
-                    <div class="well demo">
-                        <div class="row">
-                            <span class="tag">Tag</span>
-                            <span class="badge">Badge</span>
-                            <span class="badge success">Tone</span>
-                        </div>
-                    </div>
-                    <strong>Tag · Badge</strong>
-                    <small><code>.tag · .badge · .&lt;tone&gt;</code></small>
-                    <small>Inline markers. A tag names something; a badge reports a state and carries a light.</small>
+                    </a>
                 </div>
             </div>
-            <div class="scroll">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Layer</th>
-                            <th>Applies to</th>
-                            <th>Surface</th>
-                            <th>Role</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Ground</td>
-                            <td><code>body · .well · .card</code></td>
-                            <td><code>--mtt-color-body</code></td>
-                            <td><small>The page itself, and anything sunk back down to it</small></td>
-                        </tr>
-                        <tr>
-                            <td>Surface</td>
-                            <td><code>.panel</code></td>
-                            <td><code>--mtt-color-panel</code></td>
-                            <td><small>Raised from the ground; frames a region</small></td>
-                        </tr>
-                        <tr>
-                            <td>Marked</td>
-                            <td><code>.box · [aria-current] · [aria-selected]</code></td>
-                            <td><code>--mtt-color-main-dimmed</code></td>
-                            <td><small>Where you are, what is chosen, what stands alone</small></td>
-                        </tr>
-                        <tr>
-                            <td>Toned</td>
-                            <td><code>.info … .danger</code></td>
-                            <td><code>--background</code></td>
-                            <td><small>Re-tones a whole subtree through three variables</small></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <section class="panel" style="--cols: 6; --rows: 2;">
-        <header>
-            <span class="label">03</span>
-            <h3>Typography</h3>
-            <span class="note">Space Grotesk · JetBrains Mono labels &amp; data</span>
-        </header>
-        <dl>
-            <dt><b>Hero</b><code class="small">.hero</code></dt>
-            <dd class="hero">48,213 delivered</dd>
-
-            <dt><b>Heading 1</b><code class="small">h1</code></dt>
-            <dd><h1>Mail queue</h1></dd>
-
-            <dt><b>Heading 2</b><code class="small">h2</code></dt>
-            <dd><h2>Domains &amp; routing</h2></dd>
-
-            <dt><b>Heading 3</b><code class="small">h3</code></dt>
-            <dd><h3>Relay configuration</h3></dd>
-
-            <dt><b>Heading 4</b><code class="small">h4</code></dt>
-            <dd><h4>Postscreen blocked 2,941 connections from listed hosts in the last 24 hours.</h4></dd>
-
-            <dt><b>Paragraph</b><code class="small">p</code></dt>
-            <dd><p>Postscreen blocked 2,941 connections from listed hosts in the last 24 hours.</p></dd>
-
-            <dt><b>Note</b><code class="small">.note</code></dt>
-            <dd class="note">Postscreen blocked 2,941 connections from listed hosts in the last 24 hours.</dd>
-
-            <dt><b>Caption</b><code class="small">small, .small</code></dt>
-            <dd><small>Updated 2 seconds ago · auto-refresh on</small></dd>
-
-            <dt><b>Label</b><code class="small">.label</code></dt>
-            <dd class="label">Queue status</dd>
-
-            <dt><b>Mono data</b><code class="small">code</code></dt>
-            <dd><code>4F2A91C3B7 · 198.51.100.23 · 250 2.0.0</code></dd>
-
-            <dt><b>List</b><code class="small">ul · ol</code></dt>
-            <dd>
-                <ul>
-                    <li>Mail to a full mailbox is deferred, not bounced.</li>
-                    <li>Deferred mail is retried for five days.</li>
-                </ul>
-            </dd>
-        </dl>
-    </section>
-
-    <section class="panel" style="--cols: 6;">
-        <header>
-            <span class="label">04</span>
-            <h3>Buttons</h3>
-            <span class="note">primary · secondary · ghost · danger</span>
-        </header>
-        <div class="stack">
-            <div class="scroll">
-                <table>
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Primary</th>
-                            <th>Secondary</th>
-                            <th>Ghost</th>
-                            <th>Danger</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <th>Default</th>
-                            <td><button><i class="icon i-send"></i>Flush</button></td>
-                            <td><button class="alt">Requeue</button></td>
-                            <td><button class="ghost">Cancel</button></td>
-                            <td><button class="danger"><i class="icon i-trash"></i>Delete</button></td>
-                        </tr>
-                        <tr>
-                        <th>Hover</th>
-                            <td><button class="hover"><i class="icon i-send"></i>Flush</button></td>
-                            <td><button class="hover alt">Requeue</button></td>
-                            <td><button class="hover ghost">Cancel</button></td>
-                            <td><button class="hover danger"><i class="icon i-trash"></i>Delete</button></td>
-                        </tr>
-                        <tr>
-                        <th>Pressed</th>
-                            <td><button class="active hover"><i class="icon i-send"></i>Flush</button></td>
-                            <td><button class="active hover alt">Requeue</button></td>
-                            <td><button class="active hover ghost">Cancel</button></td>
-                            <td><button class="active hover danger"><i class="icon i-trash"></i>Delete</button></td>
-                        </tr>
-                        <tr>
-                        <th>Disabled</th>
-                            <td><button disabled><i class="icon i-send"></i>Flush</button></td>
-                            <td><button class="alt" disabled>Requeue</button></td>
-                            <td><button class="ghost" disabled>Cancel</button></td>
-                            <td><button class="danger" disabled><i class="icon i-trash"></i>Delete</button></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="row">
-                <button class="small">Small</button>
-                <button class="alt small"><i class="icon i-plus"></i>Add domain</button>
-                <button class="alt" title="Retry"><i class="icon i-refresh"></i></button>
-                <button class="alt" title="Hold"><i class="icon i-pause"></i></button>
-                <button class="alt" title="Delete"><i class="icon i-trash"></i></button>
-                <button class="large"><i class="icon i-plus"></i>New mailbox</button>
-            </div>
-        </div>
-    </section>
-
-    <section class="panel" style="--cols: 6;">
-        <header>
-            <span class="label">05</span>
-            <h3>Toggles &amp; checks</h3>
-            <span class="note">switches · checkbox · radio · tabs</span>
-        </header>
+        <section class="panel" id="buttons">
+            <header>
+                <span class="label">03</span>
+                <h2>Buttons</h2>
+                <span class="note">actions · toggles · groups</span>
+            </header>
             <div class="stack">
-                <label>
-                    <input type="checkbox" class="switch" checked>
-                    <span>
-                        <b>Postscreen</b>
-                        <small>Pre-greet tests on</small>
-                    </span>
-                </label>
-                <label>
-                    <input type="checkbox" class="switch">
-                    <span>
-                        <b>Greylisting</b>
-                        <small>Off</small>
-                    </span>
-                </label>
-                <label>
-                    <input type="checkbox" class="switch" disabled>
-                    <span>
-                        <b>Soft bounce</b>
-                        <small>Locked by policy</small>
-                    </span>
-                </label>
+                <div class="tiles" style="--tile-width: 440px">
+                    <div class="scroll">
+                        <table class="matrix">
+                            <thead>
+                                <tr>
+                                    <th>Action</th>
+                                    <th>Primary</th>
+                                    <th><code>.alt</code></th>
+                                    <th><code>.ghost</code></th>
+                                    <th><code>.danger</code></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>Rest</th>
+                                    <td><button>Flush</button></td>
+                                    <td><button class="alt">Requeue</button></td>
+                                    <td><button class="ghost">Cancel</button></td>
+                                    <td><button class="danger">Delete</button></td>
+                                </tr>
+                                <tr>
+                                    <th>Hover</th>
+                                    <td><button class="hover">Flush</button></td>
+                                    <td><button class="alt hover">Requeue</button></td>
+                                    <td><button class="ghost hover">Cancel</button></td>
+                                    <td><button class="danger hover">Delete</button></td>
+                                </tr>
+                                <tr>
+                                    <th>Pressed</th>
+                                    <td><button class="active hover">Flush</button></td>
+                                    <td><button class="alt active hover">Requeue</button></td>
+                                    <td><button class="ghost active hover">Cancel</button></td>
+                                    <td><button class="danger active hover">Delete</button></td>
+                                </tr>
+                                <tr>
+                                    <th>Focus</th>
+                                    <td><button class="focus">Flush</button></td>
+                                    <td><button class="alt focus">Requeue</button></td>
+                                    <td><button class="ghost focus">Cancel</button></td>
+                                    <td><button class="danger focus">Delete</button></td>
+                                </tr>
+                                <tr>
+                                    <th>Disabled</th>
+                                    <td><button disabled>Flush</button></td>
+                                    <td><button class="alt" disabled>Requeue</button></td>
+                                    <td><button class="ghost" disabled>Cancel</button></td>
+                                    <td><button class="danger" disabled>Delete</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="scroll">
+                        <table class="matrix">
+                            <thead>
+                                <tr>
+                                    <th>Toggle</th>
+                                    <th>Primary</th>
+                                    <th><code>.alt</code></th>
+                                    <th><code>.ghost</code></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>Off</th>
+                                    <td><button type="button" aria-pressed="false"><i class="icon i-mail"></i>Mail</button></td>
+                                    <td><button type="button" class="alt" aria-pressed="false">Mail</button></td>
+                                    <td><button type="button" class="ghost" aria-pressed="false">Mail</button></td>
+                                </tr>
+                                <tr>
+                                    <th>Off · hover</th>
+                                    <td><button type="button" class="hover" aria-pressed="false"><i class="icon i-mail"></i>Mail</button></td>
+                                    <td><button type="button" class="alt hover" aria-pressed="false">Mail</button></td>
+                                    <td><button type="button" class="ghost hover" aria-pressed="false">Mail</button></td>
+                                </tr>
+                                <tr>
+                                    <th>On</th>
+                                    <td><button type="button" aria-pressed="true"><i class="icon i-mail"></i>Mail</button></td>
+                                    <td><button type="button" class="alt" aria-pressed="true">Mail</button></td>
+                                    <td><button type="button" class="ghost" aria-pressed="true">Mail</button></td>
+                                </tr>
+                                <tr>
+                                    <th>On · hover</th>
+                                    <td><button type="button" class="hover" aria-pressed="true"><i class="icon i-mail"></i>Mail</button></td>
+                                    <td><button type="button" class="alt hover" aria-pressed="true">Mail</button></td>
+                                    <td><button type="button" class="ghost hover" aria-pressed="true">Mail</button></td>
+                                </tr>
+                                <tr>
+                                    <th>Disabled</th>
+                                    <td><button type="button" aria-pressed="true" disabled><i class="icon i-mail"></i>Mail</button></td>
+                                    <td><button type="button" class="alt" aria-pressed="true" disabled>Mail</button></td>
+                                    <td><button type="button" class="ghost" aria-pressed="true" disabled>Mail</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
                 <div class="row">
-                    <label><input type="checkbox" checked>SPF</label>
-                    <label><input type="checkbox" checked>DKIM</label>
-                    <label><input type="checkbox" id="dmarc">DMARC</label>
-                    <label><input type="checkbox">ARC</label>
+                    <button class="small">Small</button>
+                    <button class="alt small"><i class="icon i-plus"></i>Add domain</button>
+                    <button class="alt" title="Retry"><i class="icon i-refresh"></i></button>
+                    <button class="alt" title="Hold"><i class="icon i-pause"></i></button>
+                    <button class="alt" title="Delete"><i class="icon i-trash"></i></button>
+                    <a class="button alt" href="#buttons"><i class="icon i-arrow"></i>A link as a button</a>
+                    <a class="button ghost" aria-disabled="true">Disabled link</a>
                 </div>
-            <div class="row">
-                <label><input type="radio" name="tls" class="check" checked>TLS required</label>
-                <label><input type="radio" name="tls" class="check">Opportunistic</label>
-            </div>
-            <div class="row">
-                <div role="tablist" aria-label="Queue view">
-                    <button type="button" role="tab" id="qt-all" aria-controls="qp-all" aria-selected="true">All</button>
-                    <button type="button" role="tab" id="qt-active" aria-controls="qp-active" aria-selected="false">Active</button>
-                    <button type="button" role="tab" id="qt-deferred" aria-controls="qp-deferred" aria-selected="false">Deferred</button>
-                    <button type="button" role="tab" id="qt-hold" aria-controls="qp-hold" aria-selected="false">Hold</button>
+                <div class="row">
+                    <div class="row" role="group" aria-label="Reply by">
+                        <button type="button" aria-pressed="true"><i class="icon i-mail"></i>Mail</button>
+                        <button type="button" aria-pressed="false"><i class="icon i-phone"></i>Phone</button>
+                        <button type="button" aria-pressed="false"><i class="icon i-send"></i>Chat</button>
+                    </div>
+                    <div class="row" role="radiogroup" aria-label="Retry after">
+                        <label class="button alt"><input type="radio" name="retry" value="5" checked required>5 min</label>
+                        <label class="button alt"><input type="radio" name="retry" value="15" required>15 min</label>
+                        <label class="button alt"><input type="radio" name="retry" value="60" required>1 hour</label>
+                        <label class="button alt"><input type="radio" name="retry" value="0" disabled>Never</label>
+                    </div>
+                    <div class="row" role="group" aria-label="Checks">
+                        <label class="button"><input type="checkbox" checked>SPF</label>
+                        <label class="button"><input type="checkbox">DKIM</label>
+                        <label class="button"><input type="checkbox">DMARC</label>
+                        <label class="button"><input type="checkbox" checked disabled>ARC</label>
+                    </div>
                 </div>
-                <span class="small">ARIA tabs · panels · ← → Home End</span>
+                <small><code>[aria-pressed]</code> needs a script to flip it, the first group has one. A radio or a checkbox in <code>label.button</code> looks the same and needs none, the other two are those.</small>
             </div>
-            <p class="small" role="tabpanel" id="qp-all" aria-labelledby="qt-all">128 messages in the queue</p>
-            <p class="small" role="tabpanel" id="qp-active" aria-labelledby="qt-active" hidden>23 messages being delivered now</p>
-            <p class="small" role="tabpanel" id="qp-deferred" aria-labelledby="qt-deferred" hidden>37 deferred · oldest 2h 03m</p>
-            <p class="small" role="tabpanel" id="qp-hold" aria-labelledby="qt-hold" hidden>4 messages on hold</p>
-            <div class="row">
-                <div role="tablist" class="small" aria-label="Queue view">
-                    <button type="button" role="tab" aria-selected="true">All</button>
-                    <button type="button" role="tab" aria-selected="false">Active</button>
-                    <button type="button" role="tab" aria-selected="false">Deferred</button>
-                    <button type="button" role="tab" aria-selected="false">Hold</button>
-                </div>
-                <span class="small">ARIA small tabs · panels · ← → Home End</span>
-            </div>
-            <div class="row">
-                <nav class="tabs" aria-label="Quota filter">
-                    <a href="?q=all">All</a>
-                    <a href="?q=warn" aria-current="page">Near limit</a>
-                    <a href="?q=err">Over 95%</a>
-                </nav>
-                <span class="small">links · server pages</span>
-            </div>
-            <div class="row">
-                <nav class="tabs small" aria-label="Quota filter">
-                    <a href="?q=all">All</a>
-                    <a href="?q=warn" aria-current="page">Near limit</a>
-                    <a href="?q=err">Over 95%</a>
-                </nav>
-                <span class="small">links · Small variant</span>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <section class="panel">
-        <header>
-            <span class="label">06</span>
-            <h3>Toggle buttons</h3>
-            <span class="note">aria-pressed · a radio or a checkbox in label.button</span>
-        </header>
-        <div class="stack">
-            <div class="scroll">
-                <table>
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Primary</th>
-                            <th>Secondary</th>
-                            <th>Ghost</th>
-                            <th>Checkbox</th>
-                            <th>Radio</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <th>Off</th>
-                            <td><button type="button" aria-pressed="false"><i class="icon i-mail"></i>Mail</button></td>
-                            <td><button type="button" class="alt" aria-pressed="false">Mail</button></td>
-                            <td><button type="button" class="ghost" aria-pressed="false">Mail</button></td>
-                            <td><label class="button"><input type="checkbox" name="state-4">SPF</label></td>
-                            <td><label class="button alt"><input type="radio" name="state-5">5 min</label></td>
-                        </tr>
-                        <tr>
-                            <th>Off · hover</th>
-                            <td><button type="button" class="hover" aria-pressed="false"><i class="icon i-mail"></i>Mail</button></td>
-                            <td><button type="button" class="alt hover" aria-pressed="false">Mail</button></td>
-                            <td><button type="button" class="ghost hover" aria-pressed="false">Mail</button></td>
-                            <td><label class="button hover"><input type="checkbox" name="state-9">SPF</label></td>
-                            <td><label class="button alt hover"><input type="radio" name="state-10">5 min</label></td>
-                        </tr>
-                        <tr>
-                            <th>On</th>
-                            <td><button type="button" aria-pressed="true"><i class="icon i-mail"></i>Mail</button></td>
-                            <td><button type="button" class="alt" aria-pressed="true">Mail</button></td>
-                            <td><button type="button" class="ghost" aria-pressed="true">Mail</button></td>
-                            <td><label class="button"><input type="checkbox" name="state-14" checked>SPF</label></td>
-                            <td><label class="button alt"><input type="radio" name="state-15" checked>5 min</label></td>
-                        </tr>
-                        <tr>
-                            <th>On · hover</th>
-                            <td><button type="button" class="hover" aria-pressed="true"><i class="icon i-mail"></i>Mail</button></td>
-                            <td><button type="button" class="alt hover" aria-pressed="true">Mail</button></td>
-                            <td><button type="button" class="ghost hover" aria-pressed="true">Mail</button></td>
-                            <td><label class="button hover"><input type="checkbox" name="state-19" checked>SPF</label></td>
-                            <td><label class="button alt hover"><input type="radio" name="state-20" checked>5 min</label></td>
-                        </tr>
-                        <tr>
-                            <th>Disabled</th>
-                            <td><button type="button" aria-pressed="true" disabled><i class="icon i-mail"></i>Mail</button></td>
-                            <td><button type="button" class="alt" aria-pressed="true" disabled>Mail</button></td>
-                            <td><button type="button" class="ghost" aria-pressed="true" disabled>Mail</button></td>
-                            <td><label class="button"><input type="checkbox" name="state-24" checked disabled>SPF</label></td>
-                            <td><label class="button alt"><input type="radio" name="state-25" checked disabled>5 min</label></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="row">
-                <div class="row" role="group" aria-label="Reply by">
-                    <button type="button" aria-pressed="true"><i class="icon i-mail"></i>Mail</button>
-                    <button type="button" aria-pressed="false"><i class="icon i-phone"></i>Phone</button>
-                    <button type="button" aria-pressed="false" class="hover"><i class="icon i-send"></i>Chat</button>
-                </div>
-                <span class="small">toggle buttons · aria-pressed · hover</span>
-            </div>
-            <div class="row">
-                <div class="row" role="group" aria-label="Reply by">
-                    <button type="button" class="alt" aria-pressed="false" title="Mail"><i class="icon i-mail"></i></button>
-                    <button type="button" class="alt" aria-pressed="true" title="Phone"><i class="icon i-phone"></i></button>
-                    <button type="button" class="alt" aria-pressed="false" title="Chat"><i class="icon i-send"></i></button>
-                </div>
-                <div class="row" role="group" aria-label="Queue order">
-                    <button type="button" class="ghost" aria-pressed="true">Oldest</button>
-                    <button type="button" class="ghost hover" aria-pressed="false">Largest</button>
-                </div>
-                <span class="small">secondary · ghost</span>
-            </div>
-            <div class="row">
-                <div class="row" role="radiogroup" aria-label="Retry after">
-                    <label class="button alt"><input type="radio" name="retry" value="5" checked required>5 min</label>
-                    <label class="button alt"><input type="radio" name="retry" value="15" required>15 min</label>
-                    <label class="button alt hover"><input type="radio" name="retry" value="60" required>1 hour</label>
-                    <label class="button alt"><input type="radio" name="retry" value="0" disabled>Never</label>
-                </div>
-                <span class="small">radios in label.button · hover · disabled</span>
-            </div>
-            <div class="row">
-                <div class="row" role="group" aria-label="Checks">
-                    <label class="button"><input type="checkbox" checked>SPF</label>
-                    <label class="button"><input type="checkbox">DKIM</label>
-                    <label class="button focus"><input type="checkbox">DMARC</label>
-                    <label class="button"><input type="checkbox" checked disabled>ARC</label>
-                </div>
-                <span class="small">checkboxes · focus · no script</span>
-            </div>
-            <div class="row">
-                <button hidden>Hidden button</button>
-                <label class="button" hidden>Hidden label</label>
-                <span class="small">a button and a label with hidden sit here · nothing shows</span>
-            </div>
-        </div>
-    </section>
-
-    <section class="panel">
-        <header>
-            <span class="label">07</span>
-            <h3>Inputs</h3>
-            <span class="note">default · focus · error · disabled · date · time</span>
-        </header>
-        <div class="tiles" style="--tile-width: 240px;">
-            <fieldset>
-                <label>
-                    Hostname
-                    <input value="mx1.example.net">
-                    <small>FQDN used in SMTP banner</small>
-                </label>
-            </fieldset>
-            <fieldset>
-                <label>
-                    Relay transport
-                    <select>
-                        <option>smtp:[relay.example]</option>
-                    </select>
-                    <small>Default for outbound mail</small>
-                </label>
-            </fieldset>
-            <fieldset>
-                <label>
-                    Search
-                    <input type="search" placeholder="Queue ID, sender, IP…">
-                </label>
-            </fieldset>
-            <fieldset>
-                <label>
-                    Focused
-                    <input value="postmaster@example.com" class="focus">
-                    <small>Primary admin address</small>
-                </label>
-            </fieldset>
-            <fieldset>
-                <label>
-                    Domain
-                    <input value="example..com" class="error">
-                    <small class="error"><i class="icon i-error"></i>Invalid domain name</small>
-                </label>
-            </fieldset>
-            <fieldset>
-                <label>
-                    Purge after
-                    <input type="date" value="2026-12-01">
-                    <small>The browser's picker, the kit's icon</small>
-                </label>
-            </fieldset>
-            <fieldset>
-                <label>
-                    Nightly run
-                    <input type="time" value="03:30">
-                    <small>Server time</small>
-                </label>
-            </fieldset>
-            <fieldset>
-                <label>
-                    Disabled
-                    <input value="/var/spool/postfix" disabled>
-                    <small>Set in main.cf</small>
-                </label>
-            </fieldset>
-        </div>
-    </section>
-
-    <section class="panel">
-        <header>
-            <span class="label">08</span>
-            <h3>Stat tiles</h3>
-            <span class="note">Dashboard with sparks</span>
-        </header>
-        <div class="panel stripe">
-            <div>
-                <span class="note">Queued</span>
-                <div class="spark signature" aria-label="Queued, rising" data-values="45,50,43,59,69,65,79,75,84,90,81,100"></div>
-                <strong class="hero">128</strong>
-                <div class="small row"><code class="delta info">+12</code>23 active · 4 on hold</div>
-            </div>
-            <div>
-                <span class="note">Delivered · 24h</span>
-                <div class="spark success" aria-label="Delivered, rising" data-values="40,45,44,55,62,70,66,77,85,81,91,100"></div>
-                <strong class="hero">48,213</strong>
-                <div class="small row"><code class="success">+6.2%</code>vs 45,402 yesterday</div>
-            </div>
-            <div>
-                <span class="note">Rejected spam</span>
-                <div class="spark priority" aria-label="Rejected spam, rising" data-values="60,66,63,75,72,84,78,81,90,87,93,100"></div>
-                <strong class="hero">2,941</strong>
-                <div class="small row"><code class="success">+14%</code>81% via RBL checks</div>
-            </div>
-            <div>
-                <span class="note">Deferred</span>
-                <div class="spark warning" aria-label="Deferred, falling" data-values="96,93,100,88,80,83,75,70,74,64,67,59"></div>
-                <strong class="hero">37</strong>
-                <div class="small row"><code class="warning">−8</code>oldest 2h 03m</div>
-            </div>
-            <div>
-                <span class="note">Bounced</span>
-                <div class="spark danger" aria-label="Bounced, rising" data-values="60,66,63,75,72,84,78,81,90,87,93,100"></div>
-                <strong class="hero">112</strong>
-                <div class="small row"><code class="danger">+3</code>0.23% bounce rate</div>
-            </div>
-        </div>
-    </section>
-
-    <section class="panel" style="--cols: 4;">
-        <header>
-            <span class="label">09</span>
-            <h3>Tags and progress bars</h3>
-            <span class="note">queue + account states</span>
-        </header>
-        <div class="stack">
-            <div class="row">
-                <span class="badge success">Delivered</span>
-                <span class="badge warning">Deferred</span>
-                <span class="badge danger">Bounced</span>
-                <span class="badge signature">Active</span>
-                <span class="badge info">Queued</span>
-                <span class="badge priority">On hold</span>
-                <span class="badge priority">Suspended</span>
-            </div>
-            <div class="well stack tight">
-                <div class="row between">
-                    <small>Queue composition</small>
-                    <small>128 msgs</small>
-                </div>
-                <div class="share">
-                    <i class="signature" style="--value: 17.97"></i>
-                    <i class="warning" style="--value: 28.91"></i>
-                    <i class="priority" style="--value: 3.12"></i>
-                    <i class="info" style="--value: 50.00"></i>
-                </div>
-            </div>
-            <div class="well stack">
-                <div class="stack tight">
-                    <div class="row between">
-                        <small>Quota · default</small>
-                        <small>37%</small>
-                    </div>
-                    <div role="meter" aria-label="Quota · default" aria-valuenow="37" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-                <div class="stack tight">
-                    <div class="row between">
-                        <small>Quota · .ok</small>
-                        <small>52%</small>
-                    </div>
-                    <div class="success" role="meter" aria-label="Quota · .ok" aria-valuenow="52" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-                <div class="stack tight">
-                    <div class="row between">
-                        <small>Quota · warning</small>
-                        <small>84%</small>
-                    </div>
-                    <div class="warning" role="meter" aria-label="Quota · .warn" aria-valuenow="84" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-                <div class="stack tight">
-                    <div class="row between">
-                        <small>Quota · .err</small>
-                        <small>97%</small>
-                    </div>
-                    <div class="danger" role="meter" aria-label="Quota · .err" aria-valuenow="97" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-            </div>
-            <div class="row">
-                <span class="tag">TLS 1.3</span>
-                <span class="tag">DKIM pass</span>
-                <span class="tag">SPF pass</span>
-                <span class="tag danger">DKIM fail</span>
-                <span class="tag signature">128</span>
-            </div>
-        </div>
-    </section>
-
-    <section class="panel" style="--cols: 4;">
-        <header>
-            <span class="label">10</span>
-            <h3>Card</h3>
-            <span class="note">composed recipe</span>
-        </header>
-        <div class="card">
-            <div>
-                <header>
-                    <div class="box"><i class="icon i-globe"></i></div>
-                    <div class="stack">
-                        <strong>example.com</strong>
-                        <small>MX mx1.example.net</small>
-                    </div>
-                    <span class="badge signature">Active</span>
-                </header>
-                <div class="cols">
-                    <div class="stack tight">
-                        <span class="note">Mailboxes</span>
-                        <h2>42</h2>
-                    </div>
-                    <div class="stack tight">
-                        <span class="note">Aliases</span>
-                        <h2>17</h2>
-                    </div>
-                    <div class="stack tight">
-                        <span class="note">24h volume</span>
-                        <h2>6,812</h2>
-                    </div>
-                </div>
-            </div>
-            <div class="stack tight">
-                <div class="row between">
-                    <small>Storage</small>
-                    <small>18.4 / 50 GB</small>
-                </div>
-                <div role="meter" aria-label="Storage" aria-valuenow="37" aria-valuemin="0" aria-valuemax="100"></div>
-            </div>
-            <div class="row">
-                <span class="tag">SPF</span>
-                <span class="tag">DKIM</span>
-                <span class="tag">DMARC p=reject</span>
-            </div>
-        </div>
-    </section>
-
-    <section class="panel" style="--cols: 4;">
-        <header>
-            <span class="label">11</span>
-            <h3>Sidebar nav</h3>
-            <span class="note">active · hover · counts</span>
-        </header>
-        <div class="well stack">
-            <nav>
-                <span class="note">Mail system</span>
-                <ul>
-                    <li><a href="#"><small>01</small>Dashboard</a></li>
-                    <li><a href="#" aria-current="page"><small>02</small>Mail Queue<small>128</small></a></li>
-                    <li><a href="#"><small>03</small>Domains<small>14</small></a></li>
-                    <li><a href="#"><small>04</small>Mailboxes<small>312</small></a></li>
-                    <li><a href="#"><small>05</small>Aliases<small>87</small></a></li>
-                    <li><a href="#"><small>06</small>Logs</a></li>
-                </ul>
-            </nav>
-            <nav>
-                <span class="note">Config</span>
-                <ul>
-                    <li><a href="#"><small>07</small>Settings</a></li>
-                </ul>
-            </nav>
-        </div>
-    </section>
-
-    <section class="panel" style="--cols: 6">
-        <header>
-            <span class="label">12</span>
-            <h3>Alerts</h3>
-            <span class="note">.alert · ghost</span>
-        </header>
-        <div class="stack">
-            <div class="alert info" role="status">
-                <i class="icon i-info"></i>
-                <div class="stack">
-                    <strong>Configuration reloaded</strong>
-                    <small>postfix reload completed — 3 parameters changed in main.cf.</small>
-                </div>
-                <button class="ghost small">View diff</button>
-            </div>
-            <div class="alert success" role="status">
-                <i class="icon i-success"></i>
-                <div class="stack">
-                    <strong>Queue flushed</strong>
-                    <small>23 deferred messages were handed back to the smtp transport.</small>
-                </div>
-                <button class="ghost small" title="Dismiss"><i class="icon i-x"></i></button>
-            </div>
-            <div class="alert warning" role="alert">
-                <i class="icon i-warn"></i>
-                <div class="stack">
-                    <strong>Deferrals rising</strong>
-                    <small>37 messages have been deferred for over 1 hour to example.com.</small>
-                </div>
-                <button class="ghost small">Inspect</button>
-            </div>
-            <div class="alert danger" role="alert">
-                <i class="icon i-error"></i>
-                <div class="stack">
-                    <strong>Certificate expiring</strong>
-                    <small>TLS certificate for mx1.example.net expires in 3 days.</small>
-                </div>
-                <button class="ghost small">Renew</button>
-            </div>
-            <div class="alert danger" role="alert">
-                <i class="icon i-error"></i>
-                <div class="stack">
-                    <strong>Not saved</strong>
-                    <ul class="small">
-                        <li>The domain name has two dots in a row.</li>
-                        <li>The relay host does not answer on port 25.</li>
+        <section class="panel" id="forms">
+            <header>
+                <span class="label">04</span>
+                <h2>Relay settings</h2>
+                <span class="note">fields · combobox · choices</span>
+            </header>
+            <form class="stack" action="#forms" onsubmit="event.preventDefault()">
+                <fieldset class="tiles" style="--tile-width: 240px">
+                    <label>
+                        Hostname
+                        <input value="mx1.example.net">
+                        <small>FQDN used in the SMTP banner</small>
+                    </label>
+                    <label>
+                        Relay transport
+                        <input role="combobox" aria-controls="transports" aria-expanded="false" aria-autocomplete="list" autocomplete="off" placeholder="smtp, lmtp…">
+                        <small>Combobox · type to filter</small>
+                    </label>
+                    <ul role="listbox" id="transports" aria-label="Relay transport" popover="manual">
+                        <li role="presentation">Outbound</li>
+                        <li role="option" id="transport-smtp" data-value="smtp"><span>smtp</span><small>default</small></li>
+                        <li role="option" id="transport-relay"><span>smtp:[relay.example]</span></li>
+                        <li role="option" id="transport-backup"><span>smtp:[backup.example]</span></li>
+                        <li role="presentation">Local</li>
+                        <li role="option" id="transport-lmtp"><span>lmtp:unix:private/dovecot</span></li>
+                        <li role="option" id="transport-local"><span>local</span></li>
                     </ul>
+                    <label>
+                        Time zone
+                        <input role="combobox" aria-controls="zones" aria-expanded="false" aria-autocomplete="list" autocomplete="off" spellcheck="false" placeholder="City or abbreviation…" value="Europe / Berlin">
+                        <input type="hidden" name="zone" value="Europe/Berlin">
+                        <small>Choice · posts the id · try cet</small>
+                    </label>
+                    <ul role="listbox" id="zones" aria-label="Time zone" popover="manual" data-empty="No matches">
+                        <li role="presentation">Africa</li>
+                        <li role="option" id="tz-africa-cairo" data-value="Africa/Cairo" data-label="Africa / Cairo" data-find="eet egypt"><span>Cairo</span><small>+02:00</small></li>
+                        <li role="option" id="tz-africa-johannesburg" data-value="Africa/Johannesburg" data-label="Africa / Johannesburg" data-find="sast south africa"><span>Johannesburg</span><small>+02:00</small></li>
+                        <li role="option" id="tz-africa-lagos" data-value="Africa/Lagos" data-label="Africa / Lagos" data-find="wat nigeria"><span>Lagos</span><small>+01:00</small></li>
+                        <li role="option" id="tz-africa-nairobi" data-value="Africa/Nairobi" data-label="Africa / Nairobi" data-find="eat kenya"><span>Nairobi</span><small>+03:00</small></li>
+                        <li role="presentation">America</li>
+                        <li role="option" id="tz-america-anchorage" data-value="America/Anchorage" data-label="America / Anchorage" data-find="akst alaska"><span>Anchorage</span><small>−09:00</small></li>
+                        <li role="option" id="tz-america-chicago" data-value="America/Chicago" data-label="America / Chicago" data-find="cst usa"><span>Chicago</span><small>−06:00</small></li>
+                        <li role="option" id="tz-america-denver" data-value="America/Denver" data-label="America / Denver" data-find="mst usa"><span>Denver</span><small>−07:00</small></li>
+                        <li role="option" id="tz-america-los-angeles" data-value="America/Los_Angeles" data-label="America / Los Angeles" data-find="pst usa"><span>Los Angeles</span><small>−08:00</small></li>
+                        <li role="option" id="tz-america-mexico-city" data-value="America/Mexico_City" data-label="America / Mexico City" data-find="cst mexico"><span>Mexico City</span><small>−06:00</small></li>
+                        <li role="option" id="tz-america-new-york" data-value="America/New_York" data-label="America / New York" data-find="est usa"><span>New York</span><small>−05:00</small></li>
+                        <li role="option" id="tz-america-sao-paulo" data-value="America/Sao_Paulo" data-label="America / São Paulo" data-find="brt brazil sao paulo"><span>São Paulo</span><small>−03:00</small></li>
+                        <li role="option" id="tz-america-toronto" data-value="America/Toronto" data-label="America / Toronto" data-find="est canada"><span>Toronto</span><small>−05:00</small></li>
+                        <li role="presentation">Antarctica</li>
+                        <li role="option" id="tz-antarctica-mcmurdo" data-value="Antarctica/McMurdo" data-label="Antarctica / McMurdo" data-find="nzdt"><span>McMurdo</span><small>+13:00</small></li>
+                        <li role="option" id="tz-antarctica-troll" data-value="Antarctica/Troll" data-label="Antarctica / Troll" data-find="norway"><span>Troll</span><small>+00:00</small></li>
+                        <li role="presentation">Asia</li>
+                        <li role="option" id="tz-asia-bangkok" data-value="Asia/Bangkok" data-label="Asia / Bangkok" data-find="ict thailand"><span>Bangkok</span><small>+07:00</small></li>
+                        <li role="option" id="tz-asia-dubai" data-value="Asia/Dubai" data-label="Asia / Dubai" data-find="gst emirates"><span>Dubai</span><small>+04:00</small></li>
+                        <li role="option" id="tz-asia-hong-kong" data-value="Asia/Hong_Kong" data-label="Asia / Hong Kong" data-find="hkt"><span>Hong Kong</span><small>+08:00</small></li>
+                        <li role="option" id="tz-asia-jakarta" data-value="Asia/Jakarta" data-label="Asia / Jakarta" data-find="wib indonesia"><span>Jakarta</span><small>+07:00</small></li>
+                        <li role="option" id="tz-asia-kolkata" data-value="Asia/Kolkata" data-label="Asia / Kolkata" data-find="ist india"><span>Kolkata</span><small>+05:30</small></li>
+                        <li role="option" id="tz-asia-seoul" data-value="Asia/Seoul" data-label="Asia / Seoul" data-find="kst korea"><span>Seoul</span><small>+09:00</small></li>
+                        <li role="option" id="tz-asia-shanghai" data-value="Asia/Shanghai" data-label="Asia / Shanghai" data-find="cst china"><span>Shanghai</span><small>+08:00</small></li>
+                        <li role="option" id="tz-asia-singapore" data-value="Asia/Singapore" data-label="Asia / Singapore" data-find="sgt"><span>Singapore</span><small>+08:00</small></li>
+                        <li role="option" id="tz-asia-tokyo" data-value="Asia/Tokyo" data-label="Asia / Tokyo" data-find="jst japan"><span>Tokyo</span><small>+09:00</small></li>
+                        <li role="presentation">Atlantic</li>
+                        <li role="option" id="tz-atlantic-azores" data-value="Atlantic/Azores" data-label="Atlantic / Azores" data-find="azot portugal"><span>Azores</span><small>−01:00</small></li>
+                        <li role="option" id="tz-atlantic-reykjavik" data-value="Atlantic/Reykjavik" data-label="Atlantic / Reykjavik" data-find="gmt iceland"><span>Reykjavik</span><small>+00:00</small></li>
+                        <li role="presentation">Australia</li>
+                        <li role="option" id="tz-australia-adelaide" data-value="Australia/Adelaide" data-label="Australia / Adelaide" data-find="acdt"><span>Adelaide</span><small>+10:30</small></li>
+                        <li role="option" id="tz-australia-brisbane" data-value="Australia/Brisbane" data-label="Australia / Brisbane" data-find="aest"><span>Brisbane</span><small>+10:00</small></li>
+                        <li role="option" id="tz-australia-perth" data-value="Australia/Perth" data-label="Australia / Perth" data-find="awst"><span>Perth</span><small>+08:00</small></li>
+                        <li role="option" id="tz-australia-sydney" data-value="Australia/Sydney" data-label="Australia / Sydney" data-find="aedt"><span>Sydney</span><small>+11:00</small></li>
+                        <li role="presentation">Europe</li>
+                        <li role="option" id="tz-europe-athens" data-value="Europe/Athens" data-label="Europe / Athens" data-find="eet greece"><span>Athens</span><small>+02:00</small></li>
+                        <li role="option" id="tz-europe-berlin" data-value="Europe/Berlin" data-label="Europe / Berlin" data-find="cet germany" aria-current="true"><span>Berlin</span><small>+01:00</small></li>
+                        <li role="option" id="tz-europe-kyiv" data-value="Europe/Kyiv" data-label="Europe / Kyiv" data-find="eet ukraine kiev"><span>Kyiv</span><small>+02:00</small></li>
+                        <li role="option" id="tz-europe-lisbon" data-value="Europe/Lisbon" data-label="Europe / Lisbon" data-find="wet portugal"><span>Lisbon</span><small>+00:00</small></li>
+                        <li role="option" id="tz-europe-london" data-value="Europe/London" data-label="Europe / London" data-find="gmt uk britain"><span>London</span><small>+00:00</small></li>
+                        <li role="option" id="tz-europe-madrid" data-value="Europe/Madrid" data-label="Europe / Madrid" data-find="cet spain"><span>Madrid</span><small>+01:00</small></li>
+                        <li role="option" id="tz-europe-moscow" data-value="Europe/Moscow" data-label="Europe / Moscow" data-find="msk russia"><span>Moscow</span><small>+03:00</small></li>
+                        <li role="option" id="tz-europe-paris" data-value="Europe/Paris" data-label="Europe / Paris" data-find="cet france"><span>Paris</span><small>+01:00</small></li>
+                        <li role="option" id="tz-europe-rome" data-value="Europe/Rome" data-label="Europe / Rome" data-find="cet italy"><span>Rome</span><small>+01:00</small></li>
+                        <li role="option" id="tz-europe-warsaw" data-value="Europe/Warsaw" data-label="Europe / Warsaw" data-find="cet poland"><span>Warsaw</span><small>+01:00</small></li>
+                        <li role="presentation">Indian</li>
+                        <li role="option" id="tz-indian-maldives" data-value="Indian/Maldives" data-label="Indian / Maldives" data-find="mvt"><span>Maldives</span><small>+05:00</small></li>
+                        <li role="option" id="tz-indian-mauritius" data-value="Indian/Mauritius" data-label="Indian / Mauritius" data-find="mut"><span>Mauritius</span><small>+04:00</small></li>
+                        <li role="presentation">Pacific</li>
+                        <li role="option" id="tz-pacific-auckland" data-value="Pacific/Auckland" data-label="Pacific / Auckland" data-find="nzdt new zealand"><span>Auckland</span><small>+13:00</small></li>
+                        <li role="option" id="tz-pacific-fiji" data-value="Pacific/Fiji" data-label="Pacific / Fiji" data-find="fjt"><span>Fiji</span><small>+12:00</small></li>
+                        <li role="option" id="tz-pacific-honolulu" data-value="Pacific/Honolulu" data-label="Pacific / Honolulu" data-find="hst hawaii"><span>Honolulu</span><small>−10:00</small></li>
+                        <li role="presentation">Universal</li>
+                        <li role="option" id="tz-utc" data-value="UTC" data-label="UTC" data-find="gmt zulu"><span>UTC</span><small>+00:00</small></li>
+                    </ul>
+                    <label>
+                        Queue order
+                        <input role="combobox" aria-controls="orders" aria-expanded="false" value="Oldest first" inputmode="none" required>
+                        <small>Dropdown · inputmode=none</small>
+                    </label>
+                    <ul role="listbox" id="orders" aria-label="Queue order" popover="manual">
+                        <li role="option" id="order-oldest" aria-current="true">Oldest first</li>
+                        <li role="option" id="order-newest">Newest first</li>
+                        <li role="option" id="order-largest">Largest first</li>
+                    </ul>
+                    <label>
+                        Delivery
+                        <select>
+                            <option>Immediate</option>
+                            <option>Batched, every 5 min</option>
+                            <option>Held for review</option>
+                        </select>
+                        <small>A native select</small>
+                    </label>
+                    <label>
+                        Search
+                        <input type="search" placeholder="Queue ID, sender, IP…">
+                    </label>
+                    <label>
+                        Purge after
+                        <input type="date" value="2026-12-01">
+                        <small>The browser's picker, the kit's icon</small>
+                    </label>
+                    <label>
+                        Nightly run
+                        <input type="time" value="03:30">
+                        <small>Server time</small>
+                    </label>
+                    <label>
+                        Domain
+                        <input value="example..com" aria-invalid="true">
+                        <small><i class="icon i-error"></i>Two dots in a row</small>
+                    </label>
+                    <label>
+                        Postmaster
+                        <input value="postmaster@example.com" class="focus">
+                        <small>Focused · .focus</small>
+                    </label>
+                    <label>
+                        Spool
+                        <input value="/var/spool/postfix" disabled>
+                        <small>Set in main.cf</small>
+                    </label>
+                    <label>
+                        Banner
+                        <textarea rows="2">mx1.example.net ESMTP ready</textarea>
+                    </label>
+                </fieldset>
+                <div class="tiles" style="--tile-width: 200px">
+                    <div class="stack tight" role="group" aria-labelledby="checks-label">
+                        <span class="label" id="checks-label">Checks</span>
+                        <label><input type="checkbox" checked>SPF</label>
+                        <label><input type="checkbox" class="focus" checked>DKIM <small>· focus</small></label>
+                        <label><input type="checkbox" id="dmarc">DMARC <small>· mixed</small></label>
+                        <label><input type="checkbox" disabled>ARC</label>
+                    </div>
+                    <div class="stack tight" role="radiogroup" aria-labelledby="tls-label">
+                        <span class="label" id="tls-label">TLS</span>
+                        <label><input type="radio" name="tls" checked>Required</label>
+                        <label><input type="radio" name="tls">Opportunistic</label>
+                        <label><input type="radio" name="tls" disabled>None</label>
+                    </div>
+                    <div class="stack">
+                        <label>
+                            <input type="checkbox" class="switch" checked>
+                            <span><b>Postscreen</b><small>Pre-greet tests on</small></span>
+                        </label>
+                        <label>
+                            <input type="checkbox" class="switch">
+                            <span><b>Greylisting</b><small>Off</small></span>
+                        </label>
+                        <label>
+                            <input type="checkbox" class="switch" disabled>
+                            <span><b>Soft bounce</b><small>Locked by policy</small></span>
+                        </label>
+                    </div>
+                    <div class="stack tight">
+                        <span class="label">An open list, typed tp</span>
+                        <ul role="listbox" aria-label="Option states">
+                            <li role="presentation">Outbound</li>
+                            <li role="option"><span>sm<mark>tp</mark></span><small>rest</small></li>
+                            <li role="option" class="hover"><span>sm<mark>tp</mark>:[relay]</span><small>hover</small></li>
+                            <li role="option" aria-selected="true"><span>sm<mark>tp</mark>:[backup]</span><small>selected</small></li>
+                            <li role="option" aria-current="true"><span>lm<mark>tp</mark>:dovecot</span><small>current</small></li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-            <div class="well stack tight">
-                <span class="label">Ghost buttons · hover takes the tone</span>
-                <div class="tones">
-                    <button class="ghost info">Info</button>
-                    <button class="ghost signature">Signature</button>
-                    <button class="ghost success">Success</button>
-                    <button class="ghost priority">Priority</button>
-                    <button class="ghost warning">Warning</button>
-                    <button class="ghost danger">Danger</button>
-                </div>
-            </div>
-        </div>
-    </section>
+                <footer>
+                    <button type="reset" class="ghost">Reset</button>
+                    <button>Save</button>
+                </footer>
+            </form>
+        </section>
 
-    <section class="panel" style="--cols: 6">
-        <header>
-            <span class="label">13</span>
-            <h3>Table</h3>
-            <span class="note">domains + queue rows</span>
-        </header>
-        <div class="stack">
+        <section class="panel" id="tones">
+            <header>
+                <span class="label">05</span>
+                <h2>Tones</h2>
+                <span class="note">one class re-tones all it holds</span>
+            </header>
+            <div class="stack">
+                <div class="scroll">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Class on the row</th>
+                                <th>Badge</th>
+                                <th>Tag</th>
+                                <th>Ghost · hover</th>
+                                <th class="num">Figure</th>
+                                <th>Meter</th>
+                                <th>Spark</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>none</code></td>
+                                <td><span class="badge">Draft</span></td>
+                                <td><span class="tag">TLS 1.3</span></td>
+                                <td><button class="ghost small hover">Open</button></td>
+                                <td class="num"><code>128</code></td>
+                                <td><div role="meter" aria-label="No tone" aria-valuenow="37" aria-valuemin="0" aria-valuemax="100"></div></td>
+                                <td><div class="spark" data-values="45,50,43,59,69,65,79,75,84,90,81,100"></div></td>
+                            </tr>
+                            <tr class="info">
+                                <td><code>.info</code></td>
+                                <td><span class="badge">Queued</span></td>
+                                <td><span class="tag">Relay</span></td>
+                                <td><button class="ghost small hover">View</button></td>
+                                <td class="num"><code>+12</code></td>
+                                <td><div role="meter" aria-label="Info" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100"></div></td>
+                                <td><div class="spark" data-values="45,50,43,59,69,65,79,75,84,90,81,100"></div></td>
+                            </tr>
+                            <tr class="signature">
+                                <td><code>.signature</code></td>
+                                <td><span class="badge">Active</span></td>
+                                <td><span class="tag">Primary</span></td>
+                                <td><button class="ghost small hover">Open</button></td>
+                                <td class="num"><code>42</code></td>
+                                <td><div role="meter" aria-label="Signature" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div></td>
+                                <td><div class="spark" data-values="52,48,60,57,66,63,75,70,82,79,90,100"></div></td>
+                            </tr>
+                            <tr class="success">
+                                <td><code>.success</code></td>
+                                <td><span class="badge">Delivered</span></td>
+                                <td><span class="tag">DKIM pass</span></td>
+                                <td><button class="ghost small hover">Retry</button></td>
+                                <td class="num"><code>+6.2%</code></td>
+                                <td><div role="meter" aria-label="Success" aria-valuenow="52" aria-valuemin="0" aria-valuemax="100"></div></td>
+                                <td><div class="spark" data-values="40,45,44,55,62,70,66,77,85,81,91,100"></div></td>
+                            </tr>
+                            <tr class="priority">
+                                <td><code>.priority</code></td>
+                                <td><span class="badge">On hold</span></td>
+                                <td><span class="tag">VIP</span></td>
+                                <td><button class="ghost small hover">Release</button></td>
+                                <td class="num"><code>4</code></td>
+                                <td><div role="meter" aria-label="Priority" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div></td>
+                                <td><div class="spark" data-values="60,66,63,75,72,84,78,81,90,87,93,100"></div></td>
+                            </tr>
+                            <tr class="warning">
+                                <td><code>.warning</code></td>
+                                <td><span class="badge">Deferred</span></td>
+                                <td><span class="tag">Greylisted</span></td>
+                                <td><button class="ghost small hover">Inspect</button></td>
+                                <td class="num"><code>−8</code></td>
+                                <td><div role="meter" aria-label="Warning" aria-valuenow="84" aria-valuemin="0" aria-valuemax="100"></div></td>
+                                <td><div class="spark" data-values="96,93,100,88,80,83,75,70,74,64,67,59"></div></td>
+                            </tr>
+                            <tr class="danger">
+                                <td><code>.danger</code></td>
+                                <td><span class="badge">Bounced</span></td>
+                                <td><span class="tag">DKIM fail</span></td>
+                                <td><button class="ghost small hover">Delete</button></td>
+                                <td class="num"><code>+3</code></td>
+                                <td><div role="meter" aria-label="Danger" aria-valuenow="97" aria-valuemin="0" aria-valuemax="100"></div></td>
+                                <td><div class="spark" data-values="52,48,60,57,66,63,75,70,82,79,90,100"></div></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="stack tight">
+                    <div class="row between small"><span>Queue composition, <code>.share</code></span><span>128 messages</span></div>
+                    <div class="share">
+                        <i class="signature" style="--value: 23"></i>
+                        <i class="warning" style="--value: 37"></i>
+                        <i class="priority" style="--value: 4"></i>
+                        <i class="info" style="--value: 64"></i>
+                    </div>
+                    <div class="row small">
+                        <span class="row tight signature"><span class="swatch small" aria-hidden="true"></span>Active 23</span>
+                        <span class="row tight warning"><span class="swatch small" aria-hidden="true"></span>Deferred 37</span>
+                        <span class="row tight priority"><span class="swatch small" aria-hidden="true"></span>On hold 4</span>
+                        <span class="row tight info"><span class="swatch small" aria-hidden="true"></span>Queued 64</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="tiles" style="--tile-width: 480px">
+            <section class="panel" id="alerts">
+                <header>
+                    <span class="label">06</span>
+                    <h2>Alerts</h2>
+                    <span class="note">.alert · a tone</span>
+                </header>
+                <div class="stack">
+                    <div class="alert info" role="status">
+                        <i class="icon i-info"></i>
+                        <div class="stack">
+                            <strong>Configuration reloaded</strong>
+                            <small>postfix reload completed, 3 parameters changed in main.cf.</small>
+                        </div>
+                        <button class="ghost small">View diff</button>
+                    </div>
+                    <div class="alert success" role="status">
+                        <i class="icon i-success"></i>
+                        <div class="stack">
+                            <strong>Queue flushed</strong>
+                            <small>23 deferred messages were handed back to the smtp transport.</small>
+                        </div>
+                        <button class="ghost small" title="Dismiss"><i class="icon i-x"></i></button>
+                    </div>
+                    <div class="alert warning" role="alert">
+                        <i class="icon i-warn"></i>
+                        <div class="stack">
+                            <strong>Deferrals rising</strong>
+                            <small>37 messages to example.com have waited for over an hour.</small>
+                        </div>
+                        <button class="ghost small">Inspect</button>
+                    </div>
+                    <div class="alert danger" role="alert">
+                        <i class="icon i-error"></i>
+                        <div class="stack">
+                            <strong>Not saved</strong>
+                            <ul class="small">
+                                <li>The domain name has two dots in a row.</li>
+                                <li>The relay host does not answer on port 25.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel" id="navigation">
+                <header>
+                    <span class="label">07</span>
+                    <h2>Navigation</h2>
+                    <span class="note">crumbs · tabs · links</span>
+                </header>
+                <div class="stack">
+                    <nav class="crumbs" aria-label="Breadcrumb">
+                        <a href="#navigation">Domains</a>
+                        <a href="#navigation" class="hover">example.com</a>
+                        <span aria-current="page">Mailboxes</span>
+                    </nav>
+                    <div class="stack tight">
+                        <div role="tablist" aria-label="Queue">
+                            <button type="button" role="tab" id="qt-all" aria-controls="qp-all" aria-selected="true">All</button>
+                            <button type="button" role="tab" id="qt-active" aria-controls="qp-active" aria-selected="false">Active</button>
+                            <button type="button" role="tab" id="qt-deferred" aria-controls="qp-deferred" aria-selected="false" class="focus">Deferred</button>
+                            <button type="button" role="tab" id="qt-hold" aria-controls="qp-hold" aria-selected="false">Hold</button>
+                            <button type="button" role="tab" id="qt-incoming" aria-controls="qp-incoming" aria-selected="false">Incoming</button>
+                            <button type="button" role="tab" id="qt-maildrop" aria-controls="qp-maildrop" aria-selected="false">Maildrop</button>
+                            <button type="button" role="tab" id="qt-corrupt" aria-controls="qp-corrupt" aria-selected="false">Corrupt</button>
+                            <button type="button" role="tab" id="qt-bounce" aria-controls="qp-bounce" aria-selected="false">Bounce</button>
+                        </div>
+                        <p role="tabpanel" id="qp-all" aria-labelledby="qt-all">128 messages in all the queues.</p>
+                        <p role="tabpanel" id="qp-active" aria-labelledby="qt-active" hidden>23 messages being delivered now.</p>
+                        <p role="tabpanel" id="qp-deferred" aria-labelledby="qt-deferred" hidden>37 deferred, the oldest for 2h 03m.</p>
+                        <p role="tabpanel" id="qp-hold" aria-labelledby="qt-hold" hidden>4 messages on hold.</p>
+                        <p role="tabpanel" id="qp-incoming" aria-labelledby="qt-incoming" hidden>Nothing waiting to be taken in.</p>
+                        <p role="tabpanel" id="qp-maildrop" aria-labelledby="qt-maildrop" hidden>2 messages dropped by local senders.</p>
+                        <p role="tabpanel" id="qp-corrupt" aria-labelledby="qt-corrupt" hidden>No damaged files.</p>
+                        <p role="tabpanel" id="qp-bounce" aria-labelledby="qt-bounce" hidden>112 bounce notices to be sent.</p>
+                        <small>ARIA tabs, ← → Home End. When they don't fit they scroll sideways, the chosen one is brought into sight. <code>nav.tabs &gt; a</code> looks the same and is for links, the queue table below has one.</small>
+                    </div>
+                    <p>Bounces are kept for <a href="#navigation">five days</a> and then returned, see the <a href="#navigation" class="hover">queue manual</a> or <a href="#navigation" class="focus">ask the postmaster</a>. A link <a href="">already visited</a> stays the same.</p>
+                </div>
+            </section>
+        </div>
+
+        <section class="panel" id="queue">
+            <header>
+                <span class="label">08</span>
+                <h2>Queue</h2>
+                <nav class="tabs small" aria-label="Filter">
+                    <a href="#queue">All</a>
+                    <a href="#queue" aria-current="page">Deferred</a>
+                    <a href="#queue">Hold</a>
+                </nav>
+            </header>
             <div class="scroll">
                 <table>
                     <thead>
                         <tr>
-                            <th>Domain</th>
-                            <th class="num">Mailboxes</th>
-                            <th>DKIM</th>
+                            <th>Queue ID</th>
+                            <th>Sender → recipient</th>
+                            <th class="num">Size</th>
+                            <th class="num">Age</th>
                             <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td><strong>example.com</strong></td>
-                            <td class="num"><code>42</code></td>
-                            <td><span class="tag">DKIM pass</span></td>
+                            <td><code>4F2A91C3B7</code></td>
+                            <td><div class="sender"><span class="swatch" aria-hidden="true" style="--color: var(--color-category-5)"></span><span>billing@acme.example</span><small>→ ops@example.org</small></div></td>
+                            <td class="num">47.1 KB</td>
+                            <td class="num">2h 03m</td>
+                            <td><span class="badge warning">Deferred</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>9C1E07A2D4</code></td>
+                            <td><div class="sender"><span class="swatch" aria-hidden="true" style="--color: var(--color-category-7)"></span><span>noreply@shop.example</span><small>→ j.doe@example.com</small></div></td>
+                            <td class="num">12.8 KB</td>
+                            <td class="num">4m 20s</td>
+                            <td><span class="badge warning">Deferred</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>B83D5F10E2</code></td>
+                            <td><div class="sender"><span class="swatch" aria-hidden="true" style="--color: var(--color-category-1)"></span><span>alerts@monitor.example.net</span><small>→ oncall@example.org</small></div></td>
+                            <td class="num">3.2 KB</td>
+                            <td class="num">18s</td>
                             <td><span class="badge signature">Active</span></td>
                         </tr>
                         <tr>
-                            <td><strong>example.net</strong></td>
-                            <td class="num"><code>118</code></td>
-                            <td><span class="tag">DKIM pass</span></td>
-                            <td><span class="badge signature">Active</span></td>
+                            <td><code>D04B7E91A6</code></td>
+                            <td><div class="sender"><span class="swatch quiet" aria-hidden="true" style="--color: var(--color-category-9)"></span><span>news@legacy.example.org</span><small>→ list@example.com</small></div></td>
+                            <td class="num">220 KB</td>
+                            <td class="num">1d 6h</td>
+                            <td><span class="badge priority">On hold</span></td>
                         </tr>
                         <tr>
-                            <td><strong>shop.example</strong></td>
-                            <td class="num"><code>9</code></td>
-                            <td><span class="tag">DKIM pass</span></td>
-                            <td><span class="badge signature">Active</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>legacy.example.org</strong></td>
-                            <td class="num"><code>0</code></td>
-                            <td><span class="tag danger">DKIM fail</span></td>
-                            <td><span class="badge priority">Suspended</span></td>
+                            <td><code>E7720C3F58</code></td>
+                            <td><div class="sender"><span class="swatch" aria-hidden="true" style="--color: var(--color-category-5)"></span><span>invoice@acme.example</span><small>→ nobody@example.net</small></div></td>
+                            <td class="num">8.4 KB</td>
+                            <td class="num">3m</td>
+                            <td><span class="badge danger">Bounced</span></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <div class="stack tight">
-                <span class="note">Queue table · from admin screen</span>
-                <div class="scroll">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Queue ID</th>
-                                <th>Sender → Recipient</th>
-                                <th class="num">Size</th>
-                                <th class="num">Age</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><code>4F2A91C3B7</code></td>
-                                <td>
-                                    billing@acme.example
-                                    <small style="display: block">→ ops@example.org</small>
-                                </td>
-                                <td class="num"><code>47.1 KB</code></td>
-                                <td class="num"><code>12s</code></td>
-                                <td><span class="badge success">Delivered</span></td>
-                            </tr>
-                            <tr>
-                                <td><code>9C1E07A2D4</code></td>
-                                <td>
-                                    noreply@shop.example
-                                    <small style="display: block">→ j.doe@example.com</small>
-                                </td>
-                                <td class="num"><code>12.8 KB</code></td>
-                                <td class="num"><code>4m 20s</code></td>
-                                <td><span class="badge warning">Deferred</span></td>
-                            </tr>
-                            <tr>
-                                <td><code>B83D5F10E2</code></td>
-                                <td>
-                                    alerts@monitor.example.net
-                                    <small style="display: block">→ oncall@example.org</small>
-                                </td>
-                                <td class="num"><code>3.2 KB</code></td>
-                                <td class="num"><code>18s</code></td>
-                                <td><span class="badge signature">Active</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <section class="panel" style="--cols: 4;">
-        <header>
-            <span class="label">14</span>
-            <h3>Links</h3>
-            <span class="note">plain · crumbs · block</span>
-        </header>
-        <div class="stack">
-            <div class="row">
-                <nav class="crumbs" aria-label="Breadcrumb">
-                    <a href="#domains">Domains</a>
-                    <a href="#example" class="hover">example.com</a>
-                    <span aria-current="page">Mailboxes</span>
-                </nav>
-            </div>
-            <div class="row">
-                <a href="#default">Default</a>
-                <a href="#hover" class="hover">Hover</a>
-                <a href="">Visited</a>
-                <span class="small">plain links · the last one leads here</span>
-            </div>
-            <p>Bounces are kept for <a href="#policy">five days</a> and then returned to the sender, see the <a href="#manual">queue manual</a>.</p>
-            <a class="card tight" href="#card">
-                <strong>example.com</strong>
-                <small>A link around a whole card keeps the colors of the card.</small>
-            </a>
-        </div>
-    </section>
-
-    <section class="panel" style="--cols: 4;">
-        <header>
-            <span class="label">15</span>
-            <h3>Dialog</h3>
-            <span class="note">dialog · footer</span>
-        </header>
-        <div class="stack">
-            <div class="well demo">
-                <dialog open aria-label="Delete domain">
-                    <form method="dialog">
-                        <header><h3>Delete domain</h3></header>
-                        <p>legacy.example.org and its 9 mailboxes will be removed.</p>
-                        <footer>
-                            <button type="button" class="ghost">Cancel</button>
-                            <button class="danger">Delete</button>
-                        </footer>
-                    </form>
-                </dialog>
-            </div>
-            <div class="row">
-                <button type="button" class="alt" commandfor="delete-domain" command="show-modal">Open as modal</button>
-                <span class="small">commandfor · command · no script</span>
-            </div>
-            <dialog id="delete-domain" aria-label="Delete domain">
-                <form method="dialog">
-                    <header><h3>Delete domain</h3></header>
-                    <p>legacy.example.org and its 9 mailboxes will be removed.</p>
-                    <footer>
-                        <button type="button" class="ghost" commandfor="delete-domain" command="close">Cancel</button>
-                        <button class="danger">Delete</button>
-                    </footer>
-                </form>
-            </dialog>
-        </div>
-    </section>
-
-    <section class="panel" style="--cols: 4;">
-        <header>
-            <span class="label">16</span>
-            <h3>Combobox</h3>
-            <span class="note">combobox · choice · dropdown</span>
-        </header>
-        <div class="stack">
-            <fieldset>
-                <label>
-                    Relay transport
-                    <input role="combobox" aria-controls="transports" aria-expanded="false" aria-autocomplete="list" autocomplete="off" placeholder="smtp, lmtp…">
-                    <small>Combobox · type to filter</small>
-                </label>
-                <ul role="listbox" id="transports" aria-label="Relay transport" popover="manual">
-                    <li role="presentation">Outbound</li>
-                    <li role="option" id="transport-smtp" data-value="smtp"><span>smtp</span><small>default</small></li>
-                    <li role="option" id="transport-relay"><span>smtp:[relay.example]</span></li>
-                    <li role="option" id="transport-backup"><span>smtp:[backup.example]</span></li>
-                    <li role="presentation">Local</li>
-                    <li role="option" id="transport-lmtp"><span>lmtp:unix:private/dovecot</span></li>
-                    <li role="option" id="transport-local"><span>local</span></li>
-                </ul>
-                <label>
-                    Time zone
-                    <input role="combobox" aria-controls="zones" aria-expanded="false" aria-autocomplete="list" autocomplete="off" spellcheck="false" placeholder="City or abbreviation…" value="Europe / Berlin">
-                    <input type="hidden" name="zone" value="Europe/Berlin">
-                    <small>Choice · a hidden input posts the id · data-find, try cet</small>
-                </label>
-                <ul role="listbox" id="zones" aria-label="Time zone" popover="manual" data-empty="No matches">
-                    <li role="presentation">Africa</li>
-                    <li role="option" id="tz-africa-cairo" data-value="Africa/Cairo" data-label="Africa / Cairo" data-find="eet egypt"><span>Cairo</span><small>+02:00</small></li>
-                    <li role="option" id="tz-africa-johannesburg" data-value="Africa/Johannesburg" data-label="Africa / Johannesburg" data-find="sast south africa"><span>Johannesburg</span><small>+02:00</small></li>
-                    <li role="option" id="tz-africa-lagos" data-value="Africa/Lagos" data-label="Africa / Lagos" data-find="wat nigeria"><span>Lagos</span><small>+01:00</small></li>
-                    <li role="option" id="tz-africa-nairobi" data-value="Africa/Nairobi" data-label="Africa / Nairobi" data-find="eat kenya"><span>Nairobi</span><small>+03:00</small></li>
-                    <li role="presentation">America</li>
-                    <li role="option" id="tz-america-anchorage" data-value="America/Anchorage" data-label="America / Anchorage" data-find="akst alaska"><span>Anchorage</span><small>−09:00</small></li>
-                    <li role="option" id="tz-america-chicago" data-value="America/Chicago" data-label="America / Chicago" data-find="cst usa"><span>Chicago</span><small>−06:00</small></li>
-                    <li role="option" id="tz-america-denver" data-value="America/Denver" data-label="America / Denver" data-find="mst usa"><span>Denver</span><small>−07:00</small></li>
-                    <li role="option" id="tz-america-los-angeles" data-value="America/Los_Angeles" data-label="America / Los Angeles" data-find="pst usa"><span>Los Angeles</span><small>−08:00</small></li>
-                    <li role="option" id="tz-america-mexico-city" data-value="America/Mexico_City" data-label="America / Mexico City" data-find="cst mexico"><span>Mexico City</span><small>−06:00</small></li>
-                    <li role="option" id="tz-america-new-york" data-value="America/New_York" data-label="America / New York" data-find="est usa"><span>New York</span><small>−05:00</small></li>
-                    <li role="option" id="tz-america-sao-paulo" data-value="America/Sao_Paulo" data-label="America / São Paulo" data-find="brt brazil sao paulo"><span>São Paulo</span><small>−03:00</small></li>
-                    <li role="option" id="tz-america-toronto" data-value="America/Toronto" data-label="America / Toronto" data-find="est canada"><span>Toronto</span><small>−05:00</small></li>
-                    <li role="presentation">Antarctica</li>
-                    <li role="option" id="tz-antarctica-mcmurdo" data-value="Antarctica/McMurdo" data-label="Antarctica / McMurdo" data-find="nzdt"><span>McMurdo</span><small>+13:00</small></li>
-                    <li role="option" id="tz-antarctica-troll" data-value="Antarctica/Troll" data-label="Antarctica / Troll" data-find="norway"><span>Troll</span><small>+00:00</small></li>
-                    <li role="presentation">Asia</li>
-                    <li role="option" id="tz-asia-bangkok" data-value="Asia/Bangkok" data-label="Asia / Bangkok" data-find="ict thailand"><span>Bangkok</span><small>+07:00</small></li>
-                    <li role="option" id="tz-asia-dubai" data-value="Asia/Dubai" data-label="Asia / Dubai" data-find="gst emirates"><span>Dubai</span><small>+04:00</small></li>
-                    <li role="option" id="tz-asia-hong-kong" data-value="Asia/Hong_Kong" data-label="Asia / Hong Kong" data-find="hkt"><span>Hong Kong</span><small>+08:00</small></li>
-                    <li role="option" id="tz-asia-jakarta" data-value="Asia/Jakarta" data-label="Asia / Jakarta" data-find="wib indonesia"><span>Jakarta</span><small>+07:00</small></li>
-                    <li role="option" id="tz-asia-kolkata" data-value="Asia/Kolkata" data-label="Asia / Kolkata" data-find="ist india"><span>Kolkata</span><small>+05:30</small></li>
-                    <li role="option" id="tz-asia-seoul" data-value="Asia/Seoul" data-label="Asia / Seoul" data-find="kst korea"><span>Seoul</span><small>+09:00</small></li>
-                    <li role="option" id="tz-asia-shanghai" data-value="Asia/Shanghai" data-label="Asia / Shanghai" data-find="cst china"><span>Shanghai</span><small>+08:00</small></li>
-                    <li role="option" id="tz-asia-singapore" data-value="Asia/Singapore" data-label="Asia / Singapore" data-find="sgt"><span>Singapore</span><small>+08:00</small></li>
-                    <li role="option" id="tz-asia-tokyo" data-value="Asia/Tokyo" data-label="Asia / Tokyo" data-find="jst japan"><span>Tokyo</span><small>+09:00</small></li>
-                    <li role="presentation">Atlantic</li>
-                    <li role="option" id="tz-atlantic-azores" data-value="Atlantic/Azores" data-label="Atlantic / Azores" data-find="azot portugal"><span>Azores</span><small>−01:00</small></li>
-                    <li role="option" id="tz-atlantic-reykjavik" data-value="Atlantic/Reykjavik" data-label="Atlantic / Reykjavik" data-find="gmt iceland"><span>Reykjavik</span><small>+00:00</small></li>
-                    <li role="presentation">Australia</li>
-                    <li role="option" id="tz-australia-adelaide" data-value="Australia/Adelaide" data-label="Australia / Adelaide" data-find="acdt"><span>Adelaide</span><small>+10:30</small></li>
-                    <li role="option" id="tz-australia-brisbane" data-value="Australia/Brisbane" data-label="Australia / Brisbane" data-find="aest"><span>Brisbane</span><small>+10:00</small></li>
-                    <li role="option" id="tz-australia-perth" data-value="Australia/Perth" data-label="Australia / Perth" data-find="awst"><span>Perth</span><small>+08:00</small></li>
-                    <li role="option" id="tz-australia-sydney" data-value="Australia/Sydney" data-label="Australia / Sydney" data-find="aedt"><span>Sydney</span><small>+11:00</small></li>
-                    <li role="presentation">Europe</li>
-                    <li role="option" id="tz-europe-athens" data-value="Europe/Athens" data-label="Europe / Athens" data-find="eet greece"><span>Athens</span><small>+02:00</small></li>
-                    <li role="option" id="tz-europe-berlin" data-value="Europe/Berlin" data-label="Europe / Berlin" data-find="cet germany" aria-current="true"><span>Berlin</span><small>+01:00</small></li>
-                    <li role="option" id="tz-europe-kyiv" data-value="Europe/Kyiv" data-label="Europe / Kyiv" data-find="eet ukraine kiev"><span>Kyiv</span><small>+02:00</small></li>
-                    <li role="option" id="tz-europe-lisbon" data-value="Europe/Lisbon" data-label="Europe / Lisbon" data-find="wet portugal"><span>Lisbon</span><small>+00:00</small></li>
-                    <li role="option" id="tz-europe-london" data-value="Europe/London" data-label="Europe / London" data-find="gmt uk britain"><span>London</span><small>+00:00</small></li>
-                    <li role="option" id="tz-europe-madrid" data-value="Europe/Madrid" data-label="Europe / Madrid" data-find="cet spain"><span>Madrid</span><small>+01:00</small></li>
-                    <li role="option" id="tz-europe-moscow" data-value="Europe/Moscow" data-label="Europe / Moscow" data-find="msk russia"><span>Moscow</span><small>+03:00</small></li>
-                    <li role="option" id="tz-europe-paris" data-value="Europe/Paris" data-label="Europe / Paris" data-find="cet france"><span>Paris</span><small>+01:00</small></li>
-                    <li role="option" id="tz-europe-rome" data-value="Europe/Rome" data-label="Europe / Rome" data-find="cet italy"><span>Rome</span><small>+01:00</small></li>
-                    <li role="option" id="tz-europe-warsaw" data-value="Europe/Warsaw" data-label="Europe / Warsaw" data-find="cet poland"><span>Warsaw</span><small>+01:00</small></li>
-                    <li role="presentation">Indian</li>
-                    <li role="option" id="tz-indian-maldives" data-value="Indian/Maldives" data-label="Indian / Maldives" data-find="mvt"><span>Maldives</span><small>+05:00</small></li>
-                    <li role="option" id="tz-indian-mauritius" data-value="Indian/Mauritius" data-label="Indian / Mauritius" data-find="mut"><span>Mauritius</span><small>+04:00</small></li>
-                    <li role="presentation">Pacific</li>
-                    <li role="option" id="tz-pacific-auckland" data-value="Pacific/Auckland" data-label="Pacific / Auckland" data-find="nzdt new zealand"><span>Auckland</span><small>+13:00</small></li>
-                    <li role="option" id="tz-pacific-fiji" data-value="Pacific/Fiji" data-label="Pacific / Fiji" data-find="fjt"><span>Fiji</span><small>+12:00</small></li>
-                    <li role="option" id="tz-pacific-honolulu" data-value="Pacific/Honolulu" data-label="Pacific / Honolulu" data-find="hst hawaii"><span>Honolulu</span><small>−10:00</small></li>
-                    <li role="presentation">Universal</li>
-                    <li role="option" id="tz-utc" data-value="UTC" data-label="UTC" data-find="gmt zulu"><span>UTC</span><small>+00:00</small></li>
-                </ul>
-                <label>
-                    Queue order
-                    <input role="combobox" aria-controls="orders" aria-expanded="false" value="Oldest first" inputmode="none" required>
-                    <small>Dropdown · inputmode=none · required</small>
-                </label>
-                <ul role="listbox" id="orders" aria-label="Queue order" popover="manual">
-                    <li role="option" id="order-oldest" aria-current="true">Oldest first</li>
-                    <li role="option" id="order-newest">Newest first</li>
-                    <li role="option" id="order-largest">Largest first</li>
-                </ul>
-            </fieldset>
-            <ul role="listbox" aria-label="Rows">
-                <li role="presentation">Outbound</li>
-                <li role="option"><span>sm<mark>tp</mark></span><small>default</small></li>
-                <li role="option" class="hover"><span>sm<mark>tp</mark>:[relay.example]</span><small>hover</small></li>
-                <li role="option" aria-selected="true"><span>sm<mark>tp</mark>:[backup.example]</span><small>aria-selected</small></li>
-                <li role="option" aria-current="true"><span>lm<mark>tp</mark>:unix:private/dovecot</span><small>aria-current</small></li>
-            </ul>
-            <span class="small">the rows of an open list · typed tp</span>
-        </div>
-    </section>
-
-    <section class="panel">
-        <header>
-            <span class="label">17</span>
-            <h3>Keyboard focus</h3>
-            <span class="note">:focus-visible · .focus</span>
-        </header>
-        <div class="row" style="gap: var(--margin);">
-            <button class="focus">Flush</button>
-            <button class="focus alt">Requeue</button>
-            <button class="focus ghost">Cancel</button>
-            <button class="focus danger">Delete</button>
-            <a href="#focus" class="focus">Plain link</a>
-            <nav class="tabs" aria-label="Focus specimen">
-                <a href="#all">All</a>
-                <a href="#warn" class="focus" aria-current="page">Near limit</a>
-            </nav>
-            <nav class="crumbs" aria-label="Focus specimen">
-                <a href="#domains" class="focus">Domains</a>
-                <span aria-current="page">Mailboxes</span>
-            </nav>
-            <label><input type="checkbox" class="focus" checked>SPF</label>
-            <label><input type="radio" class="focus" checked>TLS required</label>
-            <label><input type="checkbox" class="switch focus" checked>Postscreen</label>
-        </div>
-    </section>
-    <section class="panel" style="--cols: 6;">
-        <header>
-            <span class="label">18</span>
-            <h3>Details <span class="tag">dl</span></h3>
-            <span class="note">long values · markers in cells</span>
-        </header>
-        <dl>
-            <dt class="note">Queue ID</dt>
-            <dd><code>4F2A91C3B7</code></dd>
-
-            <dt class="note">Status</dt>
-            <dd><span class="badge warning">Deferred</span></dd>
-
-            <dt class="note">Sender</dt>
-            <dd>billing-notifications.quarterly-statements@accounts.payments.acme.example</dd>
-
-            <dt class="note">Message-ID</dt>
-            <dd><code>&lt;20261117T091542.6f1c0a9e3b7d4c28a5e1f0b9d2c7e4a1@mx1.example.net&gt;</code></dd>
-
-            <dt class="note">Checks</dt>
-            <dd>
-                <div class="row">
-                    <span class="tag">SPF pass</span>
-                    <span class="tag danger">DKIM fail</span>
-                </div>
-            </dd>
-
-            <dt class="note">Reason</dt>
-            <dd>
-                <p>The receiving server said:</p>
-                <ul>
-                    <li>451 4.7.1 Greylisted, try again later</li>
-                    <li>421 4.4.2 Connection timed out</li>
-                </ul>
-            </dd>
-        </dl>
-    </section>
-
-    <section class="panel" style="--cols: 6;">
-        <header>
-            <span class="label">19</span>
-            <h3>Empty state</h3>
-            <span class="note">.empty</span>
-        </header>
-        <div class="well empty">
-            <i class="icon i-globe"></i>
-            <strong>No domains yet</strong>
-            <small>Mail for a domain is taken once it is added here.</small>
-            <button class="alt small"><i class="icon i-plus"></i>Add domain</button>
-        </div>
-    </section>
-
-    <section class="panel">
-        <header>
-            <span class="label">20</span>
-            <h3>Pages</h3>
-            <span class="note">.app · .center</span>
-        </header>
-        <div class="stack">
-            <div class="stack tight">
-                <div class="well demo">
-                    <div class="app">
-                        <aside>
-                            <strong class="row"><i class="icon i-mail"></i>hyacinth</strong>
-                            <nav aria-label="Specimen">
-                                <span class="note">Mail system</span>
-                                <ul>
-                                    <li><a href="#"><small>01</small>Dashboard</a></li>
-                                    <li><a href="#" aria-current="page"><small>02</small>Domains<small>14</small></a></li>
-                                    <li><a href="#"><small>03</small>Mailboxes<small>312</small></a></li>
-                                    <li><a href="#"><small>04</small>Aliases<small>87</small></a></li>
-                                    <li><a href="#"><small>05</small>Logs</a></li>
-                                </ul>
-                            </nav>
-                            <small>Postfix 3.9 · mx1.example.net</small>
-                        </aside>
-                        <div>
-                            <header>
-                                <nav class="crumbs" aria-label="Specimen breadcrumb">
-                                    <a href="#domains">Domains</a>
-                                    <span aria-current="page">example.com</span>
-                                </nav>
-                                <small>postmaster@example.com</small>
-                            </header>
-                            <section class="panel">
+        <div class="tiles" style="--tile-width: 480px">
+            <section class="panel" id="dialog">
+                <header>
+                    <span class="label">09</span>
+                    <h2>Dialog</h2>
+                    <span class="note">dialog · dl · footer</span>
+                </header>
+                <div class="stack">
+                    <div class="well demo">
+                        <dialog open aria-labelledby="message-title">
+                            <form method="dialog">
                                 <header>
-                                    <h3>Mailboxes</h3>
-                                    <button class="alt small"><i class="icon i-plus"></i>Add</button>
+                                    <h3 id="message-title">Message 4F2A91C3B7</h3>
+                                    <span class="badge warning">Deferred</span>
                                 </header>
-                                <div class="scroll">
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <th>Address</th>
-                                                <th class="num">Used</th>
-                                                <th>State</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>postmaster@example.com</td>
-                                                <td class="num">1.2 GB</td>
-                                                <td><span class="badge signature">Active</span></td>
-                                            </tr>
-                                            <tr>
-                                                <td>j.doe@example.com</td>
-                                                <td class="num">48.7 GB</td>
-                                                <td><span class="badge warning">Near limit</span></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </section>
-                        </div>
+                                <dl>
+                                    <dt class="note">Sender</dt>
+                                    <dd>billing-notifications.quarterly-statements@accounts.payments.acme.example</dd>
+
+                                    <dt class="note">Message-ID</dt>
+                                    <dd><code>&lt;20261117T091542.6f1c0a9e3b7d4c28a5e1f0b9d2c7e4a1@mx1.example.net&gt;</code></dd>
+
+                                    <dt class="note">Checks</dt>
+                                    <dd>
+                                        <div class="row">
+                                            <span class="tag">SPF pass</span>
+                                            <span class="tag danger">DKIM fail</span>
+                                        </div>
+                                    </dd>
+
+                                    <dt class="note">Reason</dt>
+                                    <dd>
+                                        <p>The receiving server said:</p>
+                                        <ul>
+                                            <li>451 4.7.1 Greylisted, try again later</li>
+                                            <li>421 4.4.2 Connection timed out</li>
+                                        </ul>
+                                    </dd>
+                                </dl>
+                                <footer>
+                                    <button type="button" class="ghost">Close</button>
+                                    <button type="button" class="alt"><i class="icon i-refresh"></i>Requeue</button>
+                                </footer>
+                            </form>
+                        </dialog>
                     </div>
-                </div>
-                <small><code>.app &gt; aside + main</code> · a navigation column beside the page, on a phone a row over it. Here the page is a <code>div</code>, the demo has its <code>main</code> already</small>
-            </div>
-            <div class="stack tight">
-                <div class="well demo">
-                    <div class="center">
-                        <form class="panel">
-                            <header><h3>Sign in</h3></header>
-                            <fieldset>
-                                <label>
-                                    Address
-                                    <input value="postmaster@example.com" autocomplete="off">
-                                </label>
-                                <label>
-                                    Password
-                                    <input type="password" value="password" autocomplete="off">
-                                </label>
-                            </fieldset>
+                    <div class="row">
+                        <button type="button" class="danger" commandfor="delete-domain" command="show-modal"><i class="icon i-trash"></i>Delete legacy.example.org</button>
+                        <small>opens a modal · commandfor · no script</small>
+                    </div>
+                    <dialog id="delete-domain" aria-labelledby="delete-title">
+                        <form method="dialog">
+                            <header><h3 id="delete-title">Delete domain</h3></header>
+                            <p>legacy.example.org and its 9 mailboxes will be removed.</p>
                             <footer>
-                                <button type="button">Sign in</button>
+                                <button type="button" class="ghost" commandfor="delete-domain" command="close">Cancel</button>
+                                <button class="danger">Delete</button>
                             </footer>
                         </form>
+                    </dialog>
+                </div>
+            </section>
+
+            <section class="panel" id="surfaces">
+                <header>
+                    <span class="label">10</span>
+                    <h2>Surfaces · icons</h2>
+                    <span class="note">.panel · .well · .card · .box</span>
+                </header>
+                <div class="stack">
+                    <div class="tiles" style="--tile-width: 140px">
+                        <div class="well stack tight">
+                            <code>.well</code>
+                            <small>Sunk to the ground, <b class="name" style="--name: var(--mtt-color-body-name)"></b>. Holds a group so it reads as one.</small>
+                        </div>
+                        <div class="card stack tight">
+                            <code>.card</code>
+                            <small>One of many in a panel, made to be repeated.</small>
+                        </div>
+                        <div class="stack tight">
+                            <div class="row">
+                                <div class="box"><b>42</b></div>
+                                <div class="box"><i class="icon i-user"></i></div>
+                                <div class="box active"><i class="icon i-user"></i></div>
+                            </div>
+                            <small><code>.box</code>, one glyph or one value, lit by <code>.active</code></small>
+                        </div>
+                    </div>
+                    <small>The panel itself is <b class="name" style="--name: var(--mtt-color-panel-name)"></b>, raised from the page. Everything else lives in one.</small>
+                    <span class="label">Icons · i.icon.i-…</span>
+                    <div class="row">
+                        <span class="row"><span class="box"><i class="icon i-search"></i></span><code class="small">search</code></span>
+                        <span class="row"><span class="box"><i class="icon i-refresh"></i></span><code class="small">refresh</code></span>
+                        <span class="row"><span class="box"><i class="icon i-pause"></i></span><code class="small">pause</code></span>
+                        <span class="row"><span class="box"><i class="icon i-trash"></i></span><code class="small">trash</code></span>
+                        <span class="row"><span class="box"><i class="icon i-filter"></i></span><code class="small">filter</code></span>
+                        <span class="row"><span class="box"><i class="icon i-send"></i></span><code class="small">send</code></span>
+                        <span class="row"><span class="box"><i class="icon i-plus"></i></span><code class="small">plus</code></span>
+                        <span class="row"><span class="box"><i class="icon i-globe"></i></span><code class="small">globe</code></span>
+                        <span class="row"><span class="box"><i class="icon i-mail"></i></span><code class="small">mail</code></span>
+                        <span class="row"><span class="box"><i class="icon i-phone"></i></span><code class="small">phone</code></span>
+                        <span class="row"><span class="box"><i class="icon i-swap"></i></span><code class="small">swap</code></span>
+                        <span class="row"><span class="box"><i class="icon i-user"></i></span><code class="small">user</code></span>
+                        <span class="row"><span class="box"><i class="icon i-lock"></i></span><code class="small">lock</code></span>
+                        <span class="row"><span class="box"><i class="icon i-arrow"></i></span><code class="small">arrow</code></span>
+                        <span class="row"><span class="box"><i class="icon i-info"></i></span><code class="small">info</code></span>
+                        <span class="row"><span class="box"><i class="icon i-success"></i></span><code class="small">success</code></span>
+                        <span class="row"><span class="box"><i class="icon i-warn"></i></span><code class="small">warn</code></span>
+                        <span class="row"><span class="box"><i class="icon i-error"></i></span><code class="small">error</code></span>
+                        <span class="row"><span class="box"><i class="icon i-x"></i></span><code class="small">x</code></span>
+                        <span class="row"><span class="box"><i class="icon i-check"></i></span><code class="small">check</code></span>
+                        <span class="row"><span class="box"><i class="icon i-calendar"></i></span><code class="small">calendar</code></span>
+                        <span class="row"><span class="box"><i class="icon i-clock"></i></span><code class="small">clock</code></span>
                     </div>
                 </div>
-                <small><code>.center</code> · one thing in the middle of the window: a sign-in, a confirmation, an error</small>
+            </section>
+        </div>
+
+        <div class="tiles" style="--tile-width: 480px">
+            <section class="panel" id="type">
+                <header>
+                    <span class="label">11</span>
+                    <h2>Typography</h2>
+                    <span class="note">--font · --mono for labels &amp; data</span>
+                </header>
+                <dl>
+                    <dt><b>Hero</b><code class="small">.hero</code></dt>
+                    <dd class="hero">48,213</dd>
+
+                    <dt><b>Heading 1</b><code class="small">h1</code></dt>
+                    <dd><h1>Mail queue</h1></dd>
+
+                    <dt><b>Heading 2</b><code class="small">h2</code></dt>
+                    <dd><h2>Domains &amp; routing</h2></dd>
+
+                    <dt><b>Heading 3</b><code class="small">h3</code></dt>
+                    <dd><h3>Relay configuration</h3></dd>
+
+                    <dt><b>Heading 4</b><code class="small">h4</code></dt>
+                    <dd><h4>Postscreen</h4></dd>
+
+                    <dt><b>Paragraph</b><code class="small">p</code></dt>
+                    <dd><p>Postscreen blocked 2,941 connections from listed hosts in the last 24 hours.</p></dd>
+
+                    <dt><b>Note</b><code class="small">.note</code></dt>
+                    <dd class="note">Queue status</dd>
+
+                    <dt><b>Caption</b><code class="small">small</code></dt>
+                    <dd><small>Updated 2 seconds ago · auto-refresh on</small></dd>
+
+                    <dt><b>Label</b><code class="small">.label</code></dt>
+                    <dd class="label">Section 04</dd>
+
+                    <dt><b>Mono data</b><code class="small">code</code></dt>
+                    <dd><code>4F2A91C3B7 · 198.51.100.23 · 250 2.0.0</code></dd>
+
+                    <dt><b>List</b><code class="small">ul · ol</code></dt>
+                    <dd>
+                        <ol>
+                            <li>Mail to a full mailbox is deferred, not bounced.</li>
+                            <li>Deferred mail is retried for five days.</li>
+                        </ol>
+                    </dd>
+                </dl>
+            </section>
+
+            <div class="stack">
+                <section class="panel" id="pages">
+                    <header>
+                        <span class="label">12</span>
+                        <h2>Pages</h2>
+                        <span class="note">.app · .center</span>
+                    </header>
+                    <div class="stack">
+                        <div class="well demo">
+                            <div class="center">
+                                <form class="panel" onsubmit="event.preventDefault()">
+                                    <header><h3>Sign in</h3></header>
+                                    <fieldset>
+                                        <label>
+                                            Address
+                                            <input value="postmaster@example.com" autocomplete="off">
+                                        </label>
+                                        <label>
+                                            Password
+                                            <input type="password" value="password" autocomplete="off">
+                                        </label>
+                                    </fieldset>
+                                    <footer>
+                                        <button type="button"><i class="icon i-lock"></i>Sign in</button>
+                                    </footer>
+                                </form>
+                            </div>
+                        </div>
+                        <small><code>.center</code> is a page of one thing in the middle of the window: a sign-in, a confirmation, an error. <code>.app</code> is this very page, the column on the side and the page beside it. On a phone the column goes over the page as a row.</small>
+                    </div>
+                </section>
+
+                <section class="panel" id="empty">
+                    <header>
+                        <span class="label">13</span>
+                        <h2>Empty</h2>
+                        <span class="note">.empty</span>
+                    </header>
+                    <div class="stack">
+                        <div class="well empty">
+                            <i class="icon i-globe"></i>
+                            <strong>No domains yet</strong>
+                            <small>Mail for a domain is taken once it is added here.</small>
+                            <button class="alt small"><i class="icon i-plus"></i>Add domain</button>
+                        </div>
+                        <div class="well empty">
+                            <i class="icon i-pause"></i>
+                            <strong>Nothing on hold</strong>
+                            <small>Messages put on hold wait here until released.</small>
+                        </div>
+                    </div>
+                </section>
             </div>
         </div>
-    </section>
-</main>
-</body>
+    </main>
+</div>
 <script>
-    const dmarc = document.getElementById('dmarc');
-    dmarc.indeterminate = true;
+    document.getElementById('dmarc').indeterminate = true;
 
-    // The look picked in the header: the page takes it at once and keeps it in the query
+    // The first group of toggles in Buttons is aria-pressed, one of them on at a time
+    for (const group of document.querySelectorAll('#buttons [role=group]:has(> [aria-pressed])'))
+        group.addEventListener('click', event => {
+            const pressed = event.target.closest('[aria-pressed]');
+            if (pressed)
+                for (const button of group.querySelectorAll('[aria-pressed]'))
+                    button.setAttribute('aria-pressed', String(button === pressed));
+        });
+
+    // The look picked in the column: the page takes it at once and keeps it in the query
     const form = document.getElementById('look');
     const kinds = {
         geometry: [...document.querySelectorAll('#geometries [role=option]')],
         palette: [...document.querySelectorAll('#palettes [role=option]')]
     };
+    const current = kind => kinds[kind].find(option => option.hasAttribute('aria-current')) ?? kinds[kind][0];
+    const title = option => option.querySelector('span')?.textContent ?? option.textContent;
 
     for (const [kind, options] of Object.entries(kinds)) {
         const picked = options.find(option => option.dataset[kind] === look.get(kind));
@@ -1875,23 +1333,62 @@
             else
                 option.removeAttribute('aria-current');
 
-        form.querySelector(`[aria-controls=${options[0].parentElement.id}]`).value = picked.textContent;
+        form.querySelector(`[aria-controls=${options[0].parentElement.id}]`).value = title(picked);
+    }
+
+    // the names of the look are not tokens, the palette's colors name themselves
+    function name () {
+        const geometry = title(current('geometry'));
+        const palette = title(current('palette'));
+        document.getElementById('look-name').textContent = `${geometry} on ${palette}`;
+        document.getElementById('palette-name').textContent = palette;
+        document.title = `${geometry} on ${palette} · @macawkit/theme`;
     }
 
     function apply () {
         const query = new URLSearchParams();
-        for (const [kind, options] of Object.entries(kinds)) {
-            const name = options.find(option => option.hasAttribute('aria-current')).dataset[kind];
-            wear(kind, name);
-            query.set(kind, name);
+        for (const kind of Object.keys(kinds)) {
+            const value = current(kind).dataset[kind];
+            wear(kind, value);
+            query.set(kind, value);
         }
-        history.replaceState(null, '', `?${query}`);
+        history.replaceState(null, '', `?${query}${location.hash}`);
+        name();
     }
 
     // one the query names but the list does not have falls back to the first
     if (look.has('geometry') || look.has('palette'))
         apply();
+    else
+        name();
 
     form.addEventListener('change', apply);
+
+    // The column follows the page: the section most in sight is the current one
+    const links = new Map([...document.querySelectorAll('.app > aside nav a')].map(link => [link.hash.slice(1), link]));
+    const seen = new Map();
+    const spy = new IntersectionObserver(entries => {
+        for (const entry of entries)
+            seen.set(entry.target.id, entry.intersectionRatio * entry.target.offsetHeight);
+
+        let best = null;
+        for (const [id, amount] of seen)
+            if (amount > 0 && (!best || amount > seen.get(best)))
+                best = id;
+
+        if (best)
+            for (const [id, link] of links)
+                if (id === best)
+                    link.setAttribute('aria-current', 'true');
+                else
+                    link.removeAttribute('aria-current');
+    }, { threshold: [0, 0.1, 0.25, 0.5, 0.75, 1] });
+
+    for (const id of links.keys()) {
+        const section = document.getElementById(id);
+        if (section)
+            spy.observe(section);
+    }
 </script>
+</body>
 </html>

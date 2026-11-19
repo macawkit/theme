@@ -38,7 +38,9 @@ Without a bundler, link the built files:
 
 Every color of a palette has a name of its own next to it, the same token with `-name` at the end, `--mtt-color-main-name: "Hyacinth"`. It is a string, for a picker or a legend: `content: var(--color-category-3-name)` in CSS, or `getComputedStyle(document.documentElement).getPropertyValue('--color-category-3-name')` in a script.
 
-`icon.css` embeds its icons as `data:` URIs, so a page with a strict Content-Security-Policy needs `img-src … data:`.
+`icon.css` is not optional: besides the `i.icon` set, it puts the marks on the controls, the tick of a checkbox, the check of the chosen option, the pickers of a date or a time field and the magnifier of a search field. The geometry only sizes and colors them. It embeds its icons as `data:` URIs, so a page with a strict Content-Security-Policy needs `img-src … data:`.
+
+`general.js` draws the sparks, fills the meters where CSS can not, and brings a chosen tab into sight once, when the page loads. A page that adds them later or changes them calls `mtt.refresh()`, or `mtt.refresh(element)` to look only inside that element. Tabs, comboboxes and dialog buttons need nothing, they are listened to on the whole document.
 
 ## Pages and parts
 
@@ -46,6 +48,7 @@ Every color of a palette has a name of its own next to it, the same token with `
 - `.center` is a page of one thing, a sign-in, a confirmation or an error: `<main class="center"><section class="panel">…</section></main>`. It fills the window and holds what is in it in the middle, a panel as wide as a dialog.
 - `.empty` says that there is nothing here yet: `<div class="well empty">` with an icon, a `strong` line, a `small` note and a button if there is a way to start.
 - `.num` on a table cell sets a number to the end, every figure as wide as any other, so a column of them lines up.
+- A meter is a `div` with `role="meter"` and its `aria-valuenow`, between `aria-valuemin` and `aria-valuemax`, 0 and 100 when they are not given, and an `aria-label` that says what it measures. A browser that reads attributes in CSS fills it with no script, and follows a change of `aria-valuenow` by itself. For the others `general.js` fills it.
 - `.spark` draws its `data-values` as bars. Give it an `aria-label` that says what it shows, "Delivered, rising" say, and a screen reader reads it as one picture by that name. Without one it is skipped as decoration, so the figure next to it has to say it all.
 - `.stack`, `.card`, `.row`, `.tiles`, `.empty`, `.alert`, a `footer` and the parts of `.app` space what they hold by their gap, and the margins of what sits right in them, a paragraph, a list or a header, are dropped. `.panel`, `.well` and the cells of a `dl` space by their padding, so only the first and the last lose their outer margin. Something between, a `form` say, brings its own margins back. A list in text is set in by `--margin`, a numbered one by twice that. All of it weighs nothing, a margin of your own wins.
 - `.swatch` shows one color, `--color`, a category's most of all: `<span class="swatch" aria-hidden="true" style="--color: var(--color-category-7)"></span>` beside the name of what wears it. It is decoration, the name says it all. It is drawn and lit as the geometry draws a fill. `.small` is for a dense spot, a width and a height of your own work too, and `.quiet` is for a thing that is over, faint and unlit.

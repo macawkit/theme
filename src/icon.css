@@ -1,24 +1,39 @@
+/* An icon is a mask over the color of the text around it */
 i.icon {
     display: inline-block;
+    position: relative;
+    flex-shrink: 0;
     width: 1.2em;
     height: 1.2em;
-    flex-shrink: 0;
-    position: relative;
-  }
-  
+}
+
 i.icon::before {
     content: "";
     position: absolute;
     inset: 0;
     background-color: currentColor;
-    -webkit-mask-image: var(--svg);
-    mask-image: var(--svg);
-    -webkit-mask-size: contain;
-    mask-size: contain;
-    -webkit-mask-position: center;
-    mask-position: center;
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
+    mask: var(--svg) 50% / contain no-repeat;
+}
+
+/*
+    Where the kit draws an icon itself, the tick of a checkbox or of the option a field holds, the picker of a date, a search:
+    the icon is the same mask, over a color the geometry gives. It weighs nothing, the geometry sizes it, places it, or takes it away
+*/
+:where(input[type=checkbox]:not(.switch))::before,
+:where([role=option][aria-current=true])::before {
+    mask: var(--mtt-icon-check) 50% / contain no-repeat;
+}
+
+:where(input:is([type=date], [type=datetime-local], [type=month], [type=week]))::-webkit-calendar-picker-indicator {
+    mask: var(--mtt-icon-calendar) 50% / contain no-repeat;
+}
+
+:where(input[type=time])::-webkit-calendar-picker-indicator {
+    mask: var(--mtt-icon-clock) 50% / contain no-repeat;
+}
+
+:where(label:has(> input[type=search]))::before {
+    mask: var(--mtt-icon-search) 50% / contain no-repeat;
 }
 
 :root {

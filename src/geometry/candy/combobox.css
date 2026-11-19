@@ -24,6 +24,18 @@
     > [role=presentation] {
         background-color: var(--mtt-color-panel);
     }
+
+    /* a caption sticks below the padding, so the padding above it is covered too, or the rows would pass by over it */
+    &:has(> [role=presentation])::before {
+        content: "";
+        display: block;
+        position: sticky;
+        top: calc(-1 * var(--margin-minimal));
+        z-index: 1;
+        height: var(--margin-minimal);
+        margin-top: calc(-1 * var(--margin-minimal));
+        background-color: var(--mtt-color-panel);
+    }
 }
 
 [role=listbox][data-empty]::after {
@@ -56,8 +68,6 @@
         height: var(--box-size);
         margin-left: auto;
         background: var(--mtt-color-text-decorated);
-        -webkit-mask: var(--mtt-icon-check) 50% / var(--box-size) no-repeat;
-        mask: var(--mtt-icon-check) 50% / var(--box-size) no-repeat;
     }
 
     /* What was typed */

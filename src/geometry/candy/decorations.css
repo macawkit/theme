@@ -45,14 +45,14 @@
 }
 
 /* A meter is a groove filled with a candy cane */
-div[role="meter"] {
+div[role=meter] {
     position: relative;
     height: var(--bar-thickness-small);
     border-radius: var(--pill);
     background: var(--background);
 }
 
-div[role="meter"]::before {
+div[role=meter]::before {
     --glow-source: var(--shine-color);
     content: "";
     position: absolute;

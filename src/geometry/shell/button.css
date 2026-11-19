@@ -1,3 +1,9 @@
+/*
+    A button is a chipped body, ::before, with a halo behind it, ::after, that shows when it is lit. It shines, on itself and
+    on what it holds, and rises on a shadow under the pointer. .alt is a flat body with corner ticks, a ghost has no body and
+    a tab none either, the glow bars of those two are in bar.css. Its states change --background-color, what the body and the halo
+    are made of, --glow-source, what lights them, and --elevation, its shadow
+*/
 nav.tabs > a,
 :is(button, .button) {
     --background-color: var(--mtt-color-button);
@@ -36,6 +42,10 @@ nav.tabs > a,
         transition: background-color var(--transition);
     }
 
+    &:not(.alt, [role=tab]).small::before {
+        clip-path: var(--chipped-corner-small);
+    }
+
     /* halo behind the body, shown on hover. It starts a chip inside the body, so it blurs twice the glow to reach past the edge, and is gone with no glow */
     &:not(.ghost, [role=tab])::after {
         z-index: -2;
@@ -60,39 +70,36 @@ nav.tabs > a,
     &:is([aria-pressed=true], :has(> input:checked)):where(:not(:disabled, [aria-disabled=true], :has(> input:disabled), .ghost))::after {
         opacity: 1;
     }
-}
 
-/* Lit: the current tab, a pressed toggle, a label around a checked input and whatever else the pointer is on. A toggle is lit only by being on, or pressing it would not show */
-nav.tabs > a[aria-current=page],
-:is(button, .button)[role=tab][aria-selected=true],
-:is(button, .button):is([aria-pressed=true], :has(> input:checked)):not(.ghost),
-:is(button, .button):not(.ghost, :disabled, [aria-disabled=true], [role=tab], [aria-pressed], :has(> input)):is(.hover, :hover) {
-    --background-color: var(--mtt-color-main-highlight);
-    --glow-source: var(--background-color);
-    color: var(--mtt-color-text-brightest);
-    text-shadow: 0 0 calc(var(--shine-radius) / 2) color-mix(in srgb, var(--mtt-color-text-bright) var(--shining), #0000);
-}
+    /* Lit: a pressed toggle, a label around a checked input and whatever else the pointer is on. A toggle is lit only by being on, or pressing it would not show */
+    &:is([aria-pressed=true], :has(> input:checked)):not(.ghost),
+    &:not(.ghost, :disabled, [aria-disabled=true], [role=tab], [aria-pressed], :has(> input)):is(.hover, :hover) {
+        --background-color: var(--mtt-color-main-highlight);
+        --glow-source: var(--background-color);
+        color: var(--mtt-color-text-brightest);
+        text-shadow: 0 0 calc(var(--shine-radius) / 2) color-mix(in srgb, var(--mtt-color-text-bright) var(--shining), #0000);
+    }
 
-:is(button, .button):not(.alt, .ghost, :disabled, [aria-disabled=true]):is(.hover, :hover),
-:is(button, .button):is([aria-pressed=true], :has(> input:checked)):not(.alt, .ghost, :disabled, [aria-disabled=true], :has(> input:disabled)) {
-    --background-color: var(--mtt-color-main-highlight);
-    filter:
-        drop-shadow(0 0 var(--shine-radius) color-mix(in srgb, var(--background-color) var(--shining), #0000))
-        var(--elevation);
-}
+    /* a body that is lit shines */
+    &:not(.alt, .ghost, :disabled, [aria-disabled=true], [role=tab]):is(.hover, :hover),
+    &:is([aria-pressed=true], :has(> input:checked)):not(.alt, .ghost, :disabled, [aria-disabled=true], :has(> input:disabled)) {
+        --background-color: var(--mtt-color-main-highlight);
+        filter:
+            drop-shadow(0 0 var(--shine-radius) color-mix(in srgb, var(--background-color) var(--shining), #0000))
+            var(--elevation);
+    }
 
-/* a toggle that is off goes only half way to lit under the pointer */
-:is(button, .button):is([aria-pressed], :has(> input)):not([aria-pressed=true], :has(> input:checked), .alt, .ghost, .danger, :disabled, [aria-disabled=true]):is(.hover, :hover) {
-    --background-color: color-mix(in srgb, var(--mtt-color-button), var(--mtt-color-main-highlight));
-    --glow-source: var(--background-color);
-}
+    /* a toggle that is off goes only half way to lit under the pointer */
+    &:is([aria-pressed], :has(> input)):not([aria-pressed=true], :has(> input:checked), .alt, .ghost, .danger, :disabled, [aria-disabled=true]):is(.hover, :hover) {
+        --background-color: color-mix(in srgb, var(--mtt-color-button), var(--mtt-color-main-highlight));
+        --glow-source: var(--background-color);
+    }
 
-nav.tabs > a:is(.hover, :hover),
-:is(button, .button) > * {
-    transition: filter var(--transition);
-}
+    /* what it holds, a word and an icon, shines under the pointer */
+    > * {
+        transition: filter var(--transition);
+    }
 
-:is(button, .button) {
     &:is(.hover, :hover):not(:disabled, [aria-disabled=true], .ghost) > * {
         filter: drop-shadow(0 0 var(--shine-radius) color-mix(in srgb, var(--mtt-color-text-bright) var(--shining), #0000));
     }
@@ -118,10 +125,6 @@ nav.tabs > a:is(.hover, :hover),
         transition: opacity var(--transition-fast);
         opacity: 0;
     }
-
-    &:not(.alt, [role=tab]).small::before {
-        clip-path: var(--chipped-corner-small);
-    }
 }
 
 /* Alt: a flat body with corner ticks, shared with .box */
@@ -129,6 +132,32 @@ nav.tabs > a:is(.hover, :hover),
 .box {
     background-color: var(--mtt-color-main-dimmed);
     border: 1px solid var(--mtt-color-line);
+}
+
+:is(button, .button).alt::before,
+.box::before {
+    --tick-color: var(--mtt-color-line-highlight);
+    --tick-size: calc(var(--chip) / 2);
+    content: "";
+    position: absolute;
+    inset: -1px;
+    z-index: -1;
+    pointer-events: none;
+    background: var(--ticks);
+    background-repeat: no-repeat;
+    filter: var(--unlit);
+    transition:
+        filter var(--transition),
+        background var(--transition);
+}
+
+/* lit, the ticks grow to a chip and shine */
+:is(button, .button).alt:is([aria-pressed=true], :has(> input:checked))::before,
+:is(button, .button).alt:is(.hover, :hover):not(:disabled, [aria-disabled=true], [aria-pressed], :has(> input))::before,
+.box.active::before {
+    --tick-color: var(--mtt-color-line-decorated);
+    --tick-size: var(--chip);
+    filter: drop-shadow(0 0 var(--shine-radius) color-mix(in srgb, var(--tick-color) var(--shining), #0000));
 }
 
 :is(button, .button).alt {
@@ -151,50 +180,25 @@ nav.tabs > a:is(.hover, :hover),
             --tick-color: var(--mtt-color-line-decorated);
         }
     }
-}
 
-:is(button, .button).alt::before,
-.box::before {
-    --tick-color: var(--mtt-color-line-highlight);
-    --tick-size: calc(var(--chip) / 2);
-    content: "";
-    position: absolute;
-    inset: -1px;
-    z-index: -1;
-    pointer-events: none;
-    background: var(--ticks);
-    background-repeat: no-repeat;
-    filter: var(--unlit);
-    transition:
-        filter var(--transition),
-        background var(--transition);
-}
+    /* pressed, the ticks shrink back */
+    &:is(:active, .active):not(:disabled, [aria-disabled=true])::before {
+        --tick-size: calc(var(--chip-small) / 2);
+        transition:
+            filter var(--transition-fast),
+            background var(--transition-fast);
+    }
 
-:is(button, .button).alt:is([aria-pressed=true], :has(> input:checked))::before,
-:is(button, .button).alt:is(.hover, :hover):not(:disabled, [aria-disabled=true], [aria-pressed], :has(> input))::before,
-.box.active::before {
-    --tick-color: var(--mtt-color-line-decorated);
-    --tick-size: var(--chip);
-    filter: drop-shadow(0 0 var(--shine-radius) color-mix(in srgb, var(--tick-color) var(--shining), #0000));
+    /* its halo is as large as the frame, there is no chipped body to start inside of */
+    &::after {
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
 }
 
 :is(button, .button) {
-    &.alt {
-        &:is(:active, .active):not(:disabled, [aria-disabled=true])::before {
-            --tick-size: calc(var(--chip-small) / 2);
-            transition:
-                filter var(--transition-fast),
-                background var(--transition-fast);
-        }
-
-        &::after {
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-    }
-
     &.danger {
         --background-color: var(--color-danger);
         color: var(--color-danger-text);
@@ -219,23 +223,14 @@ nav.tabs > a:is(.hover, :hover),
     }
 }
 
-:is(button, .button).ghost:is([aria-pressed=true], :has(> input:checked))::after,
-:is(button, .button).ghost:is(.hover, :hover):not(:disabled, [aria-disabled=true], [aria-pressed], :has(> input))::after,
-nav:not(.tabs, .crumbs) a[aria-current]::after,
-[role=option][aria-selected=true]::after {
-    transition: opacity var(--transition-fast);
-    opacity: 1;
-}
-
-:is(.info, .signature, .success, .priority, .warning, .danger) :is(button, .button).ghost::after,
-:is(button, .button).ghost:is(.info, .signature, .success, .priority, .warning, .danger)::after {
-    --glow-source: var(--color);
-}
-
-/* Tabs: a glow bar under the current one, see bar.css */
+/* Tabs: no body, the chosen one and the one under the pointer are set on the dimmed main color, a glow bar under the chosen one, see bar.css */
 nav.tabs > a,
 :is(button, .button)[role=tab] {
     color: var(--mtt-color-text);
+}
+
+nav.tabs > a:is(.hover, :hover) {
+    transition: filter var(--transition);
 }
 
 nav.tabs > a[aria-current=page],
@@ -247,9 +242,10 @@ nav.tabs > a:is(.hover, :hover),
     filter: none;
 }
 
-nav.tabs > a[aria-current=page]::after,
-:is(button, .button)[role=tab][aria-selected=true]::after {
-    opacity: 1;
+/* the chosen one is lit, its word shines */
+nav.tabs > a[aria-current=page],
+:is(button, .button)[role=tab][aria-selected=true] {
+    text-shadow: 0 0 calc(var(--shine-radius) / 2) color-mix(in srgb, var(--mtt-color-text-bright) var(--shining), #0000);
 }
 
 /* Navigation list: a glow bar next to the current one, see bar.css */

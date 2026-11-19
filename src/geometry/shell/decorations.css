@@ -11,7 +11,7 @@
 .spark > i:last-child {
     --glow-source: var(--shine-color);
     background: var(--fill-color);
-    box-shadow: 
+    box-shadow:
         0 0 calc(var(--shine-radius) * 2) var(--color),
         0 0 calc(var(--glow-radius) * 2) var(--glow-color);
 }
@@ -55,13 +55,13 @@
     box-shadow: 0 0 calc(var(--glow-radius) / 2) calc(var(--shine-radius) / 2) var(--shine-color);
 }
 
-div[role="meter"] {
+div[role=meter] {
     height: var(--bar-thickness-small);
     background: var(--background);
     position: relative;
 }
 
-div[role="meter"]:before {
+div[role=meter]::before {
     --glow-source: var(--shine-color);
     content: "";
     position: absolute;

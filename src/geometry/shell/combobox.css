@@ -48,8 +48,6 @@
         height: var(--box-size);
         margin-left: auto;
         background: var(--mtt-color-text-decorated);
-        -webkit-mask: var(--mtt-icon-check) 50% / var(--box-size) no-repeat;
-        mask: var(--mtt-icon-check) 50% / var(--box-size) no-repeat;
     }
 
     /* What was typed */

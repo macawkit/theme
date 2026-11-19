@@ -510,6 +510,7 @@ code {
         flex: none;
     }
 }
+
 .box > i.icon {
     display: block;
 }
@@ -627,6 +628,12 @@ input[role=combobox][inputmode=none] {
         width: anchor-size(width);
         max-height: min(calc(var(--element-height) * 8), 100% - 2 * var(--margin-minimal));
         margin: var(--margin-minimal) 0;
+        /*
+            but never shorter than three rows, or all it has if that is less. The browser tries the other side
+            only when the list does not fit, and a list that could shrink to nothing always would, so when
+            the page scrolls its field to an edge, the list goes over to the other side instead of shrinking
+        */
+        min-height: calc-size(max-content, min(size, var(--element-height) * 3));
     }
 }
 
@@ -641,6 +648,22 @@ input[role=combobox][inputmode=none] {
     display: block;
     width: var(--width, 0);
     background: var(--mtt-color-line-highlight);
+}
+
+/*
+    A meter is filled to its aria-valuenow, between aria-valuemin and aria-valuemax, 0 and 100 when they are not given.
+    --value is how full it is, the geometry draws it. A browser that reads attributes in CSS works it out here, with no script,
+    and follows a change of the attributes by itself. general.js does it for the others
+*/
+@supports (width: calc(attr(data-mtt type(<number>), 0) * 1%)) {
+    div[role=meter] {
+        --value: clamp(
+            0%,
+            (attr(aria-valuenow type(<number>), 0) - attr(aria-valuemin type(<number>), 0))
+                / (attr(aria-valuemax type(<number>), 100) - attr(aria-valuemin type(<number>), 0)) * 100%,
+            100%
+        );
+    }
 }
 
 :is(.info, .signature, .success, .priority, .warning, .danger) {

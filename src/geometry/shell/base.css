@@ -139,12 +139,15 @@ body::before {
 th {
     text-align: left;
 }
+
 .label {
     color: var(--mtt-color-text-decorated);
 }
+
 th, .note, fieldset, .small, small, [role=listbox] > [role=presentation] {
     color: var(--mtt-color-text-muted);
 }
+
 th, .note, .label, fieldset, [role=listbox] > [role=presentation] {
     font-family: var(--mono);
     font-size: var(--decrease-font-size);
@@ -152,23 +155,28 @@ th, .note, .label, fieldset, [role=listbox] > [role=presentation] {
     letter-spacing: var(--letter-spacing-wide);
     text-transform: uppercase;
 }
+
 th, td {
     padding: var(--margin-tight);
 }
+
 dt, dd {
     padding: var(--margin-tight) 0;
 }
+
 table {
     border-collapse: collapse;
 }
+
 tr:not(:last-of-type) {
     border-bottom: 1px solid var(--mtt-color-line-dimmed);
 }
+
 thead {
     border-bottom: 1px solid var(--mtt-color-line-dimmed);
 }
 
-fieldset small { 
+fieldset small {
     font-family: var(--font);
     font-size: inherit;
     font-weight: normal;
@@ -178,8 +186,8 @@ fieldset small {
 
 table tbody tr:hover {
     background: linear-gradient(
-        100deg, #0000, 
-        color-mix(in srgb, var(--mtt-color-button) calc(var(--glow-strength) / 2), #0000) 
+        100deg, #0000,
+        color-mix(in srgb, var(--mtt-color-button) calc(var(--glow-strength) / 2), #0000)
         50%, #0000
     );
 }
@@ -211,7 +219,7 @@ a {
 }
 
 /* Keyboard focus: one ring for everything but the text fields, those light up on their own, see input.css */
-:is(a, button, .button, input:is([type="checkbox"], [type="radio"])):is(:focus-visible, .focus),
+:is(a, button, .button, input:is([type=checkbox], [type=radio])):is(:focus-visible, .focus),
 .button:has(> input:focus-visible) {
     outline: var(--highlight-thickness) solid var(--mtt-color-line-decorated);
     outline-offset: var(--highlight-thickness);
@@ -227,10 +235,12 @@ fieldset {
     gap: var(--margin);
     align-items: start;
 }
+
 fieldset label {
     display: grid;
     gap: var(--margin-minimal);
 }
+
 fieldset label i {
     vertical-align: middle;
     margin: 0 var(--margin-minimal);

@@ -46,7 +46,7 @@ nav.tabs > a::after,
     }
 }
 
-/* hidden until the element is hovered, pressed or current, see button.css */
+/* hidden until the element is hovered, pressed or current */
 :is(button, .button).ghost::after,
 nav:not(.tabs, .crumbs) a::after,
 [role=option]::after,
@@ -56,12 +56,33 @@ nav.tabs > a::after,
     transition: opacity var(--transition);
 }
 
+/* shown: a ghost that is on or under the pointer, the current link, the row the keyboard is on, quickly */
+:is(button, .button).ghost:is([aria-pressed=true], :has(> input:checked))::after,
+:is(button, .button).ghost:is(.hover, :hover):not(:disabled, [aria-disabled=true], [aria-pressed], :has(> input))::after,
+nav:not(.tabs, .crumbs) a[aria-current]::after,
+[role=option][aria-selected=true]::after {
+    transition: opacity var(--transition-fast);
+    opacity: 1;
+}
+
+/* and the chosen tab, at the pace of its row */
+nav.tabs > a[aria-current=page]::after,
+:is(button, .button)[role=tab][aria-selected=true]::after {
+    opacity: 1;
+}
+
 .alert::after {
     --glow-source: var(--color);
 }
 
+/* a ghost's bar is of its tone, if it or what holds it has one */
 :is(button, .button).ghost::after {
     --glow-source: var(--mtt-color-text-decorated);
+}
+
+:is(.info, .signature, .success, .priority, .warning, .danger) :is(button, .button).ghost::after,
+:is(button, .button).ghost:is(.info, .signature, .success, .priority, .warning, .danger)::after {
+    --glow-source: var(--color);
 }
 
 nav a::after,

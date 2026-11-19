@@ -3,8 +3,8 @@
     Off, they are set into the page. On, they are hard candy in the main color, and what marks them pops in with a bounce.
     As a button, each draws itself and its states change only what it is made of
 */
-input[type="radio"],
-input[type="checkbox"] {
+input[type=radio],
+input[type=checkbox] {
     --background-color: var(--mtt-color-body);
     --gloss-layer: none;
     --rim-color: var(--mtt-color-line);
@@ -22,19 +22,19 @@ input[type="checkbox"] {
         box-shadow var(--transition);
 }
 
-input[type="radio"],
-input[type="checkbox"]:not(.switch) {
+input[type=radio],
+input[type=checkbox]:not(.switch) {
     width: var(--box-size);
     height: var(--box-size);
 }
 
-input[type="radio"],
-input[type="checkbox"].switch {
+input[type=radio],
+input[type=checkbox].switch {
     border-radius: var(--pill);
 }
 
-input[type="radio"]::before,
-input[type="checkbox"]::before {
+input[type=radio]::before,
+input[type=checkbox]::before {
     content: "";
     position: absolute;
     pointer-events: none;
@@ -45,12 +45,12 @@ input[type="checkbox"]::before {
 }
 
 /* Under the pointer an empty one brightens its rim */
-input:is([type="radio"], [type="checkbox"]):is(:hover, .hover):not(:disabled, [aria-disabled=true], :checked, :indeterminate) {
+input:is([type=radio], [type=checkbox]):is(:hover, .hover):not(:disabled, [aria-disabled=true], :checked, :indeterminate) {
     --rim-color: var(--mtt-color-line-highlight);
 }
 
 /* On: a hard candy in the main color, lit */
-input:is([type="radio"], [type="checkbox"]):checked {
+input:is([type=radio], [type=checkbox]):checked {
     --background-color: var(--mtt-color-main);
     --gloss-layer: var(--gloss);
     --rim-color: var(--background-color);
@@ -64,12 +64,11 @@ input:is([type="radio"], [type="checkbox"]):checked {
 }
 
 /* Checkbox: a tick that pops in, a candy stick across it when it is neither */
-input[type="checkbox"]:not(.switch) {
+input[type=checkbox]:not(.switch) {
     &::before {
         inset: 0;
         background: var(--mtt-color-text-brightest);
-        -webkit-mask: var(--mtt-icon-check) 50% / calc(var(--box-size) - 2px) no-repeat;
-        mask: var(--mtt-icon-check) 50% / calc(var(--box-size) - 2px) no-repeat;
+        mask-size: calc(var(--box-size) - 2px);
         opacity: 0;
         transform: scale(.3);
     }
@@ -87,14 +86,13 @@ input[type="checkbox"]:not(.switch) {
             inset: calc(50% - 1.5px) var(--element-inner-margin);
             border-radius: var(--pill);
             background: var(--mtt-color-line-decorated);
-            -webkit-mask: none;
             mask: none;
         }
     }
 }
 
 /* Radio: a white center pops in. A swirl was tried, at this size its stripes only alias */
-input[type="radio"] {
+input[type=radio] {
     &::before {
         inset: 5px;
         border-radius: 50%;
@@ -110,7 +108,7 @@ input[type="radio"] {
 }
 
 /* Switch: a round knob, glossy, rolling over with a bounce */
-input[type="checkbox"].switch {
+input[type=checkbox].switch {
     width: calc(var(--element-height-tiny) * 2);
     height: var(--element-height-tiny);
 

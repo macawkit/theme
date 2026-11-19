@@ -1,11 +1,11 @@
-input[type="radio"],
-input[type="checkbox"]:not(.switch) {
+input[type=radio],
+input[type=checkbox]:not(.switch) {
     width: var(--box-size);
     height: var(--box-size);
 }
 
-input[type="radio"]::before,
-input[type="checkbox"]:not(.switch)::before {
+input[type=radio]::before,
+input[type=checkbox]:not(.switch)::before {
     content: "";
     inset: 0;
     position: absolute;
@@ -16,8 +16,7 @@ input[type="checkbox"]:not(.switch)::before {
         opacity var(--transition);
 }
 
-input[type="radio"],
-input[type="checkbox"] {
+input:is([type=radio], [type=checkbox]) {
     border-radius: 0;
     background-color: var(--mtt-color-body);
     box-shadow: 0 0 0 1px var(--mtt-color-line);
@@ -27,11 +26,9 @@ input[type="checkbox"] {
 }
 
 /* Checkbox: a tick that scales in, a glowing dash when indeterminate */
-input[type="checkbox"]:not(.switch) {
+input[type=checkbox]:not(.switch) {
     &::before {
         background: var(--mtt-color-text-brightest);
-        -webkit-mask: var(--mtt-icon-check) 50% / var(--box-size) no-repeat;
-        mask: var(--mtt-icon-check) 50% / var(--box-size) no-repeat;
         opacity: 0;
         transform: scale(.5);
         transform-origin: center;
@@ -57,7 +54,6 @@ input[type="checkbox"]:not(.switch) {
             top: calc(50% - var(--highlight-thickness) / 2);
             left: var(--element-inner-margin);
             background: var(--mtt-color-line-decorated);
-            -webkit-mask: none;
             mask: none;
             filter: drop-shadow(0 0 var(--shine-radius) color-mix(in srgb, var(--mtt-color-line-decorated) var(--shining), #0000));
         }
@@ -79,13 +75,13 @@ input[type="checkbox"]:not(.switch) {
 }
 
 /* Switch and radio: a solid knob, on the main color once checked it takes the ink of the checkbox tick */
-input[type="checkbox"].switch {
+input[type=checkbox].switch {
     width: calc(var(--element-height-tiny) * 2);
     height: var(--element-height-tiny);
 }
 
-input[type="radio"]::before,
-input[type="checkbox"].switch::before {
+input[type=radio]::before,
+input[type=checkbox].switch::before {
     content: '';
     position: absolute;
     background-color: var(--mtt-color-text-muted);
@@ -94,7 +90,7 @@ input[type="checkbox"].switch::before {
         transform var(--transition);
 }
 
-input[type="checkbox"].switch {
+input[type=checkbox].switch {
     &::before {
         top: var(--element-inner-margin);
         left: var(--element-inner-margin-small);
@@ -108,7 +104,7 @@ input[type="checkbox"].switch {
     }
 }
 
-input[type="radio"] {
+input[type=radio] {
     &::before {
         top: var(--element-inner-margin-small);
         left: var(--element-inner-margin-small);
@@ -129,21 +125,18 @@ input[type="radio"] {
 }
 
 /* States shared by all three */
-input[type="radio"]:checked:not(:disabled, [aria-disabled=true])::before,
-input[type="checkbox"]:checked:not(:disabled, [aria-disabled=true])::before {
+input:is([type=radio], [type=checkbox]):checked:not(:disabled, [aria-disabled=true])::before {
     filter: drop-shadow(0 0 var(--shine-radius) color-mix(in srgb, var(--mtt-color-text-bright) var(--shining), #0000));
 }
 
-input[type="radio"]:is(:hover, .hover):not(:disabled, [aria-disabled=true], :checked),
-input[type="checkbox"]:is(:hover, .hover):not(:disabled, [aria-disabled=true], :checked) {
+input:is([type=radio], [type=checkbox]):is(:hover, .hover):not(:disabled, [aria-disabled=true], :checked) {
     --glow-source: var(--mtt-color-line-highlight);
     box-shadow:
         0 0 0 1px var(--glow-color),
         0 0 var(--glow-radius) var(--glow-color);
 }
 
-input[type="radio"]:checked,
-input[type="checkbox"]:checked {
+input:is([type=radio], [type=checkbox]):checked {
     --background-color: var(--mtt-color-main);
     --glow-source: var(--background-color);
     background-color: var(--background-color);
@@ -152,7 +145,6 @@ input[type="checkbox"]:checked {
         0 0 var(--glow-radius) var(--glow-color);
 }
 
-input[type="radio"]:checked:is(.hover, :hover):not(:disabled, [aria-disabled=true]),
-input[type="checkbox"]:checked:is(.hover, :hover):not(:disabled, [aria-disabled=true]) {
+input:is([type=radio], [type=checkbox]):checked:is(.hover, :hover):not(:disabled, [aria-disabled=true]) {
     --background-color: var(--mtt-color-main-highlight);
 }
