@@ -681,7 +681,7 @@ input[role=combobox][inputmode=none] {
 }
 
 .swatch.quiet {
-    background-color: color-mix(in srgb, var(--background-color) var(--quiet-strength), #0000);
+    background-color: color-mix(in srgb, var(--background-color) var(--glow-strength), #0000);
     background-image: none;
     box-shadow: none;
 }

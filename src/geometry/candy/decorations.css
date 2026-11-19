@@ -8,7 +8,7 @@
     position: relative;
     min-height: var(--width);
     border-radius: var(--pill);
-    background: color-mix(in srgb, var(--fill-color) var(--quiet-strength), #0000);
+    background: color-mix(in srgb, var(--fill-color) var(--glow-strength), #0000);
 }
 
 .spark > i:last-child {
