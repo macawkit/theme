@@ -59,8 +59,8 @@
         color: var(--mtt-color-text-bright);
     }
 
-    /* The row holding the value of the field */
-    &[aria-current=true]::before {
+    /* The row holding the value of the field, or one of the values of a choice of many */
+    &:is([aria-current=true], [aria-checked=true])::before {
         content: "";
         order: 1;
         flex: none;

@@ -40,7 +40,7 @@ Every color of a palette has a name of its own next to it, the same token with `
 
 `icon.css` is not optional: besides the `i.icon` set, it puts the marks on the controls, the tick of a checkbox, the check of the chosen option, the pickers of a date or a time field and the magnifier of a search field. The geometry only sizes and colors them. It embeds its icons as `data:` URIs, so a page with a strict Content-Security-Policy needs `img-src … data:`.
 
-`general.js` draws the sparks, fills the meters where CSS can not, and brings a chosen tab into sight once, when the page loads. A page that adds them later or changes them calls `mtt.refresh()`, or `mtt.refresh(element)` to look only inside that element. Tabs, comboboxes and dialog buttons need nothing, they are listened to on the whole document.
+`general.js` draws the sparks, fills the meters where CSS can not, and brings a chosen tab into sight once, when the page loads. A page that adds them later or changes them, or checks the options of a combobox of many by script, calls `mtt.refresh()`, or `mtt.refresh(element)` to look only inside that element. Tabs, comboboxes and dialog buttons need nothing, they are listened to on the whole document.
 
 ## Pages and parts
 

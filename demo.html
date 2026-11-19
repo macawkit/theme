@@ -741,6 +741,31 @@
                         <li role="option" id="order-largest">Largest first</li>
                     </ul>
                     <label>
+                        Bounce copies to
+                        <input role="combobox" aria-controls="bounces" aria-expanded="false" inputmode="none" placeholder="Nobody">
+                        <small>Choice of many · aria-multiselectable</small>
+                    </label>
+                    <ul role="listbox" id="bounces" aria-label="Bounce copies to" aria-multiselectable="true" popover="manual">
+                        <li role="option" id="bounce-postmaster"><input type="checkbox" name="bounce" value="postmaster" checked>postmaster</li>
+                        <li role="option" id="bounce-abuse"><input type="checkbox" name="bounce" value="abuse" checked>abuse</li>
+                        <li role="option" id="bounce-noc"><input type="checkbox" name="bounce" value="noc">noc</li>
+                        <li role="option" id="bounce-sender"><input type="checkbox" name="bounce" value="sender">The sender</li>
+                    </ul>
+                    <label>
+                        Relay domains
+                        <input role="combobox" aria-controls="domains" aria-expanded="false" aria-autocomplete="list" autocomplete="off" spellcheck="false" placeholder="Search domains…">
+                        <small>Many, searched · type ex</small>
+                    </label>
+                    <ul role="listbox" id="domains" aria-label="Relay domains" aria-multiselectable="true" popover="manual" data-empty="No matches">
+                        <li role="presentation">Primary</li>
+                        <li role="option" id="domain-net"><input type="checkbox" name="domain" value="example.net" checked>example.net</li>
+                        <li role="option" id="domain-org"><input type="checkbox" name="domain" value="example.org">example.org</li>
+                        <li role="presentation">Hosted</li>
+                        <li role="option" id="domain-lists" data-label="lists.example.net"><input type="checkbox" name="domain" value="lists.example.net"><span>lists.example.net</span><small>mailing lists</small></li>
+                        <li role="option" id="domain-staff" data-label="staff.example.org"><input type="checkbox" name="domain" value="staff.example.org" checked><span>staff.example.org</span><small>internal</small></li>
+                        <li role="option" id="domain-shop" data-label="shop.example.com"><input type="checkbox" name="domain" value="shop.example.com"><span>shop.example.com</span><small>storefront</small></li>
+                    </ul>
+                    <label>
                         Delivery
                         <select>
                             <option>Immediate</option>
@@ -1319,21 +1344,15 @@
         geometry: [...document.querySelectorAll('#geometries [role=option]')],
         palette: [...document.querySelectorAll('#palettes [role=option]')]
     };
-    const current = kind => kinds[kind].find(option => option.hasAttribute('aria-current')) ?? kinds[kind][0];
-    const title = option => option.querySelector('span')?.textContent ?? option.textContent;
+    const field = kind => form.querySelector(`[aria-controls=${kinds[kind][0].parentElement.id}]`);
+    const title = option => option.dataset.value ?? option.textContent.trim();
+    // the field holds the look, its list ticks the option as it opens
+    const current = kind => kinds[kind].find(option => title(option) === field(kind).value) ?? kinds[kind][0];
 
-    for (const [kind, options] of Object.entries(kinds)) {
-        const picked = options.find(option => option.dataset[kind] === look.get(kind));
-        if (!picked)
-            continue;
-
-        for (const option of options)
-            if (option === picked)
-                option.setAttribute('aria-current', 'true');
-            else
-                option.removeAttribute('aria-current');
-
-        form.querySelector(`[aria-controls=${options[0].parentElement.id}]`).value = title(picked);
+    for (const kind of Object.keys(kinds)) {
+        const picked = kinds[kind].find(option => option.dataset[kind] === look.get(kind));
+        if (picked)
+            field(kind).value = title(picked);
     }
 
     // the names of the look are not tokens, the palette's colors name themselves

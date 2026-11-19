@@ -113,7 +113,7 @@ function fillMeter (meter) {
 
 /*
     What the kit draws by script is drawn once, when the page loads. A page that adds or changes sparks or meters later,
-    or a row of tabs, calls mtt.refresh(), with the element that holds them to look only there
+    or a row of tabs, or checks the options of a field of many, calls mtt.refresh(), with the element that holds them to look only there
 */
 function refresh (root = document) {
     for (const spark of root.querySelectorAll('.spark'))
@@ -122,6 +122,10 @@ function refresh (root = document) {
     if (!metersInCSS)
         for (const meter of root.querySelectorAll('div[role=meter]'))
             fillMeter(meter);
+
+    for (const field of root.querySelectorAll('input[role=combobox]'))
+        if (isCombobox(field) && isMultiple(field))
+            field.value = summaryOf(field);
 
     // once the fonts have given the tabs their widths
     document.fonts.ready.then(() => revealChosen(root));
@@ -139,6 +143,10 @@ refresh();
     hidden input takes the data-value of the option chosen, the field its data-label or its text, and
     what is typed only searches. An option is also found by its data-find, and a list with data-empty
     says that when nothing is. A script chooses an option by clicking it.
+
+    A list with aria-multiselectable=true makes it a choice of many: each option holds a checkbox, the form
+    posts the checked ones. Picking an option checks or unchecks it and the list stays open, the field shows
+    the labels of the checked ones, and what is typed only searches.
 */
 function listOf (field) {
     return document.getElementById(field.getAttribute('aria-controls'));
@@ -159,6 +167,36 @@ function valueOf (field) {
     return next?.matches('input[type=hidden]') ? next : null;
 }
 
+function isMultiple (field) {
+    return listOf(field).getAttribute('aria-multiselectable') === 'true';
+}
+
+// A choice holds only options, what is typed in it searches them
+function isChoice (field) {
+    return Boolean(valueOf(field)) || isMultiple(field);
+}
+
+function boxOf (option) {
+    return option.querySelector(':scope > input[type=checkbox]');
+}
+
+// The options of a choice of many that are checked, each marked as it is for the list to show
+function checkedOf (field) {
+    const checked = [];
+    for (const option of listOf(field).querySelectorAll('[role=option]')) {
+        const on = Boolean(boxOf(option)?.checked);
+        option.setAttribute('aria-checked', String(on));
+        if (on)
+            checked.push(option);
+    }
+
+    return checked;
+}
+
+function summaryOf (field) {
+    return checkedOf(field).map(labelOf).join(', ');
+}
+
 function labelOf (option) {
     return option.dataset.label ?? option.textContent.trim();
 }
@@ -177,22 +215,30 @@ function valueOfOption (option) {
     return option.dataset.value ?? labelOf(option);
 }
 
-// The option a field holds. In a choice it is the one with the value of its hidden input, the marked one first,
-// so of two options with one label the one chosen stays, and so does one the page set by the value alone
+// What an option puts in a field that is not a choice
+function textOfOption (option) {
+    return option.dataset.value ?? option.textContent.trim();
+}
+
+// The option a field holds: the one with its text, in a choice the one with the value of its hidden input. The marked one first,
+// so of two options with one value the one chosen stays, and so does one the page or the user set by the value alone.
+// A choice of many holds several, the first is where its list starts
 function currentOf (field) {
+    if (isMultiple(field))
+        return checkedOf(field)[0] ?? null;
+
     const list = listOf(field);
     const marked = list.querySelector('[role=option][aria-current=true]');
-    const value = valueOf(field);
-    if (!value)
-        return marked;
-
-    if (value.value === '')
+    const hidden = valueOf(field);
+    const held = hidden ? hidden.value : field.value.trim();
+    const of = hidden ? valueOfOption : textOfOption;
+    if (held === '')
         return null;
 
-    if (marked && valueOfOption(marked) === value.value)
+    if (marked && of(marked) === held)
         return marked;
 
-    return [...list.querySelectorAll('[role=option]')].find(option => valueOfOption(option) === value.value) ?? null;
+    return [...list.querySelectorAll('[role=option]')].find(option => of(option) === held) ?? null;
 }
 
 function markCurrent (field, option) {
@@ -228,7 +274,7 @@ function expand (field, open) {
 function showList (field) {
     expand(field, true);
     const current = currentOf(field);
-    if (valueOf(field))
+    if (!isMultiple(field))
         markCurrent(field, current);
 
     if (current && !current.hidden)
@@ -280,17 +326,34 @@ function filter (field, query) {
         mark(row, needle);
     }
 
-    activate(field, valueOf(field) && needle !== '' ? shownOptions(list)[0] : null);
+    activate(field, isChoice(field) && needle !== '' ? shownOptions(list)[0] : null);
+}
+
+// In a choice of many the option is checked or unchecked and the list stays open. The field shows what is checked, unless a search is in it
+function toggle (field, option) {
+    const box = boxOf(option);
+    const searched = field.value !== summaryOf(field);
+    box.checked = !box.checked;
+    option.setAttribute('aria-checked', String(box.checked));
+    if (!searched)
+        field.value = summaryOf(field);
+
+    box.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
 // With no option a choice is cleared
 function choose (field, option) {
+    if (isMultiple(field)) {
+        toggle(field, option);
+        return;
+    }
+
     const value = valueOf(field);
     if (value) {
         value.value = option ? valueOfOption(option) : '';
         field.value = option ? labelOf(option) : '';
     } else
-        field.value = option.dataset.value ?? option.textContent.trim();
+        field.value = textOfOption(option);
 
     markCurrent(field, option);
 
@@ -299,8 +362,15 @@ function choose (field, option) {
     field.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
-// Leaving a choice takes the option named in full, the one it holds first, or else the only one found. Emptied it is cleared, else it goes back
+// Leaving a choice takes the option named in full, the one it holds first, or else the only one found. Emptied it is cleared, else it goes back.
+// A choice of many takes nothing that is typed, it goes back to what is checked
 function settle (field) {
+    if (isMultiple(field)) {
+        field.value = summaryOf(field);
+        filter(field, '');
+        return;
+    }
+
     if (!valueOf(field))
         return;
 
@@ -324,7 +394,7 @@ function settle (field) {
 
 // The text of a choice is only its search, so the change the browser sees in it is not the choice's, choose says that
 document.addEventListener('change', event => {
-    if (event.isTrusted && isCombobox(event.target) && valueOf(event.target))
+    if (event.isTrusted && isCombobox(event.target) && isChoice(event.target))
         event.stopImmediatePropagation();
 }, true);
 
@@ -362,19 +432,21 @@ document.addEventListener('click', event => {
         const field = event.target;
         if (field.getAttribute('aria-expanded') !== 'true') {
             showList(field);
-            if (valueOf(field) && !isDropdown(field))
+            if (isChoice(field) && !isDropdown(field))
                 field.select();
         } else if (isDropdown(field))
             expand(field, false);
     }
 });
 
+// Left, a field shows its text from the start, as Chrome does by itself: the caret goes there, what was selected or typed in it scrolled it to the end
 document.addEventListener('focusout', event => {
     if (!isCombobox(event.target))
         return;
 
     expand(event.target, false);
     settle(event.target);
+    event.target.setSelectionRange(0, 0);
 });
 
 // Enter in a field sends its form without leaving it, so a choice with a search in it is settled first

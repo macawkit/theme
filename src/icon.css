@@ -20,7 +20,7 @@ i.icon::before {
     the icon is the same mask, over a color the geometry gives. It weighs nothing, the geometry sizes it, places it, or takes it away
 */
 :where(input[type=checkbox]:not(.switch))::before,
-:where([role=option][aria-current=true])::before {
+:where([role=option]:is([aria-current=true], [aria-checked=true]))::before {
     mask: var(--mtt-icon-check) 50% / contain no-repeat;
 }
 

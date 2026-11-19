@@ -590,6 +590,11 @@ input[role=combobox][inputmode=none] {
     padding: var(--margin-tight) var(--margin-tight) var(--margin-minimal);
 }
 
+/* the checkbox of an option in a choice of many is only what the form posts, the row shows it checked */
+[role=listbox] > [role=option] > input[type=checkbox] {
+    display: none;
+}
+
 /* a caption stays over its options as they scroll under it, so an option the keyboard reaches stops below it */
 [role=listbox][popover] {
     /* as tall as a caption: its padding and a line */
