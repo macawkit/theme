@@ -3,38 +3,38 @@
         Every color has a name beside it, a string to show where the color is offered or explained, a picker or a legend:
         content: var(--mtt-color-main-name). The names are the palette's own, a color that is another one takes its name too
     */
-    --mtt-color-body: #f7f3ea;
+    --mtt-color-body: #faf2e3;
     --mtt-color-body-name: "Cream";
-    --mtt-color-panel: #fdfbf7;
+    --mtt-color-panel: #fffbf3;
     --mtt-color-panel-name: "Milk";
 
-    --mtt-color-main-dimmed: #dbeeeb;
+    --mtt-color-main-dimmed: #daefe8;
     --mtt-color-main-dimmed-name: "Sea glass";
-    --mtt-color-button: #c3e0dc;
+    --mtt-color-button: #c2e1d8;
     --mtt-color-button-name: "Seafoam";
-    --mtt-color-main: #2a6f77;
+    --mtt-color-main: #29706e;
     --mtt-color-main-name: "Petrol";
-    --mtt-color-main-highlight: #1a7f89;
+    --mtt-color-main-highlight: #1a817d;
     --mtt-color-main-highlight-name: "Teal";
 
     --mtt-color-text-muted: #7a7060;
     --mtt-color-text-muted-name: "Driftwood";
     --mtt-color-text: #554c3f;
     --mtt-color-text-name: "Sepia";
-    --mtt-color-text-decorated: #1f6f78;
+    --mtt-color-text-decorated: #1e716e;
     --mtt-color-text-decorated-name: "Teal ink";
     --mtt-color-text-bright: #41392e;
     --mtt-color-text-bright-name: "Walnut";
     --mtt-color-text-brightest: #ffffff;
     --mtt-color-text-brightest-name: "White";
 
-    --mtt-color-line: #ddd4c2;
+    --mtt-color-line: #e0d3be;
     --mtt-color-line-name: "Oat";
-    --mtt-color-line-dimmed: #e8e1d3;
+    --mtt-color-line-dimmed: #ebe0cf;
     --mtt-color-line-dimmed-name: "Linen";
-    --mtt-color-line-highlight: #b3c6c2;
+    --mtt-color-line-highlight: #b4c6be;
     --mtt-color-line-highlight-name: "Eucalyptus";
-    --mtt-color-line-decorated: #1a8a94;
+    --mtt-color-line-decorated: #1c8c87;
     --mtt-color-line-decorated-name: "Lagoon";
 
     --color-info: var(--mtt-color-main-dimmed);

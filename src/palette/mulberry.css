@@ -1,0 +1,139 @@
+:root {
+    /*
+        Every color has a name beside it, a string to show where the color is offered or explained, a picker or a legend:
+        content: var(--mtt-color-main-name). The names are the palette's own, a color that is another one takes its name too
+    */
+    --mtt-color-body: #160516;
+    --mtt-color-body-name: "Blackcurrant";
+    --mtt-color-panel: #1d081d;
+    --mtt-color-panel-name: "Elderberry";
+
+    /* The page is the berry ripe, near black. What is laid on it is the berry before that: wine where a thing rests, the pink of an unripe one where it is lit */
+    --mtt-color-main-dimmed: #3d0932;
+    --mtt-color-main-dimmed-name: "Wine";
+    --mtt-color-button: #5c0c43;
+    --mtt-color-button-name: "Mulberry";
+    --mtt-color-main: #bb0a7b;
+    --mtt-color-main-name: "Cerise";
+    --mtt-color-main-highlight: #d01985;
+    --mtt-color-main-highlight-name: "Fuchsia";
+
+    --mtt-color-text-muted: #856180;
+    --mtt-color-text-muted-name: "Heather";
+    --mtt-color-text: #be9eb6;
+    --mtt-color-text-name: "Thistle";
+    --mtt-color-text-decorated: #eb6ca9;
+    --mtt-color-text-decorated-name: "Peony";
+    --mtt-color-text-bright: #f9e9f3;
+    --mtt-color-text-bright-name: "Petal";
+    --mtt-color-text-brightest: #ffffff;
+    --mtt-color-text-brightest-name: "White";
+
+    --mtt-color-line: #42193b;
+    --mtt-color-line-name: "Damson";
+    --mtt-color-line-dimmed: #30112c;
+    --mtt-color-line-dimmed-name: "Fig";
+    --mtt-color-line-highlight: #864174;
+    --mtt-color-line-highlight-name: "Beetroot";
+    --mtt-color-line-decorated: #f2a1c5;
+    --mtt-color-line-decorated-name: "Carnation";
+
+    --color-info: var(--mtt-color-main-dimmed);
+    --color-info-name: var(--mtt-color-main-dimmed-name);
+    --color-info-highlight: var(--mtt-color-text-decorated);
+    --color-info-highlight-name: var(--mtt-color-text-decorated-name);
+    --color-info-text: var(--mtt-color-line-decorated);
+    --color-info-text-name: var(--mtt-color-line-decorated-name);
+
+    --color-signature: #142a41;
+    --color-signature-name: "Ocean";
+    --color-signature-highlight: #3ee6f1;
+    --color-signature-highlight-name: "Cyan";
+    --color-signature-text: #7aedf5;
+    --color-signature-text-name: "Aquamarine";
+
+    --color-success: #102d2b;
+    --color-success-name: "Pine";
+    --color-success-highlight: #4fe3a0;
+    --color-success-highlight-name: "Spearmint";
+    --color-success-text: #8decc0;
+    --color-success-text-name: "Seafoam";
+
+    --color-priority: #2c1c45;
+    --color-priority-name: "Grape";
+    --color-priority-highlight: #b792ff;
+    --color-priority-highlight-name: "Lilac";
+    --color-priority-text: #d3bcff;
+    --color-priority-text-name: "Wisteria";
+
+    --color-warning: #342416;
+    --color-warning-name: "Cocoa";
+    --color-warning-highlight: #fac13b;
+    --color-warning-highlight-name: "Gold";
+    --color-warning-text: #f9d989;
+    --color-warning-text-name: "Honey";
+
+    /* Pink is what is lit here, so a danger is the red on the other side of it, toward orange, not to be taken for a thing that is on */
+    --color-danger: #431215;
+    --color-danger-name: "Oxblood";
+    --color-danger-highlight: #da3b21;
+    --color-danger-highlight-name: "Vermilion";
+    --color-danger-text: #fe9979;
+    --color-danger-text-name: "Coral";
+
+    /*
+        Categories: sixteen marks that tell things apart, like whose a row is, and say nothing of state.
+        The first eight go round the hues, taking a color above where one sits there. The last eight go round again between them, deeper
+    */
+    --color-category-1: #60a7ff;
+    --color-category-1-name: "Cornflower";
+    --color-category-2: var(--color-priority-highlight);
+    --color-category-2-name: var(--color-priority-highlight-name);
+    --color-category-3: var(--mtt-color-text-decorated);
+    --color-category-3-name: var(--mtt-color-text-decorated-name);
+    --color-category-4: var(--color-danger-text);
+    --color-category-4-name: var(--color-danger-text-name);
+    --color-category-5: var(--color-warning-highlight);
+    --color-category-5-name: var(--color-warning-highlight-name);
+    --color-category-6: #cede35;
+    --color-category-6-name: "Chartreuse";
+    --color-category-7: var(--color-success-highlight);
+    --color-category-7-name: var(--color-success-highlight-name);
+    --color-category-8: var(--color-signature-highlight);
+    --color-category-8-name: var(--color-signature-highlight-name);
+    --color-category-9: #685acb;
+    --color-category-9-name: "Iris";
+    --color-category-10: #a0429f;
+    --color-category-10-name: "Plum";
+    --color-category-11: #ba3661;
+    --color-category-11-name: "Raspberry";
+    --color-category-12: #ad5002;
+    --color-category-12-name: "Rust";
+    --color-category-13: #836d03;
+    --color-category-13-name: "Olive";
+    --color-category-14: #348302;
+    --color-category-14-name: "Fern";
+    --color-category-15: #068076;
+    --color-category-15-name: "Teal";
+    --color-category-16: #0677ab;
+    --color-category-16-name: "Cerulean";
+
+    /*
+        A shadow is the dark that a raised thing casts on what is under it: its ink, and how much of it shows.
+        The geometry gives it its shape. On a page this dark there is little to darken, a glow lifts things here
+    */
+    --shadow-color: #000000;
+    --shadow-strength: 55%;
+
+    --glow-radius: 10px;
+    --shine-radius: 2px;
+    --glow-strength: 50%;
+    --disabled-filter: brightness(0.7) contrast(0.9) saturate(0.7);
+
+    /* The state colors here are bright already, and a fill glows, so it is not lifted: lighter would only bleach it */
+    --fill-lift: 0;
+}
+
+html {
+    color-scheme: dark;
+}
