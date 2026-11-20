@@ -427,8 +427,47 @@ code {
     min-width: 0;
 }
 
-.box {
-    padding: var(--margin-tight);
+/*
+    A compact card is one of many in a dense spot, a cell of a grid: two short lines and little around them.
+    It wears --color as a swatch does: a wash of it is its ground, a faint rim goes round it and the color itself runs along its start,
+    the geometry draws them. The text on it stays the palette's own, only the muted ink is too faint for a wash, so there it is the text's.
+    A link, it is a thing to tap and looks it with no pointer near, under one its wash deepens and its rim takes the color.
+    Quiet, it is a thing that is over: the wash is nearly gone, the mark is faint and the muted ink is back.
+    It is not .small, that is small text, and a card in small text would shrink twice
+*/
+.card.compact {
+    --card-wash: 16%;
+    --card-ground: color-mix(in srgb, var(--color) var(--card-wash), var(--mtt-color-panel));
+    --card-line: color-mix(in srgb, var(--color) calc(var(--glow-strength) / 2), var(--card-ground));
+    --card-mark: var(--color);
+    --card-edge: 4px;
+    --card-padding: calc(var(--margin-minimal) / 2);
+    --mtt-color-text-muted: var(--mtt-color-text);
+    gap: 0;
+    background-color: var(--card-ground);
+}
+
+.card.compact.quiet {
+    --card-wash: 5%;
+    --card-line: var(--mtt-color-line-dimmed);
+    --card-mark: color-mix(in srgb, var(--color) var(--glow-strength), var(--card-ground));
+    --mtt-color-text-muted: inherit;
+}
+
+a.card.compact {
+    transition:
+        background-color var(--transition),
+        border-color var(--transition),
+        box-shadow var(--transition);
+
+    &:is(.hover, :hover) {
+        --card-wash: 20%;
+        --card-line: var(--card-mark);
+    }
+
+    &.quiet:is(.hover, :hover) {
+        --card-wash: 10%;
+    }
 }
 
 /* An empty state: in the middle of where the things would be, an icon, a line that says what is missing, a note and a way to start */

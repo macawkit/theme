@@ -33,6 +33,32 @@ a.card {
     }
 }
 
+/* A compact card is a small soft slab in a wash of its color, flat on the page as an alert is, under the pointer too. A candy stick inside its start says whose it is */
+.card.compact,
+a.card.compact:is(.hover, :hover) {
+    padding: var(--card-padding) var(--margin-minimal);
+    padding-inline-start: calc(var(--card-edge) + var(--margin-minimal) + 3px);
+    border-color: var(--card-line);
+    border-radius: calc(var(--radius-small) - var(--margin-minimal));
+    box-shadow: none;
+}
+
+.card.compact::after {
+    content: "";
+    position: absolute;
+    inset-block: var(--margin-minimal);
+    inset-inline-start: 3px;
+    width: var(--card-edge);
+    pointer-events: none;
+    border-radius: var(--pill);
+    background: var(--gloss), var(--card-mark);
+}
+
+/* what is over has no gloss on it */
+.card.compact.quiet::after {
+    background: var(--card-mark);
+}
+
 dialog {
     box-shadow: var(--raise-high);
 }

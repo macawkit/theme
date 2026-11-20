@@ -50,6 +50,23 @@ dialog {
     }
 }
 
+/* A compact card is square with the small chip off its corner, its color a flat bar on its start edge. It is too small for corner marks */
+.card.compact {
+    --corner-line: var(--card-line);
+    padding: var(--card-padding) var(--margin-minimal) var(--card-padding) calc(var(--card-edge) + var(--margin-minimal));
+    border: 0;
+    background-size: var(--chip-small) var(--chip-small);
+    box-shadow:
+        inset var(--card-edge) 0 0 var(--card-mark),
+        inset 0 0 0 1px var(--card-line);
+    clip-path: var(--chipped-corner-small);
+
+    &::before,
+    &::after {
+        content: none;
+    }
+}
+
 /* A dialog scrolls and would cut off the corner marks of a panel, so its border carries the mark */
 dialog {
     border-image: linear-gradient(
