@@ -68,6 +68,7 @@ div[role=meter]::before {
 
 /* Markers are pills. A badge carries a light, a little round sweet before its word */
 .badge, .tag {
+    gap: var(--margin-minimal);
     height: var(--element-height-tiny);
     padding: 0 var(--margin-tight);
     border-radius: var(--pill);
@@ -76,7 +77,6 @@ div[role=meter]::before {
 }
 
 .badge {
-    gap: var(--margin-minimal);
     padding-inline-start: calc(var(--margin-tight) - 2px);
     letter-spacing: var(--letter-spacing-wide);
     text-transform: uppercase;
@@ -88,6 +88,7 @@ div[role=meter]::before {
     flex: none;
     width: 8px;
     height: 8px;
+    margin-block: calc((var(--element-height-tiny) - 8px) / 2);
     border-radius: 50%;
     background: var(--gloss), var(--shine-color);
     box-shadow: 0 0 calc(var(--glow-radius) / 2) var(--glow-color);

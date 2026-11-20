@@ -9,6 +9,15 @@
     --color: var(--mtt-color-main-highlight);
     --shine-color: var(--mtt-color-line-decorated);
     --background: var(--mtt-color-main-dimmed);
+    /*
+        an icon is as tall as a line of the text it is in, to an even pixel: in an element of an even height it is then
+        a whole pixel from the edges, and is drawn where the element is, not half a pixel off to one side
+    */
+    --icon-size: 1.2em;
+
+    @supports (width: round(1em, 2px)) {
+        --icon-size: round(1.2em, 2px);
+    }
 }
 
 .info {
@@ -156,8 +165,8 @@ nav.tabs > a > svg,
 nav.tabs > a > img,
 :is(button, .button) > svg,
 :is(button, .button) > img {
-    width: 1.2em;
-    height: 1.2em;
+    width: var(--icon-size);
+    height: var(--icon-size);
     flex-shrink: 0;
     display: block;
 }
@@ -174,9 +183,10 @@ nav a,
 
 nav.tabs > a,
 :is(button, .button) {
+    --inset: var(--margin);
     display: inline-flex;
     justify-content: center;
-    padding: 0 var(--margin);
+    padding: 0 var(--inset);
     border: 0;
     color: var(--mtt-color-text-bright);
     background-color: var(--mtt-color-button);
@@ -192,15 +202,40 @@ nav:not(.tabs, .crumbs) a {
     font-size: var(--decrease-font-size);
 }
 
+/* a small one is as tall as a small element, and so is all of a small row of tabs, the groove of one say */
+nav.tabs.small,
+.small[role=tablist],
+nav.tabs > a.small,
+[role=tablist] > :is(button, .button)[role=tab].small,
+:is(button, .button).small {
+    --element-height: var(--element-height-small);
+}
+
 nav.tabs > a.small,
 nav.tabs.small > a,
 [role=tablist] > :is(button, .button)[role=tab].small,
 .small[role=tablist] > :is(button, .button)[role=tab],
 :is(button, .button).small {
+    --inset: var(--margin-tight);
     color: var(--mtt-color-text-bright);
     font-weight: 700;
-    height: var(--element-height-small);
-    padding: 0 var(--margin-tight);
+}
+
+/*
+    An icon in a button or a tab has as much room at its sides as above and below it, so one alone makes it square.
+    Its margins take that out of the padding, and the gap gives it back to what is beside it. A word is no element,
+    there is no telling whether one is there, so the icon does the same with a word and without
+*/
+nav.tabs > a,
+:is(button, .button) {
+    &:has(> :is(.icon, svg, img)) {
+        --trim: calc(var(--inset) - (var(--element-height) - var(--icon-size)) / 2);
+        gap: calc(var(--margin-tight) + var(--trim));
+    }
+
+    > :is(.icon, svg, img) {
+        margin-inline: calc(-1 * var(--trim));
+    }
 }
 
 /*
@@ -384,6 +419,11 @@ code {
     flex: none;
 }
 
+/* the row is what the place of its chosen tab is measured from, see general.js */
+[role=tablist] {
+    position: relative;
+}
+
 :is([role=tablist], nav.tabs, .scroll) {
     overflow-x: auto;
     overscroll-behavior-x: contain;
@@ -491,6 +531,15 @@ a.card.compact {
 }
 
 /*
+    A .page is a box that scrolls in place of the window, the page of an .app held to the height of the screen say.
+    The geometry draws the top of the page on it, so it scrolls with what is on it, and not on the body behind
+*/
+.page {
+    position: relative;
+    isolation: isolate;
+}
+
+/*
     A page with a navigation column: .app > aside is the column on the start side, the page is what follows it,
     a main or whatever holds it. Anything else in .app, a dialog or a script, is left as it is.
     The last thing in the column, a note, sits at its bottom
@@ -550,8 +599,16 @@ a.card.compact {
     }
 }
 
-.box > i.icon {
-    display: block;
+/* A box is a square as tall as a small element, its glyph or its value in the middle. A value too wide for it widens it, with a little room at its sides */
+.box {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--element-height-small);
+    height: var(--element-height-small);
+    --inset: var(--margin-minimal);
+    padding-inline: var(--inset);
 }
 
 label {
@@ -714,15 +771,35 @@ input[role=combobox][inputmode=none] {
     color: var(--color);
 }
 
-/* A marker is as wide as its word wherever it is, a column or a cell would stretch it. On a line it sits in the middle, by a heading too */
+/*
+    A marker is as wide as its word wherever it is, a column or a cell would stretch it. On a line it sits in the middle, by a heading too.
+    With no room for its word it is narrower, down to what comes before the word, an icon or the light of a badge: the word wraps
+    under that, out of sight, so that is as tall as the marker, an icon is, the geometry pads the light. A word in an element
+    of its own with nothing before it is cut short instead
+*/
 .badge, .tag {
     display: inline-flex;
+    flex-wrap: wrap;
     align-items: center;
     width: fit-content;
+    min-width: 0;
+    max-width: 100%;
+    overflow: clip;
     vertical-align: middle;
     white-space: nowrap;
+    line-height: var(--element-height-tiny);
     color: var(--shine-color);
     background-color: var(--background);
+}
+
+:is(.badge, .tag) > .icon {
+    height: 100%;
+}
+
+:is(.badge, .tag) > :not(.icon) {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /*

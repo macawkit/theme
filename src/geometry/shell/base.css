@@ -121,13 +121,14 @@
     }
 }
 
-/* The top of the page is lit, with a faint grid that fades out over the first screen. Half a dimmed line, so the lines of what is on it still lead */
-body::before {
+/* The top of the page, or of the .page in it, is lit, with a faint grid that fades out over the first screen. Half a dimmed line, so the lines of what is on it still lead */
+:is(body:not(:has(.page)), .page)::before {
     content: "";
     position: absolute;
     inset: 0 0 auto;
     z-index: -1;
     height: calc(var(--column-width) * 4);
+    max-height: 100%;
     pointer-events: none;
     background:
         radial-gradient(ellipse at top, color-mix(in srgb, var(--mtt-color-line-decorated) calc(var(--glow-strength) / 6), #0000), #0000),

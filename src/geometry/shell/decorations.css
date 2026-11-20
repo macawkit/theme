@@ -31,6 +31,7 @@
 }
 
 .badge, .tag {
+    gap: var(--margin-tight);
     height: var(--element-height-tiny);
     padding: 0 var(--margin-tight);
     font-weight: 500;
@@ -39,7 +40,6 @@
 }
 
 .badge {
-    gap: var(--margin-tight);
     font-family: var(--mono);
     letter-spacing: var(--letter-spacing-wide);
     text-transform: uppercase;
@@ -50,6 +50,7 @@
     flex: none;
     width: calc(var(--element-inner-margin-small) * 2);
     height: calc(var(--element-inner-margin-small) * 2);
+    margin-block: calc((var(--element-height-tiny) - var(--element-inner-margin-small) * 2) / 2);
     border-radius: 50%;
     background: var(--shine-color);
     box-shadow: 0 0 calc(var(--glow-radius) / 2) calc(var(--shine-radius) / 2) var(--shine-color);

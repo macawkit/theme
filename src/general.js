@@ -25,6 +25,35 @@ function select (list, tab) {
         if (panel)
             panel.hidden = !selected;
     }
+
+    placeChosen(list);
+}
+
+/*
+    A geometry may draw the mark of the chosen tab on the row instead of on the tab, and move it from tab to tab.
+    The row is told where the chosen tab is, --mtt-tab-left and --mtt-tab-width, and data-mtt-tab says it has been,
+    and is told again whenever the tabs change size. Until then the chosen tab draws its own mark
+*/
+const resized = new ResizeObserver(entries => {
+    for (const list of new Set(entries.map(entry => entry.target.closest('[role=tablist]'))))
+        if (list)
+            placeChosen(list);
+});
+
+function placeChosen (list) {
+    const tab = list.querySelector(':scope > [role=tab][aria-selected=true]');
+    list.toggleAttribute('data-mtt-tab', Boolean(tab));
+    if (!tab)
+        return;
+
+    list.style.setProperty('--mtt-tab-left', `${tab.offsetLeft}px`);
+    list.style.setProperty('--mtt-tab-width', `${tab.offsetWidth}px`);
+}
+
+function watchTabs (root) {
+    for (const list of root.querySelectorAll('[role=tablist]'))
+        for (const element of [list, ...list.querySelectorAll(':scope > [role=tab]')])
+            resized.observe(element);
 }
 
 // Tabs are listened to on the document, so a row of them the page adds later works as well
@@ -113,9 +142,17 @@ function fillMeter (meter) {
 
 /*
     What the kit draws by script is drawn once, when the page loads. A page that adds or changes sparks or meters later,
-    or a row of tabs, or checks the options of a field of many, calls mtt.refresh(), with the element that holds them to look only there
+    or a row of tabs, or checks the options of a field of many, or adds a dialog to open, calls mtt.refresh(),
+    with the element that holds them to look only there.
+    A dialog with data-open is opened as a modal, once: one the server sends back with a form it turned down, say
 */
 function refresh (root = document) {
+    for (const dialog of root.querySelectorAll('dialog[data-open]')) {
+        dialog.removeAttribute('data-open');
+        if (!dialog.open)
+            dialog.showModal();
+    }
+
     for (const spark of root.querySelectorAll('.spark'))
         drawSpark(spark);
 
@@ -126,6 +163,8 @@ function refresh (root = document) {
     for (const field of root.querySelectorAll('input[role=combobox]'))
         if (isCombobox(field) && isMultiple(field))
             field.value = summaryOf(field);
+
+    watchTabs(root);
 
     // once the fonts have given the tabs their widths
     document.fonts.ready.then(() => revealChosen(root));
@@ -142,7 +181,9 @@ refresh();
     A hidden input right after the field makes it a choice of the options and of nothing else: the
     hidden input takes the data-value of the option chosen, the field its data-label or its text, and
     what is typed only searches. An option is also found by its data-find, and a list with data-empty
-    says that when nothing is. A script chooses an option by clicking it.
+    says that when nothing is. An option with data-value="" names the choice of nothing, "All students"
+    in a filter say: the field holds it while its hidden input is empty, and goes back to it when emptied.
+    A choice fires change only when its value does. A script chooses an option by clicking it.
 
     A list with aria-multiselectable=true makes it a choice of many: each option holds a checkbox, the form
     posts the checked ones. Picking an option checks or unchecks it and the list stays open, the field shows
@@ -222,7 +263,7 @@ function textOfOption (option) {
 
 // The option a field holds: the one with its text, in a choice the one with the value of its hidden input. The marked one first,
 // so of two options with one value the one chosen stays, and so does one the page or the user set by the value alone.
-// A choice of many holds several, the first is where its list starts
+// A choice of many holds several, the first is where its list starts. A choice with an empty value holds its option of nothing, if it has one
 function currentOf (field) {
     if (isMultiple(field))
         return checkedOf(field)[0] ?? null;
@@ -233,12 +274,18 @@ function currentOf (field) {
     const held = hidden ? hidden.value : field.value.trim();
     const of = hidden ? valueOfOption : textOfOption;
     if (held === '')
-        return null;
+        return hidden ? nothingOf(field) : null;
 
     if (marked && of(marked) === held)
         return marked;
 
     return [...list.querySelectorAll('[role=option]')].find(option => of(option) === held) ?? null;
+}
+
+// The option of a choice that names the choice of nothing, the marked one first
+function nothingOf (field) {
+    const options = [...listOf(field).querySelectorAll('[role=option]')].filter(option => option.dataset.value === '');
+    return options.find(option => option.getAttribute('aria-current') === 'true') ?? options[0] ?? null;
 }
 
 function markCurrent (field, option) {
@@ -261,11 +308,15 @@ function activate (field, option) {
         field.removeAttribute('aria-activedescendant');
 }
 
+// However it opens, by the pointer, a key or a search, the list ticks the option the field holds now: a script, a reset or the Back button may have set it
 function expand (field, open) {
     const list = listOf(field);
     const shown = open && (shownOptions(list).length > 0 || list.hasAttribute('data-empty'));
     field.setAttribute('aria-expanded', String(shown));
     list.togglePopover(shown);
+    if (shown && !isMultiple(field))
+        markCurrent(field, currentOf(field));
+
     if (!shown)
         activate(field, null);
 }
@@ -274,9 +325,6 @@ function expand (field, open) {
 function showList (field) {
     expand(field, true);
     const current = currentOf(field);
-    if (!isMultiple(field))
-        markCurrent(field, current);
-
     if (current && !current.hidden)
         activate(field, current);
 }
@@ -341,7 +389,7 @@ function toggle (field, option) {
     box.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
-// With no option a choice is cleared
+// With no option a choice is cleared, to its option of nothing if it has one. Change is told only when the value is another, as a select does
 function choose (field, option) {
     if (isMultiple(field)) {
         toggle(field, option);
@@ -349,7 +397,9 @@ function choose (field, option) {
     }
 
     const value = valueOf(field);
+    const before = value ? value.value : field.value;
     if (value) {
+        option ??= nothingOf(field);
         value.value = option ? valueOfOption(option) : '';
         field.value = option ? labelOf(option) : '';
     } else
@@ -359,37 +409,33 @@ function choose (field, option) {
 
     filter(field, '');
     expand(field, false);
-    field.dispatchEvent(new Event('change', { bubbles: true }));
+    if ((value ? value.value : field.value) !== before)
+        field.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
 // Leaving a choice takes the option named in full, the one it holds first, or else the only one found. Emptied it is cleared, else it goes back.
-// A choice of many takes nothing that is typed, it goes back to what is checked
+// A choice of many takes nothing that is typed, it goes back to what is checked. Any other field keeps what is typed. Whichever, the search is over
 function settle (field) {
-    if (isMultiple(field)) {
+    if (isMultiple(field))
         field.value = summaryOf(field);
-        filter(field, '');
-        return;
+    else if (valueOf(field)) {
+        const typed = field.value.trim().toLowerCase();
+        const current = currentOf(field);
+        const options = [...listOf(field).querySelectorAll('[role=option]')];
+        const isNamed = option => [labelOf(option), option.dataset.value].some(name => name?.toLowerCase() === typed);
+        const named = current && isNamed(current) ? current : options.find(isNamed);
+        const found = typed === '' ? [] : options.filter(option => matches(option, typed));
+        const option = named ?? (found.length === 1 ? found[0] : undefined);
+
+        if (typed === '' && current)
+            choose(field, null);
+        else if (option && option !== current)
+            choose(field, option);
+        else
+            field.value = current ? labelOf(current) : '';
     }
 
-    if (!valueOf(field))
-        return;
-
-    const typed = field.value.trim().toLowerCase();
-    const current = currentOf(field);
-    const options = [...listOf(field).querySelectorAll('[role=option]')];
-    const isNamed = option => [labelOf(option), option.dataset.value].some(name => name?.toLowerCase() === typed);
-    const named = current && isNamed(current) ? current : options.find(isNamed);
-    const found = typed === '' ? [] : options.filter(option => matches(option, typed));
-    const option = named ?? (found.length === 1 ? found[0] : undefined);
-
-    if (typed === '' && current)
-        choose(field, null);
-    else if (option && option !== current)
-        choose(field, option);
-    else {
-        field.value = current ? labelOf(current) : '';
-        filter(field, '');
-    }
+    filter(field, '');
 }
 
 // The text of a choice is only its search, so the change the browser sees in it is not the choice's, choose says that
@@ -520,3 +566,15 @@ if (!('commandForElement' in HTMLButtonElement.prototype))
         else if (command === 'close')
             dialog.close();
     });
+
+// A dialog closed with nowhere to give the focus back, one opened as the page loaded say, gives it to a button outside it that opens it.
+// The focus may still be in it then, on its way out
+document.addEventListener('close', event => {
+    const dialog = event.target;
+    const focused = document.activeElement;
+    if (!(dialog instanceof HTMLDialogElement) || !dialog.id || (focused && focused !== document.body && !dialog.contains(focused)))
+        return;
+
+    const openers = document.querySelectorAll(`button[commandfor="${CSS.escape(dialog.id)}"]`);
+    [...openers].find(button => !dialog.contains(button))?.focus();
+}, true);

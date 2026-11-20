@@ -127,11 +127,15 @@ nav.tabs > a,
     }
 }
 
-/* Alt: a flat body with corner ticks, shared with .box */
+/*
+    Alt: a flat body with corner ticks, shared with .box. Its frame is part of its padding,
+    so it is as wide as a plain one with the same word, and square with one icon
+*/
 :is(button, .button).alt,
 .box {
     background-color: var(--mtt-color-main-dimmed);
     border: 1px solid var(--mtt-color-line);
+    padding-inline: calc(var(--inset) - 1px);
 }
 
 :is(button, .button).alt::before,
@@ -248,7 +252,7 @@ nav.tabs > a[aria-current=page],
     text-shadow: 0 0 calc(var(--shine-radius) / 2) color-mix(in srgb, var(--mtt-color-text-bright) var(--shining), #0000);
 }
 
-/* Navigation list: a glow bar next to the current one, see bar.css */
+/* Navigation list: a glow bar next to the current one, see bar.css. The current one is chipped in a column; on a phone, where the column is a row of tabs, see theme.css, it is square as a tab is */
 nav:not(.tabs, .crumbs) a {
     transition:
         background-color var(--transition),
@@ -276,8 +280,11 @@ nav:not(.tabs, .crumbs) a {
         color: var(--mtt-color-text-bright);
 
         &::before {
-            clip-path: var(--chipped-corner);
             background-color: var(--mtt-color-main-dimmed);
+
+            @media (width >= 600px) {
+                clip-path: var(--chipped-corner);
+            }
         }
 
         small {

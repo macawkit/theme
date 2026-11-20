@@ -147,10 +147,40 @@ nav.tabs > a,
         0 0 var(--glow-radius) var(--glow-color);
 }
 
-/* Tabs: a row of them is a groove, the chosen one is a candy sitting in it. The groove is painted on the content of the row, inside the room it keeps for the glow */
+/*
+    Tabs: a row of them is a groove, the chosen one is a candy sitting in it. The groove is drawn on the content of the row: as long as all the tabs
+    and as tall as one, so it scrolls with them when they don't fit, and leaves out the room the row keeps for the glow and its scrollbar.
+    It is a bar between two round ends, each half a circle as wide as a tab is tall, none of them over another, the groove is see-through.
+    On a phone the navigation column of .app is such a row, see theme.css: a groove as well, its current link the candy
+*/
+:is([role=tablist], nav.tabs, .app > aside > nav:not(.tabs, .crumbs) > :is(ul, ol)) {
+    --groove-color: color-mix(in srgb, var(--mtt-color-main-dimmed) var(--glow-strength), #0000);
+    --groove-end: calc(var(--element-height) / 2) 100% no-repeat local content-box;
+    --groove:
+        radial-gradient(100% 50% at 100% 50%, var(--groove-color) calc(100% - 1px), #0000) 0 0 / var(--groove-end),
+        radial-gradient(100% 50% at 0 50%, var(--groove-color) calc(100% - 1px), #0000) 100% 0 / var(--groove-end),
+        linear-gradient(var(--groove-color), var(--groove-color)) 50% 0 / calc(100% - var(--element-height)) 100% no-repeat local content-box;
+}
+
 :is([role=tablist], nav.tabs) {
-    border-radius: var(--pill);
-    background: color-mix(in srgb, var(--mtt-color-main-dimmed) var(--glow-strength), #0000) content-box;
+    background: var(--groove);
+}
+
+@media (width < 600px) {
+    .app > aside > nav:not(.tabs, .crumbs) {
+        & > :is(ul, ol) {
+            background: var(--groove);
+        }
+
+        & a {
+            border-radius: var(--pill);
+        }
+
+        & a[aria-current] {
+            background: var(--gloss), var(--mtt-color-button);
+            box-shadow: var(--raise-low);
+        }
+    }
 }
 
 nav.tabs > a,
@@ -171,6 +201,37 @@ nav.tabs > a[aria-current=page],
     --gloss-layer: var(--gloss);
     --elevation: var(--raise-low);
     color: var(--mtt-color-text-bright);
+}
+
+/*
+    With general.js the candy is one for the whole row, thrown from tab to tab, overshooting a little as it lands, see general.js.
+    It lies under the tabs, so the word of one it passes over stays on top of it
+*/
+[role=tablist][data-mtt-tab] {
+    &::before {
+        content: "";
+        position: absolute;
+        inset-block: var(--overhang);
+        left: var(--mtt-tab-left);
+        width: var(--mtt-tab-width);
+        pointer-events: none;
+        border-radius: var(--pill);
+        background: var(--gloss), var(--mtt-color-button);
+        box-shadow: var(--raise-low);
+        transition:
+            left var(--transition-bounce),
+            width var(--transition-bounce);
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
+    }
+
+    > :is(button, .button)[role=tab][aria-selected=true] {
+        --background-color: transparent;
+        --gloss-layer: none;
+        --elevation: var(--flat);
+    }
 }
 
 /* Navigation list: a soft pill under the link the pointer is on, and the current one is a candy, glossy, in the main tone */

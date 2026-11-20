@@ -3,8 +3,8 @@ i.icon {
     display: inline-block;
     position: relative;
     flex-shrink: 0;
-    width: 1.2em;
-    height: 1.2em;
+    width: var(--icon-size);
+    height: var(--icon-size);
 }
 
 i.icon::before {
