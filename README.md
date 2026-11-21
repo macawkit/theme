@@ -59,6 +59,21 @@ In a choice, a combobox with a hidden input, an option with `data-value=""` name
 - `.swatch` shows one color, `--color`, a category's most of all: `<span class="swatch" aria-hidden="true" style="--color: var(--color-category-7)"></span>` beside the name of what wears it. It is decoration, the name says it all. It is drawn and lit as the geometry draws a fill. `.small` is for a dense spot, a width and a height of your own work too, and `.quiet` is for a thing that is over, faint and unlit.
 - `.card.compact` is a card for a dense spot, one of many in a cell of a grid: `<a class="card compact" href="…" style="--color: var(--color-category-3)">`. It is tight and wears `--color` as a swatch does, a wash of it as its ground and the color itself along its start, drawn by the geometry, and the text on it stays the palette's own, small text too, the muted ink is too faint for a wash. A link, its wash deepens and its rim takes the color under the pointer, the focus ring runs inside it, and given a height it fills it. `.quiet` is for a thing that is over. It is not `.small`, that one is small text.
 - An icon in a button or a tab, an `i.icon`, an `svg` or an `img`, has as much room at its sides as above and below it, so a button of only an icon is square: `<button class="alt" title="Retry"><i class="icon i-refresh"></i></button>`. The `title` or an `aria-label` is its name. Next to a word the icon keeps the usual gap. Two icons side by side with no word between them come out close together.
+- `nav.pages` is the pagination of a long list, written as it would be with no kit: a link for each page, `aria-current="page"` on the one shown, and `rel="prev"` and `rel="next"` on the way back and the way on, straight in the `nav` or in a list, an item for each:
+
+  ```html
+  <nav class="pages" aria-label="Pages">
+      <ul>
+          <li><a href="?page=3" rel="prev">Previous</a></li>
+          <li><a href="?page=1">1</a></li>
+          <li>…</li>
+          <li><a href="?page=4" aria-current="page">4</a></li>
+          <li><a href="?page=5" rel="next">Next</a></li>
+      </ul>
+  </nav>
+  ```
+
+  The kit draws the pages as tabs, the one shown with a glow bar under it in Shell and as the candy in a groove in Candy, and the way back and on as alt buttons beside them. With a word they are buttons of a word, with only an icon, `<i class="icon i-chevron-left"></i>`, and a `title` or an `aria-label`, they are square. What is not a link, "…", is the gap of the pages left out. On the first page the way back is left out, or, to keep the row from shifting, kept with no `href` and with `role="link"` and `aria-disabled="true"`, and so is the way on from the last. It wraps when it does not fit, keeping the run short is up to the server, and where it stands is up to the page: `<footer class="row between">` under a table, with how many there are, "61–80 of 128", in a `small` before it. `.small` makes it as tall as a small element.
 - `.box` is a square as tall as a small element for one glyph or one value, `<div class="box"><i class="icon i-user"></i></div>`, and a wider value widens it. `.active` lights it.
 - A badge or a tag is as wide as its word wherever it is, and sits in the middle of a line or a heading. With no room for its word, in a cell of a month say, it gets narrower: one with an icon before its word, `<span class="tag"><i class="icon i-user"></i>Ann</span>`, keeps the icon and drops the word, a badge keeps its light. A word in a `span` of its own with nothing before it is cut short with "…" instead, so give the marker a `title` when the word matters. A value in a `dl` wraps anywhere when it has no spaces, an address or a hash.
 

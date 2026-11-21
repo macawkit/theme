@@ -4,9 +4,10 @@
 */
 .alert::after,
 :is(button, .button).ghost::after,
-nav:not(.tabs, .crumbs) a::after,
+nav:not(.tabs, .crumbs, .pages) a::after,
 [role=option]::after,
 nav.tabs > a::after,
+nav.pages a:not([rel])::after,
 :is(button, .button)[role=tab]::after {
     content: "";
     position: absolute;
@@ -21,7 +22,7 @@ nav.tabs > a::after,
 /* along the left edge */
 .alert::after,
 :is(button, .button).ghost::after,
-nav:not(.tabs, .crumbs) a::after,
+nav:not(.tabs, .crumbs, .pages) a::after,
 [role=option]::after {
     top: 0;
     width: var(--highlight-thickness);
@@ -30,6 +31,7 @@ nav:not(.tabs, .crumbs) a::after,
 
 /* along the bottom edge */
 nav.tabs > a::after,
+nav.pages a:not([rel])::after,
 :is(button, .button)[role=tab]::after {
     bottom: 0;
     width: 100%;
@@ -38,7 +40,7 @@ nav.tabs > a::after,
 
 /* On a phone the navigation column of .app is a row, see theme.css, and its links run sideways as tabs do: the bar goes under them */
 @media (width < 600px) {
-    .app > aside > nav:not(.tabs, .crumbs) a::after {
+    .app > aside > nav:not(.tabs, .crumbs, .pages) a::after {
         top: auto;
         bottom: 0;
         width: 100%;
@@ -48,9 +50,10 @@ nav.tabs > a::after,
 
 /* hidden until the element is hovered, pressed or current */
 :is(button, .button).ghost::after,
-nav:not(.tabs, .crumbs) a::after,
+nav:not(.tabs, .crumbs, .pages) a::after,
 [role=option]::after,
 nav.tabs > a::after,
+nav.pages a:not([rel])::after,
 :is(button, .button)[role=tab]::after {
     opacity: 0;
     transition: opacity var(--transition);
@@ -59,7 +62,7 @@ nav.tabs > a::after,
 /* shown: a ghost that is on or under the pointer, the current link, the row the keyboard is on, quickly */
 :is(button, .button).ghost:is([aria-pressed=true], :has(> input:checked))::after,
 :is(button, .button).ghost:is(.hover, :hover):not(:disabled, [aria-disabled=true], [aria-pressed], :has(> input))::after,
-nav:not(.tabs, .crumbs) a[aria-current]::after,
+nav:not(.tabs, .crumbs, .pages) a[aria-current]::after,
 [role=option][aria-selected=true]::after {
     transition: opacity var(--transition-fast);
     opacity: 1;
@@ -67,6 +70,7 @@ nav:not(.tabs, .crumbs) a[aria-current]::after,
 
 /* and the chosen tab, at the pace of its row */
 nav.tabs > a[aria-current=page]::after,
+nav.pages a[aria-current=page]::after,
 :is(button, .button)[role=tab][aria-selected=true]::after {
     opacity: 1;
 }
@@ -85,7 +89,8 @@ nav.tabs > a[aria-current=page]::after,
     --glow-source: var(--color);
 }
 
-nav a::after,
+/* the way back and the way on of a row of pages are alt buttons with no bar, their halo is lit by the button as any other is */
+nav a:not(:where(nav.pages a[rel]))::after,
 [role=option]::after,
 :is(button, .button)[role=tab]::after {
     --glow-source: var(--mtt-color-main-highlight);

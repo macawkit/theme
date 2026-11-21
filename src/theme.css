@@ -163,6 +163,8 @@ select:not([multiple]) :is(option, optgroup) {
 
 nav.tabs > a > svg,
 nav.tabs > a > img,
+nav.pages a > svg,
+nav.pages a > img,
 :is(button, .button) > svg,
 :is(button, .button) > img {
     width: var(--icon-size);
@@ -182,6 +184,7 @@ nav a,
 }
 
 nav.tabs > a,
+nav.pages a,
 :is(button, .button) {
     --inset: var(--margin);
     display: inline-flex;
@@ -192,7 +195,7 @@ nav.tabs > a,
     background-color: var(--mtt-color-button);
 }
 
-nav:not(.tabs, .crumbs) a {
+nav:not(.tabs, .crumbs, .pages) a {
     display: flex;
     color: var(--mtt-color-text);
     padding: var(--margin);
@@ -227,6 +230,7 @@ nav.tabs.small > a,
     there is no telling whether one is there, so the icon does the same with a word and without
 */
 nav.tabs > a,
+nav.pages a,
 :is(button, .button) {
     &:has(> :is(.icon, svg, img)) {
         --trim: calc(var(--inset) - (var(--element-height) - var(--icon-size)) / 2);
@@ -264,12 +268,12 @@ a.card {
     color: inherit;
 }
 
-nav:not(.tabs, .crumbs) {
+nav:not(.tabs, .crumbs, .pages) {
     display: flex;
     flex-direction: column;
 }
 
-nav:not(.tabs, .crumbs) :is(ul, ol) {
+nav:not(.tabs, .crumbs, .pages) :is(ul, ol) {
     list-style: none;
     margin: 0;
     padding: 0;
@@ -277,11 +281,11 @@ nav:not(.tabs, .crumbs) :is(ul, ol) {
     flex-direction: column;
 }
 
-nav:not(.tabs, .crumbs) a small {
+nav:not(.tabs, .crumbs, .pages) a small {
     font-family: var(--mono);
 }
 
-nav:not(.tabs, .crumbs) a > small:last-child:not(:first-child) {
+nav:not(.tabs, .crumbs, .pages) a > small:last-child:not(:first-child) {
     margin-left: auto;
 }
 
@@ -298,6 +302,70 @@ nav.crumbs > * {
     display: flex;
     position: relative;
     color: var(--mtt-color-text);
+}
+
+/*
+    Pages: a nav of the pages of a long list, a link for each, aria-current=page on the one shown, rel=prev and rel=next on
+    the way back and the way on. The links are straight in it or in a list, one item for each. What is not a link, "…", is a gap,
+    the pages the run leaves out. It wraps when it does not fit, the run is the server's to keep short. Where it stands is up to the page.
+    The pages are side by side with nothing between them, so the geometry can lay one ground under all of them.
+    The way back and the way on stand off from them, and are as wide as a button with the same word
+*/
+nav.pages,
+nav.pages > :is(ul, ol) {
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: var(--margin-tight);
+}
+
+nav.pages > *,
+nav.pages > :is(ul, ol) > li {
+    display: flex;
+    align-items: center;
+}
+
+nav.pages > :is(ul, ol) {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav.pages a {
+    min-width: var(--element-height);
+}
+
+nav.pages a:not([rel]) {
+    --inset: var(--margin-tight);
+}
+
+nav.pages.small {
+    --element-height: var(--element-height-small);
+
+    a {
+        --inset: var(--margin-tight);
+    }
+
+    a:not([rel]) {
+        --inset: var(--margin-minimal);
+    }
+}
+
+nav.pages > :not(a, ul, ol),
+nav.pages > :is(ul, ol) > li:not(:has(> a)) {
+    justify-content: center;
+    min-width: var(--element-height);
+    height: var(--element-height);
+    color: var(--mtt-color-text-muted);
+}
+
+nav.pages > [rel=prev],
+nav.pages > :is(ul, ol) > li:has(> [rel=prev]) {
+    margin-inline-end: var(--margin-tight);
+}
+
+nav.pages > [rel=next],
+nav.pages > :is(ul, ol) > li:has(> [rel=next]) {
+    margin-inline-start: var(--margin-tight);
 }
 
 dl {
@@ -584,8 +652,8 @@ a.card.compact {
         min-width: 0;
     }
 
-    .app > aside > nav:not(.tabs, .crumbs, :has(> :is(ul, ol))),
-    .app > aside > nav:not(.tabs, .crumbs) > :is(ul, ol) {
+    .app > aside > nav:not(.tabs, .crumbs, .pages, :has(> :is(ul, ol))),
+    .app > aside > nav:not(.tabs, .crumbs, .pages) > :is(ul, ol) {
         flex-direction: row;
         overflow-x: auto;
         overscroll-behavior-x: contain;

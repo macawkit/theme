@@ -1010,7 +1010,7 @@
                 <header>
                     <span class="label">07</span>
                     <h2>Navigation</h2>
-                    <span class="note">crumbs · tabs · links</span>
+                    <span class="note">crumbs · tabs · pages · links</span>
                 </header>
                 <div class="stack">
                     <nav class="crumbs" aria-label="Breadcrumb">
@@ -1038,6 +1038,29 @@
                         <p role="tabpanel" id="qp-corrupt" aria-labelledby="qt-corrupt" hidden>No damaged files.</p>
                         <p role="tabpanel" id="qp-bounce" aria-labelledby="qt-bounce" hidden>112 bounce notices to be sent.</p>
                         <small>ARIA tabs, ← → Home End. When they don't fit they scroll sideways, the chosen one is brought into sight. <code>nav.tabs &gt; a</code> looks the same and is for links, the queue table below has one.</small>
+                    </div>
+                    <div class="stack tight">
+                        <nav class="pages" aria-label="Pages">
+                            <ul>
+                                <li><a rel="prev" role="link" aria-disabled="true"><i class="icon i-chevron-left"></i>Previous</a></li>
+                                <li><a href="#navigation" aria-current="page">1</a></li>
+                                <li><a href="#navigation">2</a></li>
+                                <li><a href="#navigation">3</a></li>
+                                <li>…</li>
+                                <li><a href="#navigation">12</a></li>
+                                <li><a href="#navigation" rel="next">Next<i class="icon i-chevron-right"></i></a></li>
+                            </ul>
+                        </nav>
+                        <nav class="pages small" aria-label="Pages">
+                            <a href="#navigation" rel="prev"><i class="icon i-chevron-left"></i>Previous</a>
+                            <a href="#navigation">1</a>
+                            <span>…</span>
+                            <a href="#navigation">10</a>
+                            <a href="#navigation">11</a>
+                            <a href="#navigation" aria-current="page">12</a>
+                            <a rel="next" role="link" aria-disabled="true">Next<i class="icon i-chevron-right"></i></a>
+                        </nav>
+                        <small>Pages, <code>nav.pages</code>: a link for each, <code>aria-current="page"</code> on the one shown, <code>rel="prev"</code> and <code>rel="next"</code> on the way back and on, in a list or straight in it. What is not a link is the gap of the pages left out. <code>.small</code> is the compact one. On the first page the way back has no <code>href</code> and is <code>aria-disabled</code>, and so is the way on from the last. The queue below has a small one under its table, its way back and on only icons with a <code>title</code>, square.</small>
                     </div>
                     <p>Bounces are kept for <a href="#navigation">five days</a> and then returned, see the <a href="#navigation" class="hover">queue manual</a> or <a href="#navigation" class="focus">ask the postmaster</a>. A link <a href="">already visited</a> stays the same.</p>
                 </div>
@@ -1104,6 +1127,20 @@
                     </tbody>
                 </table>
             </div>
+            <footer class="row between">
+                <small>61–80 of 128</small>
+                <nav class="pages small" aria-label="Pages">
+                    <a href="#queue" rel="prev" title="Previous page"><i class="icon i-chevron-left"></i></a>
+                    <a href="#queue">1</a>
+                    <span>…</span>
+                    <a href="#queue">3</a>
+                    <a href="#queue" aria-current="page">4</a>
+                    <a href="#queue" class="hover">5</a>
+                    <span>…</span>
+                    <a href="#queue">7</a>
+                    <a href="#queue" rel="next" title="Next page"><i class="icon i-chevron-right"></i></a>
+                </nav>
+            </footer>
         </section>
 
         <div class="tiles" style="--tile-width: 480px">

@@ -6,6 +6,7 @@
     and a scale that ends at one, so the type is crisp again whenever it is still
 */
 nav.tabs > a,
+nav.pages a,
 :is(button, .button) {
     --background-color: var(--mtt-color-button);
     --gloss-layer: var(--gloss);
@@ -37,7 +38,8 @@ nav.tabs > a,
         scale var(--transition-bounce);
 }
 
-:is(button, .button) {
+/* the way back and the way on of a row of pages, see theme.css, are alt buttons too */
+:is(button, .button, :where(nav.pages a[rel])) {
     /* It floats up to meet the pointer, its shadow spreading as it goes */
     &:is(.hover, :hover):not(.ghost, :disabled, [aria-disabled=true], [role=tab]):where(:not(:has(> input:disabled))) {
         --elevation: var(--raise);
@@ -45,8 +47,8 @@ nav.tabs > a,
     }
 
     /* Lit: a toggle that is on, and a plain button under the pointer. A toggle is lit only by being on */
-    &:is([aria-pressed=true], :has(> input:checked)):not(.ghost, .alt),
-    &:not(.ghost, .alt, :disabled, [aria-disabled=true], [role=tab], [aria-pressed], :has(> input)):is(.hover, :hover) {
+    &:is([aria-pressed=true], :has(> input:checked)):not(.ghost, .alt, :where(nav.pages a)),
+    &:not(.ghost, .alt, :where(nav.pages a), :disabled, [aria-disabled=true], [role=tab], [aria-pressed], :has(> input)):is(.hover, :hover) {
         --background-color: var(--mtt-color-main-highlight);
         --glow-source: var(--background-color);
         --glow-reach: var(--glow-radius);
@@ -90,7 +92,7 @@ nav.tabs > a,
     }
 
     /* Alt: a soft candy, matte, with a rim in place of the gloss. Lit, it takes the body of a plain button */
-    &.alt {
+    &:is(.alt, :where(nav.pages a)) {
         --background-color: var(--mtt-color-main-dimmed);
         --gloss-layer: none;
         --rim-color: var(--mtt-color-line);
@@ -153,7 +155,7 @@ nav.tabs > a,
     It is a bar between two round ends, each half a circle as wide as a tab is tall, none of them over another, the groove is see-through.
     On a phone the navigation column of .app is such a row, see theme.css: a groove as well, its current link the candy
 */
-:is([role=tablist], nav.tabs, .app > aside > nav:not(.tabs, .crumbs) > :is(ul, ol)) {
+:is([role=tablist], nav.tabs, .app > aside > nav:not(.tabs, .crumbs, .pages) > :is(ul, ol)) {
     --groove-color: color-mix(in srgb, var(--mtt-color-main-dimmed) var(--glow-strength), #0000);
     --groove-end: calc(var(--element-height) / 2) 100% no-repeat local content-box;
     --groove:
@@ -167,7 +169,7 @@ nav.tabs > a,
 }
 
 @media (width < 600px) {
-    .app > aside > nav:not(.tabs, .crumbs) {
+    .app > aside > nav:not(.tabs, .crumbs, .pages) {
         & > :is(ul, ol) {
             background: var(--groove);
         }
@@ -234,8 +236,71 @@ nav.tabs > a[aria-current=page],
     }
 }
 
+/*
+    Pages: they lie in a groove as tabs do, and the one shown is the candy in it. The groove is laid under each page and each gap,
+    the item of a list or what is straight in the row, round at the first and at the last, so it is as long as the pages however wide
+    the row, and stops short of the way back and the way on. The page is its own piece of groove when nothing holds it, so its candy
+    is drawn over that, on ::before. The way back and the way on are alt buttons, see above
+*/
+nav.pages {
+    --groove-color: color-mix(in srgb, var(--mtt-color-main-dimmed) var(--glow-strength), #0000);
+
+    > :not(ul, ol, [rel]),
+    > :is(ul, ol) > li:not(:has(> [rel])) {
+        background-color: var(--groove-color);
+    }
+
+    > :first-child:not(ul, ol, [rel]),
+    > [rel=prev] + :not([rel]),
+    > :is(ul, ol) > li:first-child:not(:has(> [rel])),
+    > :is(ul, ol) > li:has(> [rel=prev]) + li {
+        border-start-start-radius: var(--pill);
+        border-end-start-radius: var(--pill);
+    }
+
+    > :last-child:not(ul, ol, [rel]),
+    > :not([rel]):has(+ [rel=next]),
+    > :is(ul, ol) > li:last-child:not(:has(> [rel])),
+    > :is(ul, ol) > li:has(+ li > [rel=next]) {
+        border-start-end-radius: var(--pill);
+        border-end-end-radius: var(--pill);
+    }
+}
+
+nav.pages a:not([rel]) {
+    --gloss-layer: none;
+    --elevation: var(--flat);
+    --background-color: transparent;
+    border-radius: 0;
+    color: var(--mtt-color-text);
+
+    &:is(.hover, :hover) {
+        color: var(--mtt-color-text-bright);
+    }
+
+    &[aria-current=page] {
+        color: var(--mtt-color-text-bright);
+    }
+
+    /* the focus ring follows the shape, and a ring round a piece of groove would be square */
+    &:is(:focus-visible, .focus) {
+        border-radius: var(--pill);
+    }
+
+    &[aria-current=page]::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        border-radius: var(--pill);
+        background: var(--gloss), var(--mtt-color-button);
+        box-shadow: var(--raise-low);
+    }
+}
+
 /* Navigation list: a soft pill under the link the pointer is on, and the current one is a candy, glossy, in the main tone */
-nav:not(.tabs, .crumbs) a {
+nav:not(.tabs, .crumbs, .pages) a {
     border-radius: var(--radius-small);
     transition:
         background-color var(--transition),

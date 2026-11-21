@@ -262,7 +262,7 @@ a.card:is(:focus-visible, .focus) {
 }
 
 /* a link in text is a short run of letters, the ring around it is a little rounded */
-a:not(.button, .card, nav.tabs > a):is(:focus-visible, .focus) {
+a:not(.button, .card, nav.tabs > a, nav.pages a):is(:focus-visible, .focus) {
     border-radius: var(--radius-tiny);
 }
 
