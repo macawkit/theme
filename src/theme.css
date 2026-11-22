@@ -424,7 +424,7 @@ code {
     the margins of a paragraph, a list or a header would add to it. Only what the box holds itself, a form between
     brings its own back. They weigh nothing, a page's own margins win, and a dialog or a popover keeps the margins that place it
 */
-:where(.stack, .card, .alert, .empty, .row, .tiles, footer, .app > aside, .app > aside + *) > :where(:not(dialog, [popover])) {
+:where(.stack, .card, .alert, .empty, .row, .tiles, footer, .app > header, .app > aside, .app > aside + *) > :where(:not(dialog, [popover])) {
     margin-block: 0;
 }
 
@@ -610,13 +610,24 @@ a.card.compact {
 /*
     A page with a navigation column: .app > aside is the column on the start side, the page is what follows it,
     a main or whatever holds it. Anything else in .app, a dialog or a script, is left as it is.
-    The last thing in the column, a note, sits at its bottom
+    The last thing in the column, a note, sits at its bottom. A header before the column is a bar over both
 */
 .app {
     display: grid;
     grid-template-columns: var(--nav-width) minmax(0, 1fr);
     min-height: 100vh;
     min-height: 100dvh;
+}
+
+.app:has(> header) {
+    grid-template-rows: auto 1fr;
+}
+
+.app > header {
+    grid-column: 1 / -1;
+    min-height: calc(var(--element-height) + var(--margin-tight) * 2);
+    margin: 0;
+    padding: var(--margin-tight) var(--margin);
 }
 
 .app > :is(aside, aside + *) {
@@ -639,6 +650,10 @@ a.card.compact {
     .app {
         grid-template-columns: minmax(0, 1fr);
         grid-template-rows: auto 1fr;
+    }
+
+    .app:has(> header) {
+        grid-template-rows: auto auto 1fr;
     }
 
     .app > aside {

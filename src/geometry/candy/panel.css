@@ -115,3 +115,23 @@ dialog::backdrop {
         border-radius: 0 0 var(--radius) var(--radius);
     }
 }
+
+/* Under a bar .app is the chrome and the page a sheet set into it, its top corners round */
+.app:has(> header) {
+    background-color: var(--mtt-color-panel);
+
+    > aside {
+        background: none;
+        border: 0;
+        border-radius: 0;
+    }
+
+    > aside + * {
+        position: relative;
+        isolation: isolate;
+        background-color: var(--mtt-color-body);
+        border: 1px solid var(--mtt-color-line-dimmed);
+        border-bottom: 0;
+        border-radius: var(--radius) var(--radius) 0 0;
+    }
+}

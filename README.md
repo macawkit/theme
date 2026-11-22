@@ -48,7 +48,7 @@ In a choice, a combobox with a hidden input, an option with `data-value=""` name
 
 ## Pages and parts
 
-- `.app` is a page with a navigation column: `<div class="app"><aside>…</aside><main>…</main></div>`. The `aside` is the column on the start side, a `nav` in it is drawn as the kit's navigation list, and the last thing in it, a note, sits at its bottom. The page is whatever follows the `aside`, a column of its parts. Anything else in `.app`, a dialog or a script, is left alone. Set `--nav-width` for a wider column.
+- `.app` is a page with a navigation column: `<div class="app"><aside>…</aside><main>…</main></div>`. The `aside` is the column on the start side, a `nav` in it is drawn as the kit's navigation list, and the last thing in it, a note, sits at its bottom. The page is whatever follows the `aside`, a column of its parts. Anything else in `.app`, a dialog or a script, is left alone. Set `--nav-width` for a wider column. A `header` before the `aside` is a bar over the column and the page.
 - `.page` is a box that scrolls in place of the window, the page of an `.app` held to the height of the screen: `<main class="page">`. The geometry draws the top of the page, the lit grid or the sky, on it instead of on the body, so it scrolls with what is on it. Without one it is on the body, never taller than the window.
 - `.center` is a page of one thing, a sign-in, a confirmation or an error: `<main class="center"><section class="panel">…</section></main>`. It fills the window and holds what is in it in the middle, a panel as wide as a dialog.
 - `.empty` says that there is nothing here yet: `<div class="well empty">` with an icon, a `strong` line, a `small` note and a button if there is a way to start.

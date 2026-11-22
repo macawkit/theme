@@ -112,9 +112,10 @@
     }
 }
 
-/* The top of the page, or of the .page in it, is a cotton candy sky: soft clouds in the colors of the palette that lean pink and lilac. It fades out over the first screen */
-:is(body:not(:has(.page)), .page)::before {
+/* The top of the page, of the .page in it or of the page under the bar of an .app, is a cotton candy sky: soft clouds in the colors of the palette that lean pink and lilac. It fades out over the first screen */
+:is(body:not(:has(.page, .app > header)), .page, .app > header ~ aside + *)::before {
     content: "";
+    border-radius: inherit;
     position: absolute;
     inset: 0 0 auto;
     z-index: -1;

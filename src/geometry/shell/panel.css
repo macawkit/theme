@@ -108,6 +108,11 @@ header {
     background-origin: border-box;
 }
 
+/* The bar of .app is the same surface as the column */
+.app > header {
+    background-color: var(--mtt-color-panel);
+}
+
 /* The navigation column of .app is a surface along the page, ruled off from it. On a phone it is over the page, so the rule is under it */
 .app > aside {
     background-color: var(--mtt-color-panel);

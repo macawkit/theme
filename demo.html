@@ -28,7 +28,7 @@
     <style>
         /* the navigation column, with the pickers of the look, stays in sight while the page scrolls */
         @media (width >= 600px) {
-            .app > aside {
+            body > .app > aside {
                 position: sticky;
                 top: 0;
                 align-self: start;
@@ -213,7 +213,7 @@
         }
 
         /* a page in a box: as tall as a short window, not as the one the demo is in */
-        .demo > .center {
+        .demo > :is(.center, .app) {
             min-height: calc(var(--element-height) * 9);
         }
 
@@ -281,6 +281,7 @@
                 <li><a href="#type"><small>11</small>Typography</a></li>
                 <li><a href="#pages"><small>12</small>Pages</a></li>
                 <li><a href="#empty"><small>13</small>Empty</a></li>
+                <li><a href="#bar"><small>14</small>App bar</a></li>
             </ul>
         </nav>
         <small>0.4.1 · MIT · <a href="https://github.com/macawkit/theme">Source</a><br>This page is an <code>.app</code> itself</small>
@@ -1374,6 +1375,38 @@
                 </section>
             </div>
         </div>
+
+        <section class="panel" id="bar">
+            <header>
+                <span class="label">14</span>
+                <h2>App bar</h2>
+                <span class="note">.app &gt; header</span>
+            </header>
+            <div class="stack">
+                <div class="well demo" style="padding: 0; overflow: hidden">
+                    <div class="app">
+                        <header>
+                            <strong>Postmaster</strong>
+                            <button class="alt" title="Account"><i class="icon i-user"></i></button>
+                        </header>
+                        <aside>
+                            <nav aria-label="Mail">
+                                <ul>
+                                    <li><a href="#bar" aria-current="true">Queue<small>12</small></a></li>
+                                    <li><a href="#bar">Domains</a></li>
+                                    <li><a href="#bar">On hold<small>3</small></a></li>
+                                </ul>
+                            </nav>
+                        </aside>
+                        <main>
+                            <header><h3>Queue</h3></header>
+                            <p>12 messages waiting for delivery.</p>
+                        </main>
+                    </div>
+                </div>
+                <small>A <code>header</code> before the column of an <code>.app</code> is a bar over the column and the page.</small>
+            </div>
+        </section>
     </main>
 </div>
 <script>
