@@ -91,25 +91,36 @@ nav.pages a,
         }
     }
 
-    /* Alt: a soft candy, matte, with a rim in place of the gloss. Lit, it takes the body of a plain button */
+    /* Alt: a soft candy, matte, with a rim in place of the gloss. Under the pointer it takes the body of a plain button */
     &:is(.alt, :where(nav.pages a)) {
         --background-color: var(--mtt-color-main-dimmed);
         --gloss-layer: none;
         --rim-color: var(--mtt-color-line);
         --rim-width: var(--rim);
 
-        &:is(.hover, :hover):not(:disabled, [aria-disabled=true]) {
+        &:is(.hover, :hover):not(:disabled, [aria-disabled=true], [aria-pressed=true], :has(> input:checked)) {
             --rim-color: var(--mtt-color-line-highlight);
             color: var(--mtt-color-text-bright);
         }
 
-        &:is([aria-pressed=true], :has(> input:checked)),
         &:not([aria-pressed], :has(> input), :disabled, [aria-disabled=true]):is(.hover, :hover) {
             --background-color: var(--mtt-color-button);
         }
 
+        /*
+            On, it is the main color all through, what a checked box is made of, and lit as one: a toggle is told from one that is off
+            by its body, not by its rim. It stays matte, the rim is the ink of the gloss it has not got. Under the pointer it brightens, as the box does
+        */
         &:is([aria-pressed=true], :has(> input:checked)) {
-            --rim-color: var(--mtt-color-line-decorated);
+            --background-color: var(--mtt-color-main);
+            --rim-color: color-mix(in srgb, var(--mtt-color-text-brightest) 40%, #0000);
+            --glow-source: var(--background-color);
+            --glow-reach: var(--glow-radius);
+            color: var(--mtt-color-text-brightest);
+
+            &:is(.hover, :hover):not(:disabled, [aria-disabled=true]) {
+                --background-color: var(--mtt-color-main-highlight);
+            }
         }
     }
 

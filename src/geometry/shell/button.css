@@ -156,7 +156,8 @@ nav.pages a[rel]::before,
     filter: var(--unlit);
     transition:
         filter var(--transition),
-        background var(--transition);
+        background var(--transition),
+        inset var(--transition);
 }
 
 /* lit, the ticks grow to a chip and shine */
@@ -169,25 +170,43 @@ nav.pages a[rel]:is(.hover, :hover):not([aria-disabled=true])::before,
     filter: drop-shadow(0 0 var(--shine-radius) color-mix(in srgb, var(--tick-color) var(--shining), #0000));
 }
 
+/* on, they step off the body and stand in the room the focus ring leaves: brackets around what is lit */
+:is(button, .button).alt:is([aria-pressed=true], :has(> input:checked))::before {
+    inset: calc(-1px - var(--highlight-thickness));
+}
+
 :is(button, .button).alt,
 nav.pages a[rel] {
     --background-color: var(--mtt-color-main-dimmed);
     background-color: var(--background-color);
 
-    /* lit, it takes the body of a plain button and so the text of one */
-    &:is([aria-pressed=true], :has(> input:checked)),
+    /* under the pointer it takes the body of a plain button and so the text of one */
     &:is(.hover, :hover):not(:disabled, [aria-disabled=true], [aria-pressed], :has(> input)) {
         --background-color: var(--mtt-color-button);
         border-color: var(--mtt-color-line-highlight);
         color: var(--mtt-color-text-bright);
     }
 
-    /* a toggle under the pointer lights only its frame, the body is left to being on */
-    &:is([aria-pressed], :has(> input)):is(.hover, :hover):not(:disabled, [aria-disabled=true]) {
+    /* a toggle that is off lights only its frame under the pointer, the body is left to being on */
+    &:is([aria-pressed], :has(> input)):not([aria-pressed=true], :has(> input:checked), :disabled, [aria-disabled=true]):is(.hover, :hover) {
         border-color: var(--mtt-color-line-highlight);
 
         &::before {
             --tick-color: var(--mtt-color-line-decorated);
+        }
+    }
+
+    /*
+        On, it is a slab of the main color, flat to its edge, what a checked box is made of: a toggle is told from one that is off
+        by its body, not by its frame. It has the text and the glow of a lit body from the rule above, and under the pointer
+        it brightens, as the box does
+    */
+    &:is([aria-pressed=true], :has(> input:checked)) {
+        --background-color: var(--mtt-color-main);
+        border-color: var(--background-color);
+
+        &:is(.hover, :hover):not(:disabled, [aria-disabled=true]) {
+            --background-color: var(--mtt-color-main-highlight);
         }
     }
 
@@ -196,7 +215,8 @@ nav.pages a[rel] {
         --tick-size: calc(var(--chip-small) / 2);
         transition:
             filter var(--transition-fast),
-            background var(--transition-fast);
+            background var(--transition-fast),
+            inset var(--transition-fast);
     }
 
     /* its halo is as large as the frame, there is no chipped body to start inside of */
