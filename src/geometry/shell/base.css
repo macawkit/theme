@@ -39,15 +39,8 @@
     --transition: var(--animation-duration) var(--animation-ease);
     --transition-fast: var(--animation-duration-fast) var(--animation-ease);
     --press-translate: 1px;
-    /*
-        How far a drawing reaches past the box it belongs to: a focus ring, the visible part of a glow.
-        Whatever clips, a box that scrolls, leaves this much room around what it holds
-    */
     --overhang: max(var(--glow-radius), var(--highlight-thickness) * 2);
-    /*
-        The rest of a filter that fades a shine or a glow in. Their colors are mixed, and Chrome
-        fades from no filter to a mixed color through black, so the color would come in at the end
-    */
+    /* the neutral start of a filter: Chrome fades from no filter to a mixed color through black */
     --unlit: drop-shadow(0 0 0 color(srgb 0 0 0 / 0));
     --chipped-corner: polygon(
         0 0,
@@ -65,14 +58,12 @@
     );
 }
 
-/* A phone is held close, the page needs less air around things */
 @media (width < 600px) {
     :root {
         --margin: 16px;
     }
 }
 
-/* A finger is broader than a pointer, what it taps is taller */
 @media (pointer: coarse) {
     :root {
         --element-height: 44px;
@@ -80,25 +71,9 @@
     }
 }
 
-/*
-    Mixins. These are declared on every element, so each of them is computed
-    from the inputs of the element it is used on:
-
-    --glow-source            ->  --glow-color, a soft halo of that color
-    --background-color       ->  --raised, the shadow of what is lifted, see below
-    --shine-radius           ->  --shining, 100% or 0%, the opacity of a shine. With no
-                                 radius a shine would still be a sharp copy, inking the edges
-    --tick-color, --tick-size ->  --ticks, a background of four corner marks
-    --color, --fill-lift     ->  --fill-color, what a bar or a meter is filled with: the color,
-                                 lifted that much lighter where the browser can say so
-*/
+/* declared on every element, so each is computed from that element's own inputs */
 *, ::before, ::after {
     --glow-color: color-mix(in srgb, var(--glow-source) var(--glow-strength), #0000);
-    /*
-        The palette says what a shadow is, here it is the soft one a lifted body casts on the page right under it.
-        A grey shadow under a colored body reads as dirt, so the ink takes a part of the body's color, as light through it would.
-        On a dark page it is black on black and hardly shows, on a light one it is what lifts a thing
-    */
     --shadow-ink: color-mix(in oklab, var(--shadow-color), var(--background-color, var(--shadow-color)) 35%);
     --raised: drop-shadow(0 3px 5px color-mix(in srgb, var(--shadow-ink) min(var(--shadow-strength) * 2.5, 100%), #0000));
     --shining: calc(sign(var(--shine-radius)) * 100%);
@@ -121,7 +96,6 @@
     }
 }
 
-/* The top of the page, or of the .page in it, is lit, with a faint grid that fades out over the first screen. Half a dimmed line, so the lines of what is on it still lead */
 :is(body:not(:has(.page)), .page)::before {
     content: "";
     position: absolute;
@@ -197,7 +171,6 @@ dt:not(:last-of-type), dd:not(:last-of-type) {
     border-bottom: 1px solid var(--mtt-color-line-dimmed);
 }
 
-/* Where a key sits over its value they are one entry, the line goes under the value only */
 @media (width < 600px) {
     dt:not(:last-of-type) {
         padding-bottom: 0;
@@ -219,14 +192,13 @@ a {
     transition: color var(--transition);
 }
 
-/* Keyboard focus: one ring for everything but the text fields, those light up on their own, see input.css */
 :is(a, button, .button, input:is([type=checkbox], [type=radio])):is(:focus-visible, .focus),
 .button:has(> input:focus-visible) {
     outline: var(--highlight-thickness) solid var(--mtt-color-line-decorated);
     outline-offset: var(--highlight-thickness);
 }
 
-/* a card is clipped and would cut the ring off, so there it runs inside */
+/* a card clips, the ring runs inside it */
 a.card:is(:focus-visible, .focus) {
     outline-offset: calc(-1 * var(--highlight-thickness));
 }

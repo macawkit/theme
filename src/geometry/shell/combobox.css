@@ -1,4 +1,3 @@
-/* The list of a combobox or a dropdown. It opens over the page, so it keeps the type of the body wherever it sits */
 [role=listbox] {
     font-family: var(--font);
     font-size: 1rem;
@@ -8,12 +7,10 @@
     background-color: var(--mtt-color-body);
     border: 1px solid var(--mtt-color-line);
 
-    /* in a fieldset a small takes the size around it, a detail in a row stays small */
     small {
         font-size: var(--decrease-font-size);
     }
 
-    /* the options scroll under a caption */
     &[popover] > [role=presentation] {
         background-color: var(--mtt-color-body);
     }
@@ -33,13 +30,11 @@
         color: var(--mtt-color-text-bright);
     }
 
-    /* The row the keyboard is on, with the glow bar of bar.css */
     &[aria-selected=true] {
         background-color: var(--mtt-color-main-dimmed);
         color: var(--mtt-color-text-bright);
     }
 
-    /* The row holding the value of the field, or one of the values of a choice of many */
     &:is([aria-current=true], [aria-checked=true])::before {
         content: "";
         order: 1;
@@ -50,7 +45,6 @@
         background: var(--mtt-color-text-decorated);
     }
 
-    /* What was typed */
     mark {
         background: none;
         color: var(--mtt-color-text-bright);

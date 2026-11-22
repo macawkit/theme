@@ -26,18 +26,6 @@
     </script>
     <link rel="stylesheet" href="src/icon.css">
     <style>
-        /* the navigation column, with the pickers of the look, stays in sight while the page scrolls */
-        @media (width >= 600px) {
-            body > .app > aside {
-                position: sticky;
-                top: 0;
-                align-self: start;
-                height: 100vh;
-                height: 100dvh;
-                overflow-y: auto;
-            }
-        }
-
         /* on a phone the column is a row over the page, the two pickers share a line in it */
         @media (width < 600px) {
             #look {
@@ -284,10 +272,10 @@
                 <li><a href="#bar"><small>14</small>App bar</a></li>
             </ul>
         </nav>
-        <small>0.4.2 · MIT · <a href="https://github.com/macawkit/theme">Source</a><br>This page is an <code>.app</code> itself</small>
+        <small>0.4.3 · MIT · <a href="https://github.com/macawkit/theme">Source</a><br>This page is an <code>.app</code> itself</small>
     </aside>
 
-    <main>
+    <main class="page">
         <header>
             <h1 id="look-name">Shell on Hyacinth</h1>
             <div class="row">
@@ -1011,7 +999,7 @@
                 <header>
                     <span class="label">07</span>
                     <h2>Navigation</h2>
-                    <span class="note">crumbs · tabs · pages · links</span>
+                    <span class="note">crumbs · back · tabs · pages · links</span>
                 </header>
                 <div class="stack">
                     <nav class="crumbs" aria-label="Breadcrumb">
@@ -1019,6 +1007,13 @@
                         <a href="#navigation" class="hover">example.com</a>
                         <span aria-current="page">Mailboxes</span>
                     </nav>
+                    <header>
+                        <div class="title">
+                            <a class="button ghost" href="#navigation" aria-label="Back to Mailboxes"><i class="icon i-chevron-left"></i></a>
+                            <h3>postmaster@example.com</h3>
+                        </div>
+                        <button type="button" class="alt small">Edit</button>
+                    </header>
                     <div class="stack tight">
                         <div role="tablist" aria-label="Queue">
                             <button type="button" role="tab" id="qt-all" aria-controls="qp-all" aria-selected="true">All</button>

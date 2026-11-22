@@ -1,14 +1,9 @@
 :root {
-    /*
-        Every color has a name beside it, a string to show where the color is offered or explained, a picker or a legend:
-        content: var(--mtt-color-main-name). The names are the palette's own, a color that is another one takes its name too
-    */
     --mtt-color-body: #ffc594;
     --mtt-color-body-name: "Sundown";
     --mtt-color-panel: #ffdbba;
     --mtt-color-panel-name: "Afterglow";
 
-    /* The page is the orange of the sky, what is laid on it goes on round the evening: rose where a thing rests, purple where it is lit */
     --mtt-color-main-dimmed: #ffd7de;
     --mtt-color-main-dimmed-name: "Rose quartz";
     --mtt-color-button: #ffbccd;
@@ -18,7 +13,6 @@
     --mtt-color-main-highlight: #a02ab8;
     --mtt-color-main-highlight-name: "Foxglove";
 
-    /* The page is neither light nor dark, so the inks are all dark and close: there is little room under them */
     --mtt-color-text-muted: #63403a;
     --mtt-color-text-muted-name: "Nutmeg";
     --mtt-color-text: #452725;
@@ -30,7 +24,6 @@
     --mtt-color-text-brightest: #ffffff;
     --mtt-color-text-brightest-name: "White";
 
-    /* The lines are the page itself, baked longer */
     --mtt-color-line: #f6aa77;
     --mtt-color-line-name: "Papaya";
     --mtt-color-line-dimmed: #ffb781;
@@ -47,10 +40,6 @@
     --color-info-text: var(--mtt-color-text-decorated);
     --color-info-text-name: var(--mtt-color-text-decorated-name);
 
-    /*
-        A tone is a ball of hard candy on the page: its color clear and bright where the page would be, with a dark ink of its own on it.
-        Its highlight is that ink a step lighter, dark enough to be read on the page as text
-    */
     --color-signature: #a1d9ff;
     --color-signature-name: "Sky";
     --color-signature-highlight: #0064b5;
@@ -86,11 +75,6 @@
     --color-danger-text: #690313;
     --color-danger-text-name: "Garnet";
 
-    /*
-        Categories: sixteen marks that tell things apart, like whose a row is, and say nothing of state.
-        The first eight are the candies, as clear as they come, going round the hues. The last eight go round again between them, deeper,
-        each a color of its own and not a shade of one above
-    */
     --color-category-1: #56acf0;
     --color-category-1-name: "Bluebell";
     --color-category-2: #a155da;
@@ -124,20 +108,15 @@
     --color-category-16: #037bab;
     --color-category-16-name: "Cerulean";
 
-    /*
-        A shadow is the dark that a raised thing casts on what is under it: its ink, and how much of it shows.
-        The geometry gives it its shape. A page this deep takes a real one, the red brown the orange goes in the shade
-    */
     --shadow-color: #5a1e0a;
     --shadow-strength: 28%;
 
-    /* A glow or a shine is a blur of a thing in its own color, purple smeared on orange is mud, so nothing blurs */
     --glow-radius: 0px;
     --shine-radius: 0px;
     --glow-strength: 50%;
     --disabled-filter: opacity(0.5) saturate(0.5);
 
-    /* The highlights are inks, dark enough to be read on the page. A bar filled with one would be a stroke of marker, so a fill is lifted back toward the candy */
+    /* the highlights are too dark for a bar, a fill is lifted back toward the candy */
     --fill-lift: 0.12;
 }
 

@@ -25,7 +25,6 @@ input:is([type=radio], [type=checkbox]) {
         box-shadow var(--transition);
 }
 
-/* Checkbox: a tick that scales in, a glowing dash when indeterminate */
 input[type=checkbox]:not(.switch) {
     &::before {
         background: var(--mtt-color-text-brightest);
@@ -74,7 +73,6 @@ input[type=checkbox]:not(.switch) {
     }
 }
 
-/* Switch and radio: a solid knob, on the main color once checked it takes the ink of the checkbox tick */
 input[type=checkbox].switch {
     width: calc(var(--element-height-tiny) * 2);
     height: var(--element-height-tiny);
@@ -124,7 +122,6 @@ input[type=radio] {
     }
 }
 
-/* States shared by all three */
 input:is([type=radio], [type=checkbox]):checked:not(:disabled, [aria-disabled=true])::before {
     filter: drop-shadow(0 0 var(--shine-radius) color-mix(in srgb, var(--mtt-color-text-bright) var(--shining), #0000));
 }

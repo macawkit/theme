@@ -1,7 +1,3 @@
-/*
-    Text fields are pills set into the page, ringed by a soft rim. Focused, the rim takes the decorated color
-    and a jelly halo of it spreads around. The shadows are always two, so the change eases
-*/
 :is(input:not([type=checkbox], [type=radio]), select, textarea) {
     --field-surface: var(--mtt-color-body);
     --rim-color: var(--mtt-color-line);
@@ -56,10 +52,6 @@
     }
 }
 
-/*
-    The chevron, a rounded one: two halves, each a square of --chevron with a diagonal in it and a pixel and a half of fade,
-    --chevron-end from the end of the field. The text keeps clear of it
-*/
 :is(select, input[role=combobox]) {
     --chevron: 6px;
     --chevron-end: 15px;
@@ -72,7 +64,6 @@
             right var(--chevron-end) center / var(--chevron) var(--chevron);
 }
 
-/* The date and time fields keep the browser's picker, Chrome lets its icon be reached, so that is the kit's */
 input:is([type=date], [type=datetime-local], [type=month], [type=week], [type=time]) {
     &::-webkit-calendar-picker-indicator {
         inline-size: var(--box-size);
@@ -88,10 +79,7 @@ input:is([type=date], [type=datetime-local], [type=month], [type=week], [type=ti
     }
 }
 
-/*
-    A box of text is too tall for a pill, it is a rounded slab. As specific as the fields above, or they win:
-    a textarea has no type, so the attribute only weighs
-*/
+/* :not([type]) matches the specificity of the fields above */
 textarea:not([type]) {
     min-block-size: 64px;
     padding-block: var(--margin-tight);
@@ -106,7 +94,6 @@ textarea:not([type]) {
     opacity: 1;
 }
 
-/* The search icon is set by the label, over the field, wherever the label puts it */
 @supports (anchor-name: --mtt-field-control) {
     label:has(> input[type=search]) {
         position: relative;

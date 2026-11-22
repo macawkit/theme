@@ -4,7 +4,6 @@
         scrollbar-width: thin;
     }
 
-    /* a row of tabs or links marks the current one with a bar in the main color, a scrollbar in it under them would read as a second one */
     :is([role=tablist], nav.tabs, .app > aside > nav, .app > aside > nav > :is(ul, ol)) {
         scrollbar-color: var(--mtt-color-line) transparent;
     }

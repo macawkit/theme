@@ -1,10 +1,8 @@
 # Theme
 
-A small CSS kit for interface chrome — panels, controls, markers, and the layout helpers around them.
+A small CSS kit for interface chrome: panels, controls, markers, and the layout around them. You write plain semantic HTML, and the kit styles it.
 
-Color lives in `palette/`. Visual treatment lives in `geometry/`. Shared structure and semantics live in `theme.css`. Icons and a few runtime helpers sit alongside.
-
-Still early; the [live demo](https://macawkit.github.io/theme/) (source: [`demo.html`](demo.html)) is the best place to see what it can do.
+The [live demo](https://macawkit.github.io/theme/) shows every part, its source is [`demo.html`](demo.html). The kit is still early, things may change between minor versions.
 
 ## Install
 
@@ -16,14 +14,14 @@ bun add @macawkit/theme
 
 ## Use
 
-Pick one geometry and one palette, they are interchangeable. The geometries are `shell`, sharp, chipped and lit like a console, and `candy`, round, glossy and soft. The palettes are `hyacinth` and `mulberry`, dark, `cream`, light, and `sunset`, a warm orange middle between them:
+A page takes `theme.css`, one geometry, one palette, `icon.css` and `general.js`:
 
 ```js
 import '@macawkit/theme/theme.css';
 import '@macawkit/theme/geometry/shell.css';
 import '@macawkit/theme/palette/hyacinth.css';
 import '@macawkit/theme/icon.css';
-import '@macawkit/theme/general'; // tabs, comboboxes, sparks and meters behaviour, dialog buttons in older browsers
+import '@macawkit/theme/general';
 ```
 
 Without a bundler, link the built files:
@@ -36,30 +34,89 @@ Without a bundler, link the built files:
 <script src="node_modules/@macawkit/theme/dist/general.js" defer></script>
 ```
 
-Every color of a palette has a name of its own next to it, the same token with `-name` at the end, `--mtt-color-main-name: "Hyacinth"`. It is a string, for a picker or a legend: `content: var(--color-category-3-name)` in CSS, or `getComputedStyle(document.documentElement).getPropertyValue('--color-category-3-name')` in a script.
+- `theme.css` is the structure every geometry shares.
+- A **geometry** is the shape of things: `shell`, sharp, chipped and lit like a console, or `candy`, round, glossy and soft.
+- A **palette** is the colors: `hyacinth` and `mulberry` are dark, `cream` is light, `sunset` is a warm orange between them. Any geometry works with any palette.
+- `icon.css` is required, not only for `i.icon`: it draws the tick of a checkbox, the check of a chosen option, the pickers of date and time fields and the magnifier of a search field. Its icons are `data:` URIs, so a strict Content-Security-Policy needs `img-src data:`.
+- `general.js` runs tabs, comboboxes, sparks and meters, and adds `commandfor` to browsers that lack it. See [Script](#script).
 
-`icon.css` is not optional: besides the `i.icon` set, it puts the marks on the controls, the tick of a checkbox, the check of the chosen option, the pickers of a date or a time field and the magnifier of a search field. The geometry only sizes and colors them. It embeds its icons as `data:` URIs, so a page with a strict Content-Security-Policy needs `img-src … data:`.
+## Layout
 
-`general.js` draws the sparks, fills the meters where CSS can not, brings a chosen tab into sight, tells its row where it is so Candy can throw its candy from tab to tab, and opens a `dialog` marked `data-open` as a modal once, when the page loads. A page that adds them later or changes them, or checks the options of a combobox of many by script, calls `mtt.refresh()`, or `mtt.refresh(element)` to look only inside that element. Tabs, comboboxes and dialog buttons need nothing, they are listened to on the whole document.
+### `.app`: a page with a navigation column
 
-`data-open` is for a dialog the server sends back, the form in it turned down with what was typed and why: `<dialog id="edit" data-open>`. Opened that way there is nothing to give the focus back to, so when it closes the focus goes to a button outside it with `commandfor="edit"`, the one that would have opened it.
+```html
+<div class="app">
+    <aside>
+        <strong>Studio</strong>
+        <nav><ul><li><a href="/" aria-current="true">Home</a></li>…</ul></nav>
+        <small>Last thing: sits at the bottom</small>
+    </aside>
+    <main class="page">…</main>
+</div>
+```
 
-In a choice, a combobox with a hidden input, an option with `data-value=""` names the choice of nothing, "All students" in a filter: the field holds it while the hidden input is empty, and goes back to it when emptied. A combobox fires `change` only when its value is another, as a `select` does.
+- The `aside` is the column on the start side. A `nav` in it is a navigation list, `aria-current` marks the current link, and a `small` in a link is a count beside it. The last thing in the column sits at its bottom.
+- The element after the `aside` is the page.
+- `--nav-width` sets the width of the column.
+- A `header` before the `aside` is a bar over the column and the page.
+- Below 600px the column goes above the page as a row, and its links scroll sideways like tabs.
 
-## Pages and parts
+### `.page`: the page scrolls, not the window
 
-- `.app` is a page with a navigation column: `<div class="app"><aside>…</aside><main>…</main></div>`. The `aside` is the column on the start side, a `nav` in it is drawn as the kit's navigation list, and the last thing in it, a note, sits at its bottom. The page is whatever follows the `aside`, a column of its parts. Anything else in `.app`, a dialog or a script, is left alone. Set `--nav-width` for a wider column. A `header` before the `aside` is a bar over the column and the page.
-- `.page` is a box that scrolls in place of the window, the page of an `.app` held to the height of the screen: `<main class="page">`. The geometry draws the top of the page, the lit grid or the sky, on it instead of on the body, so it scrolls with what is on it. Without one it is on the body, never taller than the window.
-- `.center` is a page of one thing, a sign-in, a confirmation or an error: `<main class="center"><section class="panel">…</section></main>`. It fills the window and holds what is in it in the middle, a panel as wide as a dialog.
-- `.empty` says that there is nothing here yet: `<div class="well empty">` with an icon, a `strong` line, a `small` note and a button if there is a way to start.
-- `.num` on a table cell sets a number to the end, every figure as wide as any other, so a column of them lines up.
-- A meter is a `div` with `role="meter"` and its `aria-valuenow`, between `aria-valuemin` and `aria-valuemax`, 0 and 100 when they are not given, and an `aria-label` that says what it measures. A browser that reads attributes in CSS fills it with no script, and follows a change of `aria-valuenow` by itself. For the others `general.js` fills it.
-- `.spark` draws its `data-values` as bars. Give it an `aria-label` that says what it shows, "Delivered, rising" say, and a screen reader reads it as one picture by that name. Without one it is skipped as decoration, so the figure next to it has to say it all.
-- `.stack`, `.card`, `.row`, `.tiles`, `.empty`, `.alert`, a `footer` and the parts of `.app` space what they hold by their gap, and the margins of what sits right in them, a paragraph, a list or a header, are dropped. `.panel`, `.well` and the cells of a `dl` space by their padding, so only the first and the last lose their outer margin. Something between, a `form` say, brings its own margins back. A list in text is set in by `--margin`, a numbered one by twice that. All of it weighs nothing, a margin of your own wins.
-- `.swatch` shows one color, `--color`, a category's most of all: `<span class="swatch" aria-hidden="true" style="--color: var(--color-category-7)"></span>` beside the name of what wears it. It is decoration, the name says it all. It is drawn and lit as the geometry draws a fill. `.small` is for a dense spot, a width and a height of your own work too, and `.quiet` is for a thing that is over, faint and unlit.
-- `.card.compact` is a card for a dense spot, one of many in a cell of a grid: `<a class="card compact" href="…" style="--color: var(--color-category-3)">`. It is tight and wears `--color` as a swatch does, a wash of it as its ground and the color itself along its start, drawn by the geometry, and the text on it stays the palette's own, small text too, the muted ink is too faint for a wash. A link, its wash deepens and its rim takes the color under the pointer, the focus ring runs inside it, and given a height it fills it. `.quiet` is for a thing that is over. It is not `.small`, that one is small text.
-- An icon in a button or a tab, an `i.icon`, an `svg` or an `img`, has as much room at its sides as above and below it, so a button of only an icon is square: `<button class="alt" title="Retry"><i class="icon i-refresh"></i></button>`. The `title` or an `aria-label` is its name. Next to a word the icon keeps the usual gap. Two icons side by side with no word between them come out close together.
-- `nav.pages` is the pagination of a long list, written as it would be with no kit: a link for each page, `aria-current="page"` on the one shown, and `rel="prev"` and `rel="next"` on the way back and the way on, straight in the `nav` or in a list, an item for each:
+With `class="page"` on the page of an `.app`, the `.app` is held to the height of the screen and only the page scrolls. The column stays in place, and scrolls on its own if it is taller than the screen. The geometry draws the top of the page (Shell's lit grid, Candy's sky) on the `.page`, so it scrolls with the content. Without a `.page` the whole window scrolls and the top is drawn on the body (in Candy under a bar, on the page).
+
+### `.center`: a page of one thing
+
+`<main class="center"><section class="panel">…</section></main>` fills the window and centres one panel, as wide as a dialog. Use it for a sign-in, a confirmation or an error.
+
+### Boxes
+
+| Class | What it does |
+|---|---|
+| `.stack` | a column, spaced by `--margin` |
+| `.row` | a row that wraps, spaced by `--margin-tight`. `.row.between` pushes its ends apart |
+| `.tiles` | a grid of equal tiles at least `--tile-width` wide, as many as fit, at most `--tiles-max`. With fewer tiles than columns they share the row. A `.wide` tile takes a whole row |
+| `.cols` | a row of equal columns that never wraps, for a line of figures. `--rows` stacks it into rows |
+| `.tight` | a `.stack`, `.row` or `.tiles` with the tight gap |
+| `.scroll` | scrolls sideways inside its box, for anything wide, a table most of all |
+
+`.stack`, `.row`, `.tiles`, `.card`, `.alert`, `.empty`, `footer` and the parts of `.app` space their children by their gap, so the children lose their own top and bottom margins. `.panel`, `.well` and the cells of a `dl` space by their padding, so only their first and last children lose the outer margin. These rules have no specificity, so a margin you set yourself always wins.
+
+## Parts
+
+### Surfaces
+
+- `.panel` is the main surface. A `header` in it holds the title and anything after it, and wraps when there is no room.
+- A page below a list leads back to it with a link before its title. Wrap the link and the heading in a `.title`, so the heading wraps beside the link and the rest of the header goes below when the line is full:
+
+  ```html
+  <header>
+      <div class="title">
+          <a class="button ghost" href="/students" aria-label="Back to Students"><i class="icon i-chevron-left"></i></a>
+          <h1>Ida Lind</h1>
+      </div>
+      <button class="alt">Edit</button>
+  </header>
+  ```
+- `.card` is a smaller surface inside a panel. `a.card` is a card you can click.
+- `.card.compact` is a tight card for a dense spot, a cell of a calendar say. It is tinted with `--color`: `<a class="card compact" href="…" style="--color: var(--color-category-3)">`. `.quiet` fades it, for something that is over.
+- `.well` is a sunken area inside a panel.
+- `.alert` is a message in a tone: `<div class="alert warning" role="status"><i class="icon i-warn"></i><div class="stack">…</div><button class="ghost small">…</button></div>`.
+- `.empty` says there is nothing here yet: `<div class="well empty">` with an icon, a `strong` line, a `small` note and a button if there is a way to start.
+- A `dialog` is drawn as a panel. A `footer` puts its buttons at the end.
+
+### Buttons
+
+- `button`, or `.button` on a link or a label.
+- `.alt` is the secondary style, `.ghost` has no body until hovered, `.danger` is for a destructive action, `.small` is shorter.
+- A toggle is a button with `aria-pressed`, or a `label.button` around a checkbox or a radio, which keeps the input focusable and part of the form.
+- An icon in a button gets as much room at its sides as above and below it, so a button with only an icon is square: `<button class="alt" title="Retry"><i class="icon i-refresh"></i></button>`. Give it a `title` or an `aria-label`.
+
+### Navigation
+
+- `nav.tabs` is a row of links, `aria-current="page"` on the current one. For tabs that switch panels in place, see [Tabs](#tabs).
+- `nav.crumbs` is a breadcrumb trail, the current page last.
+- `nav.pages` is pagination. Each page is a link, `aria-current="page"` marks the one shown, and `rel="prev"` and `rel="next"` mark the links back and forward. Anything that is not a link, such as "…", is a gap. The links can sit straight in the `nav` or in a list:
 
   ```html
   <nav class="pages" aria-label="Pages">
@@ -73,28 +130,97 @@ In a choice, a combobox with a hidden input, an option with `data-value=""` name
   </nav>
   ```
 
-  The kit draws the pages as tabs, the one shown with a glow bar under it in Shell and as the candy in a groove in Candy, and the way back and on as alt buttons beside them. With a word they are buttons of a word, with only an icon, `<i class="icon i-chevron-left"></i>`, and a `title` or an `aria-label`, they are square. What is not a link, "…", is the gap of the pages left out. On the first page the way back is left out, or, to keep the row from shifting, kept with no `href` and with `role="link"` and `aria-disabled="true"`, and so is the way on from the last. It wraps when it does not fit, keeping the run short is up to the server, and where it stands is up to the page: `<footer class="row between">` under a table, with how many there are, "61–80 of 128", in a `small` before it. `.small` makes it as tall as a small element.
-- `.box` is a square as tall as a small element for one glyph or one value, `<div class="box"><i class="icon i-user"></i></div>`, and a wider value widens it. `.active` lights it.
-- A badge or a tag is as wide as its word wherever it is, and sits in the middle of a line or a heading. With no room for its word, in a cell of a month say, it gets narrower: one with an icon before its word, `<span class="tag"><i class="icon i-user"></i>Ann</span>`, keeps the icon and drops the word, a badge keeps its light. A word in a `span` of its own with nothing before it is cut short with "…" instead, so give the marker a `title` when the word matters. A value in a `dl` wraps anywhere when it has no spaces, an address or a hash.
+  The back and forward links are drawn as `.alt` buttons. With only an icon (`<i class="icon i-chevron-left"></i>`) and a `title`, they are square. On the first page, leave out the back link, or keep it in place without `href` and with `role="link" aria-disabled="true"`; the same goes for the forward link on the last page. The row wraps if it does not fit, so keep the run of pages short on the server. `.small` makes it as tall as a small button. Under a table: `<footer class="row between"><small>61–80 of 128</small><nav class="pages small">…</nav></footer>`.
+
+### Markers and figures
+
+- `.badge` (with a dot of light) and `.tag` are short labels. They are only as wide as their word, and in a narrow spot they shrink: a tag with an icon keeps the icon and drops the word, a badge keeps its dot, a word alone is cut with "…". Give them a `title` if the word matters.
+- `.box` is a small square for one glyph or value, `<div class="box"><i class="icon i-user"></i></div>`. `.active` lights it.
+- `.swatch` shows one color, `--color`: `<span class="swatch" aria-hidden="true" style="--color: var(--color-category-7)"></span>` next to the name of what wears it. `.small` makes it tiny, `.quiet` fades it.
+- `.hero` is a big figure, `.label` a small caps label in the decorated color, `.note` a small caps label in the muted color. A label over a figure: `<div class="stack tight"><span class="note">Mailboxes</span><strong class="hero">42</strong></div>`.
+- `.num` on a table cell aligns a number to the end, with every digit the same width.
+- A `dl` is a grid of keys and values. Below 600px each key sits over its value. A value with no spaces, such as an address or a hash, wraps anywhere.
+
+### Data
+
+- **Meter:** `<div role="meter" aria-label="Storage" aria-valuenow="37" aria-valuemin="0" aria-valuemax="100"></div>`. Min and max default to 0 and 100. Browsers that support typed `attr()` fill it with CSS alone and follow changes to `aria-valuenow`. In the others, `general.js` fills it; call `mtt.refresh()` after a change.
+- **Spark:** `<div class="spark" aria-label="Delivered, rising" data-values="40,45,44,55"></div>` draws the values as bars, the highest one full. The `aria-label` is what a screen reader reads; without one the spark is hidden from screen readers, so the text next to it has to say it all.
+- **Share:** `<div class="share"><i class="success" style="--value: 23"></i><i class="warning" style="--value: 37"></i></div>` is a bar split into parts by their `--value`.
+
+### Tones and colors
+
+`.info`, `.signature`, `.success`, `.priority`, `.warning` and `.danger` give an element and everything in it a tone: its text, and the color of a badge, tag, alert, meter, spark or ghost button inside.
+
+A palette has 16 category colors, `--color-category-1` to `--color-category-16`, to tell things apart (whose a row is, say), not to show state. Every palette color has its name next to it as a string, the same token with `-name` at the end, `--color-category-3-name: "Peony"` in Hyacinth. Use it in a picker or a legend: `content: var(--color-category-3-name)` in CSS, or `getComputedStyle(document.documentElement).getPropertyValue('--color-category-3-name')` in a script.
+
+## Forms
+
+Fields are plain `input`, `select` and `textarea`, usually inside a `label` with the label text before the field and a `small` hint after it. A `fieldset` lays its labels out in a column, and its `legend` is the group's title. `:user-invalid` or `aria-invalid="true"` marks a field as wrong, and its hint takes the danger color. `<input type="checkbox" class="switch">` is a switch.
+
+### Combobox
+
+An `input` with `role="combobox"` and a `[role=listbox][popover]` list, linked by `aria-controls`. Each option needs an `id`.
+
+```html
+<label>
+    Time zone
+    <input role="combobox" aria-controls="zones" aria-expanded="false" autocomplete="off">
+    <input type="hidden" name="zone">
+</label>
+<ul role="listbox" id="zones" aria-label="Time zone" popover data-empty="No matches">
+    <li role="presentation">Europe</li>
+    <li role="option" id="tz-berlin" data-value="Europe/Berlin" data-find="cet">Berlin</li>
+    …
+</ul>
+```
+
+- **Typed:** what you type filters the options and highlights the match. Without the hidden input, the field posts its own text, so a value that is not in the list is allowed.
+- **Dropdown:** `inputmode="none"` makes it a dropdown you click instead of typing into. It stays a real input, so `required` works.
+- **Choice:** a hidden input right after the field limits it to the options. The hidden input posts the option's `data-value`, and the field shows its `data-label` or its text. Typing only searches. An option with `data-value=""` stands for "nothing" (such as "All students" in a filter); the field shows it while the value is empty.
+- **Choice of many:** `aria-multiselectable="true"` on the list, and a checkbox in each option, which is what the form posts. The list stays open while you pick, and the field shows the checked labels.
+- `data-find` adds search terms to an option, `data-empty` is the text when nothing matches, and a `role="presentation"` item is a caption over the options after it.
+- A combobox fires `change` only when its value changes, as a `select` does. To choose an option from a script, call `option.click()`.
+
+### Dialogs
+
+`<button commandfor="edit" command="show-modal">` opens `<dialog id="edit">` as a modal, and `command="close"` closes it, with no script. `general.js` adds this to browsers that do not support it yet. Put the dialog's content in a `<form method="dialog">` with a `footer` for the buttons. In a dialog taller than the window, the content scrolls and the footer stays at the bottom.
+
+`<dialog id="edit" data-open>` opens as a modal when the page loads. Use it for a form the server sends back with errors. When it closes, the focus goes to a button outside it with `commandfor="edit"`.
+
+### Tabs
+
+```html
+<div role="tablist" aria-label="Queue">
+    <button type="button" role="tab" id="t-all" aria-controls="p-all" aria-selected="true">All</button>
+    <button type="button" role="tab" id="t-hold" aria-controls="p-hold" aria-selected="false">Hold</button>
+</div>
+<div id="p-all" role="tabpanel" aria-labelledby="t-all">…</div>
+<div id="p-hold" role="tabpanel" aria-labelledby="t-hold" hidden>…</div>
+```
+
+A click or the arrow keys, Home and End choose a tab and show its panel. A row that does not fit scrolls sideways, and the chosen tab is scrolled into view. `.small` on the row makes it shorter.
 
 ## Small screens
 
-The kit makes its parts hold up at any width. Arranging the page is up to the page.
+The kit keeps its parts usable at any width. Arranging the page is up to you.
 
-- Most parts adjust to the box they are in, not to the screen. Headers wrap, so whatever follows the title goes under it when there is no room. A row of tabs stays on one line and scrolls sideways.
-- Put anything wide, a table most of all, in a `.scroll`. It scrolls sideways inside its box instead of widening the page. A table in it never gets narrower than `--table-min-width` (three columns by default), set it higher on a table with many columns.
-- `.tiles` is for a group of equal things that should reflow, it fits as many as there is room for. `.cols` is a fixed row, of figures say, it never wraps.
-- The kit asks about the screen's width once: below `600px` a key of a `dl` sits over its value, the navigation column of `.app` goes over the page as a row, its links scrolling sideways like tabs, and the geometry spaces things a little closer. A page that rearranges itself for phones can use the same width to change in step.
-- On a touch screen the geometry makes controls taller. Size things by `--element-height` and `--element-height-small` rather than by a number, so they follow.
-- A focus ring or a glow can reach past its element by `--overhang`. A box of your own that clips what it holds, scrolling or `overflow: hidden`, leaves that much room around it. `.scroll` and the tabs already do: a `.scroll` above and below, its table has room in its cells, a row of tabs all around, reaching out of its box by `--overhang`, so it sits in one with at least that much padding, as every box of the kit has.
+- Most parts adapt to their box, not to the screen. Headers wrap, rows of tabs scroll sideways, and a heading breaks a word too long for its line.
+- Put anything wide in a `.scroll`, a table most of all. A table in it is never narrower than `--table-min-width`, which is 450px by default; raise it for a table with many columns.
+- The kit uses one breakpoint, 600px. Below it a `dl` puts each key over its value, the column of `.app` goes above the page, and spacing gets a little tighter. Use the same width if your page rearranges itself for phones.
+- On touch screens the geometry makes controls taller. Size things with `--element-height` and `--element-height-small` instead of fixed numbers, so they follow.
+- Focus rings and glows reach `--overhang` past their element. A box of your own that clips (scrolling, `overflow: hidden`) needs at least that much padding, or they are cut off. The kit's own boxes already have it.
+
+## Script
+
+`general.js` listens on the whole document, so tabs, comboboxes and dialog buttons added later work without any call. Sparks, meters, `data-open` dialogs, new rows of tabs and checkboxes changed by script in a choice of many are handled when the page loads. After you add or change those, call `mtt.refresh()`, or `mtt.refresh(element)` to handle only that element and what is inside it.
 
 ## Licenses
 
-The code is MIT. The bundled fonts, Space Grotesk, Nunito and JetBrains Mono, are under the SIL Open Font License, the texts are next to the font files.
+The code is MIT. The bundled fonts, Space Grotesk, Nunito and JetBrains Mono, are under the SIL Open Font License; their license texts are next to the font files.
 
 ## Develop
 
-Sources are in `src/`, `demo.html` links them directly, so no build is needed to see a change.
+Sources are in `src/`. `demo.html` links them directly, so you can see a change without building.
 
 ```sh
 npm run build          # dist/, unminified

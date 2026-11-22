@@ -1,14 +1,9 @@
 :root {
-    /*
-        Every color has a name beside it, a string to show where the color is offered or explained, a picker or a legend:
-        content: var(--mtt-color-main-name). The names are the palette's own, a color that is another one takes its name too
-    */
     --mtt-color-body: #160516;
     --mtt-color-body-name: "Blackcurrant";
     --mtt-color-panel: #1d081d;
     --mtt-color-panel-name: "Elderberry";
 
-    /* The page is the berry ripe, near black. What is laid on it is the berry before that: wine where a thing rests, the pink of an unripe one where it is lit */
     --mtt-color-main-dimmed: #3d0932;
     --mtt-color-main-dimmed-name: "Wine";
     --mtt-color-button: #5c0c43;
@@ -73,7 +68,6 @@
     --color-warning-text: #f9d989;
     --color-warning-text-name: "Honey";
 
-    /* Pink is what is lit here, so a danger is the red on the other side of it, toward orange, not to be taken for a thing that is on */
     --color-danger: #431215;
     --color-danger-name: "Oxblood";
     --color-danger-highlight: #da3b21;
@@ -81,10 +75,6 @@
     --color-danger-text: #fe9979;
     --color-danger-text-name: "Coral";
 
-    /*
-        Categories: sixteen marks that tell things apart, like whose a row is, and say nothing of state.
-        The first eight go round the hues, taking a color above where one sits there. The last eight go round again between them, deeper
-    */
     --color-category-1: #60a7ff;
     --color-category-1-name: "Cornflower";
     --color-category-2: var(--color-priority-highlight);
@@ -118,10 +108,6 @@
     --color-category-16: #0677ab;
     --color-category-16-name: "Cerulean";
 
-    /*
-        A shadow is the dark that a raised thing casts on what is under it: its ink, and how much of it shows.
-        The geometry gives it its shape. On a page this dark there is little to darken, a glow lifts things here
-    */
     --shadow-color: #000000;
     --shadow-strength: 55%;
 
@@ -130,7 +116,6 @@
     --glow-strength: 50%;
     --disabled-filter: brightness(0.7) contrast(0.9) saturate(0.7);
 
-    /* The state colors here are bright already, and a fill glows, so it is not lifted: lighter would only bleach it */
     --fill-lift: 0;
 }
 

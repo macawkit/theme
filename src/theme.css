@@ -2,17 +2,12 @@
     --key-width: 120px;
     --column-width: 150px;
     --tile-width: calc(var(--column-width) * 2);
-    /* the narrowest a table in .scroll gets, narrower it would stand its words one per line */
     --table-min-width: calc(var(--column-width) * 3);
-    /* the navigation column of .app, room for a name and a count beside it */
     --nav-width: calc(var(--column-width) * 1.5);
     --color: var(--mtt-color-main-highlight);
     --shine-color: var(--mtt-color-line-decorated);
     --background: var(--mtt-color-main-dimmed);
-    /*
-        an icon is as tall as a line of the text it is in, to an even pixel: in an element of an even height it is then
-        a whole pixel from the edges, and is drawn where the element is, not half a pixel off to one side
-    */
+    /* even pixels, so an icon in an even-height element sits on whole pixels */
     --icon-size: 1.2em;
 
     @supports (width: round(1em, 2px)) {
@@ -60,7 +55,7 @@
     box-sizing: border-box;
 }
 
-/* Whatever display an element is given below, hidden still hides it */
+/* [hidden] wins over every display set below */
 [hidden]:not([hidden=until-found]) {
     display: none !important;
 }
@@ -85,7 +80,6 @@ textarea {
     font: inherit;
 }
 
-/* a header that runs out of room puts what follows the title under it, instead of squeezing both */
 header {
     display: flex;
     flex-wrap: wrap;
@@ -95,9 +89,28 @@ header {
     padding-bottom: var(--margin-tight);
 }
 
-header > :is(h1, h2, h3, h4, h5, h6) {
+header > :is(h1, h2, h3, h4, h5, h6),
+header > .title {
     margin: 0;
     flex: auto;
+}
+
+/* a back link and the heading after it stay on one line, the heading wraps beside it */
+header > .title {
+    display: flex;
+    align-items: center;
+    gap: var(--margin-tight);
+    min-width: 0;
+
+    > :is(h1, h2, h3, h4, h5, h6) {
+        flex: auto;
+        min-width: 0;
+        margin: 0;
+    }
+
+    > :not(:is(h1, h2, h3, h4, h5, h6)) {
+        flex: none;
+    }
 }
 
 footer {
@@ -108,7 +121,6 @@ footer {
     gap: var(--margin-tight);
 }
 
-/* The space between a header or a footer and the rest weighs nothing, so a box that spaces what it holds can take it away, see .stack */
 :where(header) {
     margin-bottom: var(--margin);
 }
@@ -117,7 +129,18 @@ footer {
     margin-top: var(--margin);
 }
 
-/* the browser gives a dialog the text color of the canvas, not the one of the body */
+/* stays in sight over what scrolls under it: the padding of the dialog below becomes its own, a shadow covers the gap above */
+dialog > form > footer {
+    position: sticky;
+    z-index: 2;
+    bottom: calc(-1 * var(--margin));
+    margin-bottom: calc(-1 * var(--margin));
+    padding-bottom: var(--margin);
+    background-color: var(--mtt-color-panel);
+    box-shadow: 0 calc(-1 * var(--margin)) var(--mtt-color-panel);
+}
+
+/* the browser gives a dialog the canvas text color, not the body one */
 dialog {
     width: min(100%, var(--column-width) * 3);
     color: var(--mtt-color-text);
@@ -125,6 +148,10 @@ dialog {
 
 h1, h2, h3, h4, h5, h6, b, strong {
     color: var(--mtt-color-text-bright);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    overflow-wrap: anywhere;
 }
 
 h1, h2, h3, h4, small {
@@ -205,7 +232,6 @@ nav:not(.tabs, .crumbs, .pages) a {
     font-size: var(--decrease-font-size);
 }
 
-/* a small one is as tall as a small element, and so is all of a small row of tabs, the groove of one say */
 nav.tabs.small,
 .small[role=tablist],
 nav.tabs > a.small,
@@ -224,11 +250,7 @@ nav.tabs.small > a,
     font-weight: 700;
 }
 
-/*
-    An icon in a button or a tab has as much room at its sides as above and below it, so one alone makes it square.
-    Its margins take that out of the padding, and the gap gives it back to what is beside it. A word is no element,
-    there is no telling whether one is there, so the icon does the same with a word and without
-*/
+/* an icon gets as much room at its sides as above and below it, so an icon alone makes a square button */
 nav.tabs > a,
 nav.pages a,
 :is(button, .button) {
@@ -242,10 +264,7 @@ nav.pages a,
     }
 }
 
-/*
-    Plain links. The states weigh no more than a bare `a`, so nav links,
-    .button and any class with a color of its own keep it.
-*/
+/* :where keeps the states as light as a bare a, so nav links and any class with a color of its own keep it */
 a {
     color: var(--mtt-color-text-decorated);
 
@@ -263,7 +282,6 @@ a:is(.button, .card) {
     text-decoration: none;
 }
 
-/* A link around a whole block leaves the colors of its text alone */
 a.card {
     color: inherit;
 }
@@ -289,7 +307,6 @@ nav:not(.tabs, .crumbs, .pages) a > small:last-child:not(:first-child) {
     margin-left: auto;
 }
 
-/* Breadcrumbs: one row of steps, the page you are on comes last */
 nav.crumbs {
     display: flex;
     flex-wrap: wrap;
@@ -304,13 +321,6 @@ nav.crumbs > * {
     color: var(--mtt-color-text);
 }
 
-/*
-    Pages: a nav of the pages of a long list, a link for each, aria-current=page on the one shown, rel=prev and rel=next on
-    the way back and the way on. The links are straight in it or in a list, one item for each. What is not a link, "…", is a gap,
-    the pages the run leaves out. It wraps when it does not fit, the run is the server's to keep short. Where it stands is up to the page.
-    The pages are side by side with nothing between them, so the geometry can lay one ground under all of them.
-    The way back and the way on stand off from them, and are as wide as a button with the same word
-*/
 nav.pages,
 nav.pages > :is(ul, ol) {
     display: flex;
@@ -374,7 +384,6 @@ dl {
     gap: var(--margin);
 }
 
-/* A cell gives way to the grid, and a long value with no spaces in it, an address or a hash, breaks anywhere instead of running out of it */
 dt, dd {
     display: flex;
     flex-direction: column;
@@ -382,17 +391,14 @@ dt, dd {
     overflow-wrap: anywhere;
 }
 
-/* the column of the grid places a value, the indent the browser gives it would only push it off */
 dd {
     margin-inline-start: 0;
 }
 
-/* code is as wide as itself, as a badge is */
 :is(dt, dd) > code {
     align-self: start;
 }
 
-/* On a phone a key sits over its value, there is no room for both side by side. The one width the kit asks about */
 @media (width < 600px) {
     dl {
         grid-template-columns: minmax(0, 1fr);
@@ -405,7 +411,6 @@ code {
     color: var(--mtt-color-text-decorated);
 }
 
-/* set as tight as a heading, or a second line runs into the first */
 .hero {
     line-height: var(--heading-line-height);
     font-size: 250%;
@@ -419,11 +424,7 @@ code {
     gap: var(--margin);
 }
 
-/*
-    A box spaces what it holds by its gap or its padding, and that is the only space there:
-    the margins of a paragraph, a list or a header would add to it. Only what the box holds itself, a form between
-    brings its own back. They weigh nothing, a page's own margins win, and a dialog or a popover keeps the margins that place it
-*/
+/* these space their children by gap or padding, so the children lose their margins; :where lets a page margin win */
 :where(.stack, .card, .alert, .empty, .row, .tiles, footer, .app > header, .app > aside, .app > aside + *) > :where(:not(dialog, [popover])) {
     margin-block: 0;
 }
@@ -436,10 +437,6 @@ code {
     margin-block-end: 0;
 }
 
-/*
-    A list in text is set in by one margin, a numbered one by two, its numbers are wider than a bullet.
-    A list the kit lays out, in a nav or with a role of its own, keeps its own
-*/
 :where(ul, ol):where(:not([role]), [role=list]) {
     padding-inline-start: var(--margin);
 }
@@ -459,10 +456,15 @@ code {
 }
 
 .tiles {
+    --tiles-max: 99;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--tile-width)), 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, max(var(--tile-width), (100% - (var(--tiles-max) - 1) * var(--margin)) / var(--tiles-max))), 1fr));
     gap: var(--margin);
     align-items: start;
+}
+
+.tiles > .wide {
+    grid-column: 1 / -1;
 }
 
 .row {
@@ -472,11 +474,7 @@ code {
     gap: var(--margin-tight);
 }
 
-/*
-    Tabs are one line, a choice along one axis. When they don't fit they scroll sideways,
-    as anything wide does in .scroll. The overhang is room for a focus ring and a glow,
-    which the scrolling box would cut off, the negative margin keeps the box where it was
-*/
+/* the padding is room for the focus ring and glow the scrolling box would clip, the negative margin keeps the box in place */
 :is([role=tablist], nav.tabs) {
     display: flex;
     min-width: 0;
@@ -487,7 +485,7 @@ code {
     flex: none;
 }
 
-/* the row is what the place of its chosen tab is measured from, see general.js */
+/* the offsets of its tabs are measured from here, see general.js */
 [role=tablist] {
     position: relative;
 }
@@ -502,10 +500,7 @@ code {
     margin: calc(-1 * var(--overhang));
 }
 
-/*
-    A table has room for a ring in its cells already, so a .scroll leaves it only above and below:
-    reaching out at the sides it would widen a page that gives it no padding there
-*/
+/* the cells of a table leave room for a ring at the sides already */
 .scroll {
     padding-block: var(--overhang);
     margin-block: calc(-1 * var(--overhang));
@@ -535,14 +530,6 @@ code {
     min-width: 0;
 }
 
-/*
-    A compact card is one of many in a dense spot, a cell of a grid: two short lines and little around them.
-    It wears --color as a swatch does: a wash of it is its ground, a faint rim goes round it and the color itself runs along its start,
-    the geometry draws them. The text on it stays the palette's own, only the muted ink is too faint for a wash, so there it is the text's.
-    A link, it is a thing to tap and looks it with no pointer near, under one its wash deepens and its rim takes the color.
-    Quiet, it is a thing that is over: the wash is nearly gone, the mark is faint and the muted ink is back.
-    It is not .small, that is small text, and a card in small text would shrink twice
-*/
 .card.compact {
     --card-wash: 16%;
     --card-ground: color-mix(in srgb, var(--color) var(--card-wash), var(--mtt-color-panel));
@@ -578,7 +565,6 @@ a.card.compact {
     }
 }
 
-/* An empty state: in the middle of where the things would be, an icon, a line that says what is missing, a note and a way to start */
 .empty {
     display: flex;
     flex-direction: column;
@@ -587,7 +573,6 @@ a.card.compact {
     text-align: center;
 }
 
-/* A page of one thing, a sign-in or an error: it is in the middle of the window, as wide as a dialog */
 .center {
     display: grid;
     grid-template-columns: min(100%, var(--column-width) * 3);
@@ -598,20 +583,21 @@ a.card.compact {
     padding: var(--margin);
 }
 
-/*
-    A .page is a box that scrolls in place of the window, the page of an .app held to the height of the screen say.
-    The geometry draws the top of the page on it, so it scrolls with what is on it, and not on the body behind
-*/
 .page {
     position: relative;
     isolation: isolate;
 }
 
-/*
-    A page with a navigation column: .app > aside is the column on the start side, the page is what follows it,
-    a main or whatever holds it. Anything else in .app, a dialog or a script, is left as it is.
-    The last thing in the column, a note, sits at its bottom. A header before the column is a bar over both
-*/
+.app:has(> .page) {
+    height: 100vh;
+    height: 100dvh;
+
+    > :is(aside, .page) {
+        min-height: 0;
+        overflow-y: auto;
+    }
+}
+
 .app {
     display: grid;
     grid-template-columns: var(--nav-width) minmax(0, 1fr);
@@ -642,10 +628,6 @@ a.card.compact {
     margin-block-start: auto;
 }
 
-/*
-    On a phone there is no room beside the page, the column goes over it as a row. Its links go sideways
-    and scroll when they don't fit, as tabs do, the overhang is room for the glow of the current one
-*/
 @media (width < 600px) {
     .app {
         grid-template-columns: minmax(0, 1fr);
@@ -682,7 +664,6 @@ a.card.compact {
     }
 }
 
-/* A box is a square as tall as a small element, its glyph or its value in the middle. A value too wide for it widens it, with a little room at its sides */
 .box {
     display: inline-flex;
     flex: none;
@@ -707,17 +688,14 @@ label > span {
     line-height: var(--heading-line-height);
 }
 
-/*
-    A radio or a checkbox inside a .button gives the button its state.
-    It is out of sight, but still in reach of the keyboard and of validation.
-*/
+/* out of sight, but still focusable and validated */
 .button > input:is([type=radio], [type=checkbox]) {
     position: absolute;
     opacity: 0;
     pointer-events: none;
 }
 
-/* The label is not :disabled itself, so this is what keeps its hover quiet */
+/* the label is not :disabled itself */
 .button:has(> input:disabled) {
     pointer-events: none;
 }
@@ -733,12 +711,7 @@ legend {
     padding: 0;
 }
 
-/*
-    Combobox and dropdown: an input[role=combobox] and the [role=listbox][popover]
-    named by its aria-controls, opened and filtered by general.js.
-*/
-
-/* one with inputmode=none is the dropdown: it is clicked, not typed in */
+/* inputmode=none makes it a dropdown, clicked and not typed in */
 input[role=combobox][inputmode=none] {
     cursor: pointer;
     caret-color: transparent;
@@ -750,7 +723,6 @@ input[role=combobox][inputmode=none] {
     list-style: none;
 }
 
-/* it scrolls on its own, the page behind it stays */
 [role=listbox][popover] {
     max-height: calc(var(--element-height) * 8);
     overscroll-behavior: contain;
@@ -769,14 +741,13 @@ input[role=combobox][inputmode=none] {
     padding: var(--margin-tight) var(--margin-tight) var(--margin-minimal);
 }
 
-/* the checkbox of an option in a choice of many is only what the form posts, the row shows it checked */
+/* only what the form posts, the row shows it checked */
 [role=listbox] > [role=option] > input[type=checkbox] {
     display: none;
 }
 
-/* a caption stays over its options as they scroll under it, so an option the keyboard reaches stops below it */
+/* keyboard scrolling stops below a sticky caption */
 [role=listbox][popover] {
-    /* as tall as a caption: its padding and a line */
     &:has(> [role=presentation]) {
         scroll-padding-block-start: calc(var(--margin-tight) + var(--line-height) + var(--margin-minimal));
     }
@@ -788,7 +759,6 @@ input[role=combobox][inputmode=none] {
     }
 }
 
-/* what a list says when a search finds nothing */
 [role=listbox][data-empty]:not(:has(> [role=option]:not([hidden])))::after {
     content: attr(data-empty);
     display: flex;
@@ -797,13 +767,12 @@ input[role=combobox][inputmode=none] {
     padding: 0 var(--margin-tight);
 }
 
-/* Without anchors the browser shows the list in the middle of the window */
+/* without anchors the browser shows the list in the middle of the window */
 @supports (anchor-name: --mtt-combobox) {
     [role=combobox][aria-expanded=true] {
         anchor-name: --mtt-combobox;
     }
 
-    /* on the side of its field with more room, and no taller than that room, so it never covers the field */
     [role=listbox][popover] {
         position-anchor: --mtt-combobox;
         position-area: block-end span-inline-end;
@@ -812,11 +781,7 @@ input[role=combobox][inputmode=none] {
         width: anchor-size(width);
         max-height: min(calc(var(--element-height) * 8), 100% - 2 * var(--margin-minimal));
         margin: var(--margin-minimal) 0;
-        /*
-            but never shorter than three rows, or all it has if that is less. The browser tries the other side
-            only when the list does not fit, and a list that could shrink to nothing always would, so when
-            the page scrolls its field to an edge, the list goes over to the other side instead of shrinking
-        */
+        /* at least three rows, or the browser shrinks it to nothing instead of flipping it */
         min-height: calc-size(max-content, min(size, var(--element-height) * 3));
     }
 }
@@ -834,11 +799,7 @@ input[role=combobox][inputmode=none] {
     background: var(--mtt-color-line-highlight);
 }
 
-/*
-    A meter is filled to its aria-valuenow, between aria-valuemin and aria-valuemax, 0 and 100 when they are not given.
-    --value is how full it is, the geometry draws it. A browser that reads attributes in CSS works it out here, with no script,
-    and follows a change of the attributes by itself. general.js does it for the others
-*/
+/* browsers without typed attr() are filled by general.js */
 @supports (width: calc(attr(data-mtt type(<number>), 0) * 1%)) {
     div[role=meter] {
         --value: clamp(
@@ -854,12 +815,6 @@ input[role=combobox][inputmode=none] {
     color: var(--color);
 }
 
-/*
-    A marker is as wide as its word wherever it is, a column or a cell would stretch it. On a line it sits in the middle, by a heading too.
-    With no room for its word it is narrower, down to what comes before the word, an icon or the light of a badge: the word wraps
-    under that, out of sight, so that is as tall as the marker, an icon is, the geometry pads the light. A word in an element
-    of its own with nothing before it is cut short instead
-*/
 .badge, .tag {
     display: inline-flex;
     flex-wrap: wrap;
@@ -885,13 +840,6 @@ input[role=combobox][inputmode=none] {
     text-overflow: ellipsis;
 }
 
-/*
-    A swatch shows one color, a category's most of all, beside the name of what wears it: an empty element,
-    decoration only, the name says it all. The color is --color, on it or on anything around it, and one that comes to nothing,
-    a token the palette has not got, leaves a line where it would be. It is --background-color, what it is made of, for the geometry to draw with.
-    Small, it is as thick as a bar, for a dense spot, a day of a month.
-    Quiet, it is a thing that is over: as faint as the past of a spark, and whatever a geometry lays on it, a light, a lift or a gloss, is gone
-*/
 .swatch {
     --background-color: var(--color, var(--mtt-color-line-highlight));
     display: inline-block;
@@ -913,7 +861,6 @@ input[role=combobox][inputmode=none] {
     box-shadow: none;
 }
 
-/* A number lines up with the ones over and under it: at the end, every figure as wide as any other */
 .num {
     text-align: end;
     font-variant-numeric: tabular-nums;

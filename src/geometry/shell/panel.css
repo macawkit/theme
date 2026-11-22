@@ -50,7 +50,6 @@ dialog {
     }
 }
 
-/* A compact card is square with the small chip off its corner, its color a flat bar on its start edge. It is too small for corner marks */
 .card.compact {
     --corner-line: var(--card-line);
     padding: var(--card-padding) var(--margin-minimal) var(--card-padding) calc(var(--card-edge) + var(--margin-minimal));
@@ -67,7 +66,7 @@ dialog {
     }
 }
 
-/* A dialog scrolls and would cut off the corner marks of a panel, so its border carries the mark */
+/* a dialog scrolls and would cut off corner marks, so its border carries the mark */
 dialog {
     border-image: linear-gradient(
         135deg,
@@ -76,7 +75,6 @@ dialog {
     ) 1;
 }
 
-/* The page behind a modal dialog is out of reach, so it looks disabled */
 dialog::backdrop {
     background-color: color-mix(in srgb, var(--mtt-color-body) var(--glow-strength), #0000);
     backdrop-filter: var(--disabled-filter);
@@ -99,7 +97,6 @@ dialog::backdrop {
     min-width: 0;
 }
 
-/* Add glow */
 header {
     background:
         linear-gradient(var(--mtt-color-text-decorated), var(--mtt-color-text-decorated)) 0 100% / calc(var(--chip) * 2) 1px no-repeat,
@@ -108,12 +105,10 @@ header {
     background-origin: border-box;
 }
 
-/* The bar of .app is the same surface as the column */
 .app > header {
     background-color: var(--mtt-color-panel);
 }
 
-/* The navigation column of .app is a surface along the page, ruled off from it. On a phone it is over the page, so the rule is under it */
 .app > aside {
     background-color: var(--mtt-color-panel);
     border-inline-end: 1px solid var(--mtt-color-line-dimmed);

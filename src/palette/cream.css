@@ -1,8 +1,4 @@
 :root {
-    /*
-        Every color has a name beside it, a string to show where the color is offered or explained, a picker or a legend:
-        content: var(--mtt-color-main-name). The names are the palette's own, a color that is another one takes its name too
-    */
     --mtt-color-body: #faf2e3;
     --mtt-color-body-name: "Cream";
     --mtt-color-panel: #fffbf3;
@@ -79,12 +75,6 @@
     --color-danger-text: #8c2318;
     --color-danger-text-name: "Madder";
 
-    /*
-        Categories: sixteen marks that tell things apart, like whose a row is, and say nothing of state.
-        Cream is paper, so they are a paintbox, soft enough to sit on it as washes. The first eight are the clear pigments round the hues,
-        the last eight the earths and minerals between them, each a color of its own and not a shade of one above.
-        They are lighter than the inks of the states: a mark, with its name beside it, never the text itself
-    */
     --color-category-1: #5f83d4;
     --color-category-1-name: "Cornflower";
     --color-category-2: #9c6fc2;
@@ -118,20 +108,15 @@
     --color-category-16: #7db5df;
     --color-category-16-name: "Sky blue";
 
-    /*
-        A shadow is the dark that a raised thing casts on what is under it: its ink, and how much of it shows.
-        The geometry gives it its shape. On paper it is what lifts things, warm like the inks, and faint
-    */
     --shadow-color: #4a3b22;
     --shadow-strength: 16%;
 
-    /* A glow or a shine is a blur of a thing in its own color, on a light page that reads as a smudge, so nothing blurs */
     --glow-radius: 0px;
     --shine-radius: 0px;
     --glow-strength: 50%;
     --disabled-filter: opacity(0.5) saturate(0.5);
 
-    /* The state colors are inks, dark enough to be read as text. Unlit, a bar filled with one sits on the page like a stroke of marker, so a fill is lifted a step lighter */
+    /* the state inks are too dark for a bar, a fill is lifted a step lighter */
     --fill-lift: 0.08;
 }
 

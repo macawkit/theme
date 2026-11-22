@@ -1,8 +1,3 @@
-/*
-    A checkbox is a gummy, a radio is a round candy, a switch is a candy rolling in a groove.
-    Off, they are set into the page. On, they are hard candy in the main color, and what marks them pops in with a bounce.
-    As a button, each draws itself and its states change only what it is made of
-*/
 input[type=radio],
 input[type=checkbox] {
     --background-color: var(--mtt-color-body);
@@ -44,12 +39,10 @@ input[type=checkbox]::before {
         opacity var(--transition);
 }
 
-/* Under the pointer an empty one brightens its rim */
 input:is([type=radio], [type=checkbox]):is(:hover, .hover):not(:disabled, [aria-disabled=true], :checked, :indeterminate) {
     --rim-color: var(--mtt-color-line-highlight);
 }
 
-/* On: a hard candy in the main color, lit */
 input:is([type=radio], [type=checkbox]):checked {
     --background-color: var(--mtt-color-main);
     --gloss-layer: var(--gloss);
@@ -63,7 +56,6 @@ input:is([type=radio], [type=checkbox]):checked {
     }
 }
 
-/* Checkbox: a tick that pops in, a candy stick across it when it is neither */
 input[type=checkbox]:not(.switch) {
     &::before {
         inset: 0;
@@ -91,7 +83,6 @@ input[type=checkbox]:not(.switch) {
     }
 }
 
-/* Radio: a white center pops in. A swirl was tried, at this size its stripes only alias */
 input[type=radio] {
     &::before {
         inset: 5px;
@@ -107,7 +98,6 @@ input[type=radio] {
     }
 }
 
-/* Switch: a round knob, glossy, rolling over with a bounce */
 input[type=checkbox].switch {
     width: calc(var(--element-height-tiny) * 2);
     height: var(--element-height-tiny);

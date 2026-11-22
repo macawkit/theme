@@ -1,10 +1,3 @@
-/*
-    A button is a hard candy: a pill, glossy on its top half, set on the page by a small shadow.
-    It draws itself, its states change only what it is made of and where it sits. The shadows are always four,
-    a rim, an elevation of two and a glow, so every change between them eases.
-    It hops up to the pointer and springs back, and pressed it is squeezed: the motion goes by whole pixels
-    and a scale that ends at one, so the type is crisp again whenever it is still
-*/
 nav.tabs > a,
 nav.pages a,
 :is(button, .button) {
@@ -19,11 +12,6 @@ nav.pages a,
 
     translate: 0 var(--lift);
     scale: var(--squeeze);
-    /*
-        Kept on a layer of its own, so it is moved and squeezed as one picture. Without it the browser lifts it onto one
-        only while it moves and puts it back after, and the text, drawn anew to the whole pixel, jumps once it has settled
-    */
-    will-change: translate, scale;
     border-radius: var(--pill);
     background: var(--gloss-layer), var(--background-color);
     box-shadow:
@@ -38,15 +26,17 @@ nav.pages a,
         scale var(--transition-bounce);
 }
 
-/* the way back and the way on of a row of pages, see theme.css, are alt buttons too */
+/* kept on a layer: promoted only while moving, its text would change smoothing as it settles */
+:is(button, .button, nav.pages a[rel]):not([role=tab], :disabled, [aria-disabled=true], :has(> input:disabled)) {
+    will-change: translate, scale;
+}
+
 :is(button, .button, :where(nav.pages a[rel])) {
-    /* It floats up to meet the pointer, its shadow spreading as it goes */
     &:is(.hover, :hover):not(.ghost, :disabled, [aria-disabled=true], [role=tab]):where(:not(:has(> input:disabled))) {
         --elevation: var(--raise);
         --lift: var(--hop);
     }
 
-    /* Lit: a toggle that is on, and a plain button under the pointer. A toggle is lit only by being on */
     &:is([aria-pressed=true], :has(> input:checked)):not(.ghost, .alt, :where(nav.pages a)),
     &:not(.ghost, .alt, :where(nav.pages a), :disabled, [aria-disabled=true], [role=tab], [aria-pressed], :has(> input)):is(.hover, :hover) {
         --background-color: var(--mtt-color-main-highlight);
@@ -55,15 +45,10 @@ nav.pages a,
         color: var(--mtt-color-text-brightest);
     }
 
-    /* a toggle that is off goes only half way under the pointer */
     &:is([aria-pressed], :has(> input)):not([aria-pressed=true], :has(> input:checked), .alt, .ghost, .danger, :disabled, [aria-disabled=true]):is(.hover, :hover) {
         --background-color: color-mix(in srgb, var(--mtt-color-button), var(--mtt-color-main-highlight));
     }
 
-    /*
-        Pressed, it sets down on the page at once, is squeezed between the fingers and its light dims, after the lit ones so it wins over them.
-        It goes down quick and plain, and springs back from there when let go
-    */
     &:is(:active, .active):not(.ghost, :disabled, [aria-disabled=true], [role=tab]):where(:not(:has(> input:disabled))) {
         --elevation: var(--flat);
         --glow-reach: calc(var(--glow-radius) / 2);
@@ -73,7 +58,6 @@ nav.pages a,
         transition-timing-function: var(--animation-ease);
     }
 
-    /* a ghost has no candy to lift, it only gives a little under the finger */
     &.ghost:is(:active, .active):not(:disabled, [aria-disabled=true], [role=tab]):where(:not(:has(> input:disabled))) {
         --squeeze: var(--press-squeeze);
         transition-duration: var(--animation-duration-fast);
@@ -91,7 +75,6 @@ nav.pages a,
         }
     }
 
-    /* Alt: a soft candy, matte, with a rim in place of the gloss. Under the pointer it takes the body of a plain button */
     &:is(.alt, :where(nav.pages a)) {
         --background-color: var(--mtt-color-main-dimmed);
         --gloss-layer: none;
@@ -107,10 +90,6 @@ nav.pages a,
             --background-color: var(--mtt-color-button);
         }
 
-        /*
-            On, it is the main color all through, what a checked box is made of, and lit as one: a toggle is told from one that is off
-            by its body, not by its rim. It stays matte, the rim is the ink of the gloss it has not got. Under the pointer it brightens, as the box does
-        */
         &:is([aria-pressed=true], :has(> input:checked)) {
             --background-color: var(--mtt-color-main);
             --rim-color: color-mix(in srgb, var(--mtt-color-text-brightest) 40%, #0000);
@@ -124,7 +103,6 @@ nav.pages a,
         }
     }
 
-    /* Ghost: no candy until the pointer comes, then a soft pill of its tone. On, it keeps the pill and a rim */
     &.ghost {
         --background-color: transparent;
         --gloss-layer: none;
@@ -144,7 +122,6 @@ nav.pages a,
     }
 }
 
-/* A box is a gumdrop: a rounded square for one glyph or one value. Active, it is held up to the light */
 .box {
     border-radius: var(--radius-small);
     background-color: var(--mtt-color-main-dimmed);
@@ -160,12 +137,7 @@ nav.pages a,
         0 0 var(--glow-radius) var(--glow-color);
 }
 
-/*
-    Tabs: a row of them is a groove, the chosen one is a candy sitting in it. The groove is drawn on the content of the row: as long as all the tabs
-    and as tall as one, so it scrolls with them when they don't fit, and leaves out the room the row keeps for the glow and its scrollbar.
-    It is a bar between two round ends, each half a circle as wide as a tab is tall, none of them over another, the groove is see-through.
-    On a phone the navigation column of .app is such a row, see theme.css: a groove as well, its current link the candy
-*/
+/* the groove is drawn on the content box, so it scrolls with the tabs and leaves out the overhang */
 :is([role=tablist], nav.tabs, .app > aside > nav:not(.tabs, .crumbs, .pages) > :is(ul, ol)) {
     --groove-color: color-mix(in srgb, var(--mtt-color-main-dimmed) var(--glow-strength), #0000);
     --groove-end: calc(var(--element-height) / 2) 100% no-repeat local content-box;
@@ -216,10 +188,7 @@ nav.tabs > a[aria-current=page],
     color: var(--mtt-color-text-bright);
 }
 
-/*
-    With general.js the candy is one for the whole row, thrown from tab to tab, overshooting a little as it lands, see general.js.
-    It lies under the tabs, so the word of one it passes over stays on top of it
-*/
+/* with general.js one candy moves from tab to tab, under them */
 [role=tablist][data-mtt-tab] {
     &::before {
         content: "";
@@ -247,12 +216,6 @@ nav.tabs > a[aria-current=page],
     }
 }
 
-/*
-    Pages: they lie in a groove as tabs do, and the one shown is the candy in it. The groove is laid under each page and each gap,
-    the item of a list or what is straight in the row, round at the first and at the last, so it is as long as the pages however wide
-    the row, and stops short of the way back and the way on. The page is its own piece of groove when nothing holds it, so its candy
-    is drawn over that, on ::before. The way back and the way on are alt buttons, see above
-*/
 nav.pages {
     --groove-color: color-mix(in srgb, var(--mtt-color-main-dimmed) var(--glow-strength), #0000);
 
@@ -293,7 +256,6 @@ nav.pages a:not([rel]) {
         color: var(--mtt-color-text-bright);
     }
 
-    /* the focus ring follows the shape, and a ring round a piece of groove would be square */
     &:is(:focus-visible, .focus) {
         border-radius: var(--pill);
     }
@@ -310,7 +272,6 @@ nav.pages a:not([rel]) {
     }
 }
 
-/* Navigation list: a soft pill under the link the pointer is on, and the current one is a candy, glossy, in the main tone */
 nav:not(.tabs, .crumbs, .pages) a {
     border-radius: var(--radius-small);
     transition:
@@ -335,7 +296,6 @@ nav:not(.tabs, .crumbs, .pages) a {
     }
 }
 
-/* Breadcrumbs: the steps are parted by a little round sweet */
 nav.crumbs > * {
     &:is(a.hover, a:hover, [aria-current]) {
         color: var(--mtt-color-text-bright);

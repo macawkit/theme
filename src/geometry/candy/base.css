@@ -1,11 +1,3 @@
-/*
-    Candy: everything is round, light and a little sweet. Surfaces are soft slabs that float on the palette's shadow,
-    controls are pills, and what is filled is a hard candy with a gloss on its top half. Under the pointer a control
-    hops up and floats higher on its shadow, and pressed it is squeezed back down onto the page.
-
-    A control draws itself, no layers under it: its states only change what it is made of and where it sits,
-    --background-color, --gloss-layer, --rim-color and --rim-width, --elevation, --glow-reach for a light, and --lift and --squeeze
-*/
 @font-face {
     font-family: 'Nunito';
     src: url('../../font/nunito.woff2') format('woff2');
@@ -26,7 +18,6 @@
     --line-height: 1.55em;
     --heading-line-height: 1.15em;
     --letter-spacing-wide: 0.1em;
-    /* a surface, a thing inside one, a small thing, and a pill: as round as its height allows */
     --radius: 24px;
     --radius-small: 16px;
     --radius-tiny: 6px;
@@ -48,30 +39,22 @@
     --animation-duration-fast: 120ms;
     --animation-ease: cubic-bezier(.3, .7, .4, 1);
     --transition: var(--animation-duration) var(--animation-ease);
-    /* overshoots and settles, only for a small mark that pops in, a tick or a knob. Color and text never bounce */
     --transition-bounce: var(--animation-duration) cubic-bezier(.34, 1.56, .64, 1);
-    /* how high a control hops to the pointer, in whole pixels so the type lands on them, and how much a press squeezes it */
+    /* whole pixels, so the text lands on them */
     --hop: -2px;
     --press-squeeze: 0.96;
-    /* How far a drawing reaches past the box it belongs to, a focus ring or a glow. Whatever clips leaves this much room around what it holds */
     --overhang: max(var(--glow-radius), var(--highlight-thickness) * 2);
 
-    /*
-        Elevations: the palette says what a shadow is, this says how high a thing floats. Each is two shadows,
-        a close one that sets it down and a soft one that lifts it, so one eases into another
-    */
     --shadow: color-mix(in srgb, var(--shadow-color) var(--shadow-strength), #0000);
     --flat: 0 0 0 #0000, 0 0 0 #0000;
     --raise-low: 0 1px 2px var(--shadow), 0 3px 8px -4px var(--shadow);
     --raise: 0 2px 4px -2px var(--shadow), 0 10px 24px -12px var(--shadow);
     --raise-high: 0 4px 8px -4px var(--shadow), 0 24px 48px -16px var(--shadow);
 
-    /* the shine on the top half of a hard candy, in the brightest ink of the palette */
     --gloss: linear-gradient(
         color-mix(in srgb, var(--mtt-color-text-brightest) 30%, #0000),
         color-mix(in srgb, var(--mtt-color-text-brightest) 0%, #0000) 55%
     );
-    /* a lollipop stripe, laid over a fill */
     --candy-stripes: repeating-linear-gradient(
         -45deg,
         color-mix(in srgb, var(--mtt-color-text-brightest) 30%, #0000) 0 4px,
@@ -79,7 +62,6 @@
     );
 }
 
-/* A phone is held close, the page needs less air around things */
 @media (width < 600px) {
     :root {
         --margin: 16px;
@@ -87,7 +69,6 @@
     }
 }
 
-/* A finger is broader than a pointer, what it taps is taller */
 @media (pointer: coarse) {
     :root {
         --element-height: 44px;
@@ -95,12 +76,7 @@
     }
 }
 
-/*
-    Mixins, declared on every element so each is computed from the inputs of the element it is used on:
-
-    --glow-source            ->  --glow-color, a soft halo of that color
-    --color, --fill-lift     ->  --fill-color, what a bar or a meter is filled with
-*/
+/* declared on every element, so each is computed from that element's own inputs */
 *, ::before, ::after {
     --glow-color: color-mix(in srgb, var(--glow-source, #0000) var(--glow-strength), #0000);
     --fill-color: var(--color);
@@ -112,7 +88,6 @@
     }
 }
 
-/* The top of the page, of the .page in it or of the page under the bar of an .app, is a cotton candy sky: soft clouds in the colors of the palette that lean pink and lilac. It fades out over the first screen */
 :is(body:not(:has(.page, .app > header)), .page, .app > header ~ aside + *)::before {
     content: "";
     border-radius: inherit;
@@ -132,7 +107,6 @@
     mask-image: linear-gradient(#000 10%, #0000);
 }
 
-/* Rounded type is set a little heavier, its strokes are soft and thin ones would wash out */
 body {
     font-weight: 500;
 }
@@ -159,7 +133,6 @@ th, .note, fieldset, .small, small, [role=listbox] > [role=presentation] {
     color: var(--mtt-color-text-muted);
 }
 
-/* the labels of a wrapper: small, round, heavy and spaced out */
 th, .note, .label, fieldset, [role=listbox] > [role=presentation] {
     font-size: var(--decrease-font-size);
     font-weight: 800;
@@ -194,7 +167,6 @@ dt:not(:last-of-type), dd:not(:last-of-type) {
     border-bottom: 1px solid var(--mtt-color-line-dimmed);
 }
 
-/* the whole row lights, its label too when it starts with one */
 tbody :is(td, th) {
     transition: background-color var(--transition);
 }
@@ -213,7 +185,6 @@ tbody tr:hover > :is(td, th) {
     }
 }
 
-/* Where a key sits over its value they are one entry, the line goes under the value only */
 @media (width < 600px) {
     dt:not(:last-of-type) {
         padding-bottom: 0;
@@ -221,7 +192,6 @@ tbody tr:hover > :is(td, th) {
     }
 }
 
-/* A header needs no rule, the type says it. Its index is a little candy */
 header {
     padding-bottom: 0;
 }
@@ -250,19 +220,17 @@ a {
     transition: color var(--transition);
 }
 
-/* Keyboard focus: a round ring that follows the shape, for everything but the text fields, those have their own, see input.css */
 :is(a, button, .button, input:is([type=checkbox], [type=radio])):is(:focus-visible, .focus),
 .button:has(> input:focus-visible) {
     outline: var(--highlight-thickness) solid color-mix(in srgb, var(--mtt-color-line-decorated) 70%, #0000);
     outline-offset: 2px;
 }
 
-/* a card is clipped and would cut the ring off, so there it runs inside */
+/* a card clips, the ring runs inside it */
 a.card:is(:focus-visible, .focus) {
     outline-offset: calc(-1 * var(--highlight-thickness));
 }
 
-/* a link in text is a short run of letters, the ring around it is a little rounded */
 a:not(.button, .card, nav.tabs > a, nav.pages a):is(:focus-visible, .focus) {
     border-radius: var(--radius-tiny);
 }

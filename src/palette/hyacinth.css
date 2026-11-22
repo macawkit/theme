@@ -1,8 +1,4 @@
 :root {
-    /*
-        Every color has a name beside it, a string to show where the color is offered or explained, a picker or a legend:
-        content: var(--mtt-color-main-name). The names are the palette's own, a color that is another one takes its name too
-    */
     --mtt-color-body: #050a22;
     --mtt-color-body-name: "Midnight";
     --mtt-color-panel: #060f28;
@@ -79,10 +75,6 @@
     --color-danger-text: #ff8e9c;
     --color-danger-text-name: "Rose";
 
-    /*
-        Categories: sixteen marks that tell things apart, like whose a row is, and say nothing of state.
-        The first eight go round the hues, taking a color above where one sits there. The last eight go round again between them, deeper
-    */
     --color-category-1: var(--mtt-color-text-decorated);
     --color-category-1-name: var(--mtt-color-text-decorated-name);
     --color-category-2: var(--color-priority-highlight);
@@ -116,10 +108,6 @@
     --color-category-16: #0677ab;
     --color-category-16-name: "Cerulean";
 
-    /*
-        A shadow is the dark that a raised thing casts on what is under it: its ink, and how much of it shows.
-        The geometry gives it its shape. On a page this dark there is little to darken, a glow lifts things here
-    */
     --shadow-color: #000000;
     --shadow-strength: 55%;
 
@@ -128,7 +116,6 @@
     --glow-strength: 50%;
     --disabled-filter: brightness(0.7) contrast(0.9) saturate(0.7);
 
-    /* The state colors here are bright already, and a fill glows, so it is not lifted: lighter would only bleach it */
     --fill-lift: 0;
 }
 

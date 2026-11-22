@@ -1,4 +1,3 @@
-/* A scrollbar is a thin candy stick in a quiet color */
 @supports not selector(::-webkit-scrollbar) {
     * {
         scrollbar-color: var(--mtt-color-line-highlight) transparent;

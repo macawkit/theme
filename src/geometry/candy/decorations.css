@@ -1,4 +1,3 @@
-/* A spark is a row of lollipop sticks. The last one, now, is the brightest and wears the candy */
 .spark {
     --width: 4px;
     gap: 3px;
@@ -28,7 +27,6 @@
     box-shadow: 0 0 var(--glow-radius) var(--glow-color);
 }
 
-/* A share is a string of candy, one bead for each part */
 .share {
     display: flex;
     gap: var(--element-inner-margin);
@@ -44,7 +42,6 @@
     box-shadow: 0 0 var(--glow-radius) var(--glow-color);
 }
 
-/* A meter is a groove filled with a candy cane */
 div[role=meter] {
     position: relative;
     height: var(--bar-thickness-small);
@@ -66,7 +63,6 @@ div[role=meter]::before {
     box-shadow: 0 0 var(--glow-radius) var(--glow-color);
 }
 
-/* Markers are pills. A badge carries a light, a little round sweet before its word */
 .badge, .tag {
     gap: var(--margin-minimal);
     height: var(--element-height-tiny);
@@ -94,7 +90,6 @@ div[role=meter]::before {
     box-shadow: 0 0 calc(var(--glow-radius) / 2) var(--glow-color);
 }
 
-/* A swatch is a round hard candy, glossy on its top half, sitting on the page and lit as a fill is lit, as far as the palette lets a light reach */
 .swatch {
     --glow-source: var(--background-color);
     border-radius: 50%;
@@ -102,7 +97,6 @@ div[role=meter]::before {
     box-shadow: var(--raise-low), 0 0 var(--glow-radius) var(--glow-color);
 }
 
-/* An empty state has room around it, and its icon is large and quiet, it stands for what is missing */
 .empty {
     padding: calc(var(--margin) * 2) var(--margin);
 }

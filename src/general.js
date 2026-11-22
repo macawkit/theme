@@ -1,4 +1,4 @@
-/* A row of tabs scrolls sideways when it doesn't fit, the chosen one is brought into sight in it, the page doesn't move */
+// scrolls only the row, never the page
 function reveal (row, item) {
     const style = getComputedStyle(row);
     const shown = row.getBoundingClientRect();
@@ -29,11 +29,7 @@ function select (list, tab) {
     placeChosen(list);
 }
 
-/*
-    A geometry may draw the mark of the chosen tab on the row instead of on the tab, and move it from tab to tab.
-    The row is told where the chosen tab is, --mtt-tab-left and --mtt-tab-width, and data-mtt-tab says it has been,
-    and is told again whenever the tabs change size. Until then the chosen tab draws its own mark
-*/
+// tells the row where its chosen tab is, for a geometry that draws the mark on the row
 const resized = new ResizeObserver(entries => {
     for (const list of new Set(entries.map(entry => entry.target.closest('[role=tablist]'))))
         if (list)
@@ -51,12 +47,11 @@ function placeChosen (list) {
 }
 
 function watchTabs (root) {
-    for (const list of root.querySelectorAll('[role=tablist]'))
+    for (const list of within(root, '[role=tablist]'))
         for (const element of [list, ...list.querySelectorAll(':scope > [role=tab]')])
             resized.observe(element);
 }
 
-// Tabs are listened to on the document, so a row of them the page adds later works as well
 document.addEventListener('click', event => {
     const tab = event.target.closest('[role=tablist] [role=tab]');
     if (tab)
@@ -89,20 +84,15 @@ document.addEventListener('keydown', event => {
     next.focus();
 });
 
-// The chosen tab may start past the edge of its row, it is brought in. So is the current link of the navigation column of .app, a row of them on a phone
 function revealChosen (root) {
-    for (const row of root.querySelectorAll('[role=tablist], nav.tabs, .app > aside > nav > :is(ul, ol)')) {
+    for (const row of within(root, '[role=tablist], nav.tabs, .app > aside > nav > :is(ul, ol)')) {
         const chosen = row.querySelector(':scope > :is([aria-selected=true], [aria-current]:not([aria-current=false])), :scope > li > [aria-current]:not([aria-current=false])');
         if (chosen)
             reveal(row, chosen);
     }
 }
 
-/*
-    Bars mean nothing to a screen reader. A spark the page names, aria-label="Delivered, rising" say, is read as
-    one picture by that name, one it leaves unnamed is decoration and is skipped. Only the page knows what it shows.
-    The tallest value is a full bar, the others in proportion to it. What is not a number, or below zero, is an empty bar, and so is every bar when none is above zero
-*/
+// an unnamed spark is decoration, a named one is read as one image
 function drawSpark (spark) {
     if (spark.hasAttribute('aria-label') || spark.hasAttribute('aria-labelledby')) {
         if (!spark.hasAttribute('role'))
@@ -124,11 +114,6 @@ function drawSpark (spark) {
     }));
 }
 
-/*
-    A meter is filled by its aria-valuenow, between aria-valuemin and aria-valuemax, 0 and 100 when they are not given.
-    A browser that reads attributes in CSS does it there, see theme.css, and follows a change of them by itself.
-    For the others it is done here, and redone by refresh
-*/
 const metersInCSS = CSS.supports('width', 'calc(attr(data-mtt type(<number>), 0) * 1%)');
 
 function fillMeter (meter) {
@@ -140,27 +125,29 @@ function fillMeter (meter) {
     meter.style.setProperty('--value', `${Math.min(Math.max(share, 0), 1) * 100}%`);
 }
 
-/*
-    What the kit draws by script is drawn once, when the page loads. A page that adds or changes sparks or meters later,
-    or a row of tabs, or checks the options of a field of many, or adds a dialog to open, calls mtt.refresh(),
-    with the element that holds them to look only there.
-    A dialog with data-open is opened as a modal, once: one the server sends back with a form it turned down, say
-*/
+function within (root, selector) {
+    const found = [...root.querySelectorAll(selector)];
+    if (root instanceof Element && root.matches(selector))
+        found.unshift(root);
+
+    return found;
+}
+
 function refresh (root = document) {
-    for (const dialog of root.querySelectorAll('dialog[data-open]')) {
+    for (const dialog of within(root, 'dialog[data-open]')) {
         dialog.removeAttribute('data-open');
         if (!dialog.open)
             dialog.showModal();
     }
 
-    for (const spark of root.querySelectorAll('.spark'))
+    for (const spark of within(root, '.spark'))
         drawSpark(spark);
 
     if (!metersInCSS)
-        for (const meter of root.querySelectorAll('div[role=meter]'))
+        for (const meter of within(root, 'div[role=meter]'))
             fillMeter(meter);
 
-    for (const field of root.querySelectorAll('input[role=combobox]'))
+    for (const field of within(root, 'input[role=combobox]'))
         if (isCombobox(field) && isMultiple(field))
             field.value = summaryOf(field);
 
@@ -173,22 +160,6 @@ function refresh (root = document) {
 globalThis.mtt = Object.assign(globalThis.mtt ?? {}, { refresh });
 refresh();
 
-/*
-    Combobox: an input and the listbox its aria-controls names, the option chosen
-    gives the input its data-value or its text. One with inputmode=none is a
-    dropdown that takes no typing, any other filters the options by what is typed and marks the match.
-
-    A hidden input right after the field makes it a choice of the options and of nothing else: the
-    hidden input takes the data-value of the option chosen, the field its data-label or its text, and
-    what is typed only searches. An option is also found by its data-find, and a list with data-empty
-    says that when nothing is. An option with data-value="" names the choice of nothing, "All students"
-    in a filter say: the field holds it while its hidden input is empty, and goes back to it when emptied.
-    A choice fires change only when its value does. A script chooses an option by clicking it.
-
-    A list with aria-multiselectable=true makes it a choice of many: each option holds a checkbox, the form
-    posts the checked ones. Picking an option checks or unchecks it and the list stays open, the field shows
-    the labels of the checked ones, and what is typed only searches.
-*/
 function listOf (field) {
     return document.getElementById(field.getAttribute('aria-controls'));
 }
@@ -212,7 +183,6 @@ function isMultiple (field) {
     return listOf(field).getAttribute('aria-multiselectable') === 'true';
 }
 
-// A choice holds only options, what is typed in it searches them
 function isChoice (field) {
     return Boolean(valueOf(field)) || isMultiple(field);
 }
@@ -221,7 +191,6 @@ function boxOf (option) {
     return option.querySelector(':scope > input[type=checkbox]');
 }
 
-// The options of a choice of many that are checked, each marked as it is for the list to show
 function checkedOf (field) {
     const checked = [];
     for (const option of listOf(field).querySelectorAll('[role=option]')) {
@@ -242,7 +211,6 @@ function labelOf (option) {
     return option.dataset.label ?? option.textContent.trim();
 }
 
-// What a search reads: the text of the option, its label and its data-find
 function matches (option, needle) {
     return `${option.textContent} ${option.dataset.label ?? ''} ${option.dataset.find ?? ''}`.toLowerCase().includes(needle);
 }
@@ -251,19 +219,15 @@ function shownOptions (list) {
     return [...list.querySelectorAll('[role=option]:not([hidden])')];
 }
 
-// What an option posts in a choice
 function valueOfOption (option) {
     return option.dataset.value ?? labelOf(option);
 }
 
-// What an option puts in a field that is not a choice
 function textOfOption (option) {
     return option.dataset.value ?? option.textContent.trim();
 }
 
-// The option a field holds: the one with its text, in a choice the one with the value of its hidden input. The marked one first,
-// so of two options with one value the one chosen stays, and so does one the page or the user set by the value alone.
-// A choice of many holds several, the first is where its list starts. A choice with an empty value holds its option of nothing, if it has one
+// the marked one first, so of two options with one value the chosen one stays
 function currentOf (field) {
     if (isMultiple(field))
         return checkedOf(field)[0] ?? null;
@@ -282,7 +246,6 @@ function currentOf (field) {
     return [...list.querySelectorAll('[role=option]')].find(option => of(option) === held) ?? null;
 }
 
-// The option of a choice that names the choice of nothing, the marked one first
 function nothingOf (field) {
     const options = [...listOf(field).querySelectorAll('[role=option]')].filter(option => option.dataset.value === '');
     return options.find(option => option.getAttribute('aria-current') === 'true') ?? options[0] ?? null;
@@ -300,7 +263,7 @@ function activate (field, option) {
     for (const row of listOf(field).querySelectorAll('[role=option]'))
         row.setAttribute('aria-selected', String(row === option));
 
-    // only the list scrolls to it, not the page
+    // only the list scrolls, not the page
     option?.scrollIntoView({ block: 'nearest', container: 'nearest' });
     if (option?.id)
         field.setAttribute('aria-activedescendant', option.id);
@@ -308,10 +271,13 @@ function activate (field, option) {
         field.removeAttribute('aria-activedescendant');
 }
 
-// However it opens, by the pointer, a key or a search, the list ticks the option the field holds now: a script, a reset or the Back button may have set it
+// manual, or a click on its own field would light-dismiss it and leave aria-expanded stale
 function expand (field, open) {
     const list = listOf(field);
     const shown = open && (shownOptions(list).length > 0 || list.hasAttribute('data-empty'));
+    if (list.popover !== 'manual' && !list.matches(':popover-open'))
+        list.popover = 'manual';
+
     field.setAttribute('aria-expanded', String(shown));
     list.togglePopover(shown);
     if (shown && !isMultiple(field))
@@ -321,7 +287,6 @@ function expand (field, open) {
         activate(field, null);
 }
 
-// Opened without a search, the list starts at the option the field holds
 function showList (field) {
     expand(field, true);
     const current = currentOf(field);
@@ -329,7 +294,7 @@ function showList (field) {
         activate(field, current);
 }
 
-// Only inside an element of the row: the row is a flex box, a mark in its own text would split it into items
+// only inside the elements of the row, a mark in its own text would split the flex row
 function mark (row, needle) {
     for (const old of row.querySelectorAll('mark'))
         old.replaceWith(...old.childNodes);
@@ -355,7 +320,6 @@ function mark (row, needle) {
     }
 }
 
-// A caption shows while an option after it does. A choice is only searched, so Enter takes its first match
 function filter (field, query) {
     const needle = query.trim().toLowerCase();
     const list = listOf(field);
@@ -377,7 +341,6 @@ function filter (field, query) {
     activate(field, isChoice(field) && needle !== '' ? shownOptions(list)[0] : null);
 }
 
-// In a choice of many the option is checked or unchecked and the list stays open. The field shows what is checked, unless a search is in it
 function toggle (field, option) {
     const box = boxOf(option);
     const searched = field.value !== summaryOf(field);
@@ -389,7 +352,7 @@ function toggle (field, option) {
     box.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
-// With no option a choice is cleared, to its option of nothing if it has one. Change is told only when the value is another, as a select does
+// change fires only when the value changes, as on a select
 function choose (field, option) {
     if (isMultiple(field)) {
         toggle(field, option);
@@ -413,8 +376,6 @@ function choose (field, option) {
         field.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
-// Leaving a choice takes the option named in full, the one it holds first, or else the only one found. Emptied it is cleared, else it goes back.
-// A choice of many takes nothing that is typed, it goes back to what is checked. Any other field keeps what is typed. Whichever, the search is over
 function settle (field) {
     if (isMultiple(field))
         field.value = summaryOf(field);
@@ -438,13 +399,13 @@ function settle (field) {
     filter(field, '');
 }
 
-// The text of a choice is only its search, so the change the browser sees in it is not the choice's, choose says that
+// typing in a choice only searches, its own change is swallowed, choose fires the real one
 document.addEventListener('change', event => {
     if (event.isTrusted && isCombobox(event.target) && isChoice(event.target))
         event.stopImmediatePropagation();
 }, true);
 
-// A dropdown stays a field the browser validates, so required works, but nothing is typed or pasted into it
+// a dropdown stays a validated input, so required works, but takes no typing
 document.addEventListener('beforeinput', event => {
     if (isCombobox(event.target) && isDropdown(event.target))
         event.preventDefault();
@@ -454,19 +415,17 @@ document.addEventListener('input', event => {
     if (!isCombobox(event.target))
         return;
 
-    // a new search starts at its first match
     filter(event.target, event.target.value);
     expand(event.target, true);
     listOf(event.target).scrollTop = 0;
 });
 
-// The list keeps the focus in its field
+// the list keeps the focus in its field
 document.addEventListener('mousedown', event => {
     if (event.target.closest('[role=listbox][popover]'))
         event.preventDefault();
 });
 
-// A choice opened by the pointer has its text selected, so what is typed next searches anew
 document.addEventListener('click', event => {
     const option = event.target.closest('[role=listbox][popover] [role=option]');
     if (option) {
@@ -485,7 +444,7 @@ document.addEventListener('click', event => {
     }
 });
 
-// Left, a field shows its text from the start, as Chrome does by itself: the caret goes there, what was selected or typed in it scrolled it to the end
+// Chrome leaves the caret at the end, the text shows from its start
 document.addEventListener('focusout', event => {
     if (!isCombobox(event.target))
         return;
@@ -495,7 +454,7 @@ document.addEventListener('focusout', event => {
     event.target.setSelectionRange(0, 0);
 });
 
-// Enter in a field sends its form without leaving it, so a choice with a search in it is settled first
+// Enter submits with no focusout, so a search in progress is settled first
 document.addEventListener('submit', event => {
     for (const field of event.target.elements)
         if (isCombobox(field))
@@ -523,7 +482,6 @@ document.addEventListener('keydown', event => {
         const step = event.key === 'ArrowDown' ? 1 : -1;
         activate(field, options.at(active ? (index + step) % options.length : Math.min(step, 0)));
     } else if ((event.key === 'PageDown' || event.key === 'PageUp') && open && options.length > 0) {
-        // as many rows as the list shows
         event.preventDefault();
         const page = Math.max(1, Math.floor(list.clientHeight / options[0].offsetHeight));
         const to = (active ? index : -1) + (event.key === 'PageDown' ? page : -page);
@@ -549,7 +507,7 @@ document.addEventListener('keydown', event => {
     }
 });
 
-// Invoker commands for the browsers that have none yet: a button with commandfor opens or closes its dialog
+// commandfor for the browsers that have none yet
 if (!('commandForElement' in HTMLButtonElement.prototype))
     document.addEventListener('click', event => {
         const button = event.target.closest('button[commandfor]');
@@ -567,8 +525,7 @@ if (!('commandForElement' in HTMLButtonElement.prototype))
             dialog.close();
     });
 
-// A dialog closed with nowhere to give the focus back, one opened as the page loaded say, gives it to a button outside it that opens it.
-// The focus may still be in it then, on its way out
+// a dialog opened on load has no opener to give the focus back to, it goes to a button outside it that opens it
 document.addEventListener('close', event => {
     const dialog = event.target;
     const focused = document.activeElement;
