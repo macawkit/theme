@@ -1,6 +1,6 @@
 {
   "name": "@macawkit/theme",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "A small CSS kit for MacawKit projects",
   "exports": {
     "./general": "./dist/general.js",
