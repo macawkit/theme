@@ -1,18 +1,9 @@
 [role=listbox] {
-    font-family: var(--font);
-    font-size: 1rem;
     font-weight: 500;
-    letter-spacing: normal;
-    text-transform: none;
-    color: var(--mtt-color-text);
     background-color: var(--mtt-color-panel);
     border: 1px solid var(--mtt-color-line);
     border-radius: var(--radius-small);
     box-shadow: var(--raise-high);
-
-    small {
-        font-size: var(--decrease-font-size);
-    }
 }
 
 [role=listbox][popover] {
@@ -22,7 +13,7 @@
         background-color: var(--mtt-color-panel);
     }
 
-    /* covers the padding above a sticky caption, or the rows would pass over it */
+    /* mask the top padding above sticky group captions so scrolled options don't peek through */
     &:has(> [role=presentation])::before {
         content: "";
         display: block;
@@ -33,10 +24,6 @@
         margin-top: calc(-1 * var(--margin-minimal));
         background-color: var(--mtt-color-panel);
     }
-}
-
-[role=listbox][data-empty]::after {
-    color: var(--mtt-color-text-muted);
 }
 
 [role=option] {
@@ -53,16 +40,6 @@
     &[aria-selected=true] {
         background-color: var(--mtt-color-main-dimmed);
         color: var(--mtt-color-text-bright);
-    }
-
-    &:is([aria-current=true], [aria-checked=true])::before {
-        content: "";
-        order: 1;
-        flex: none;
-        width: var(--box-size);
-        height: var(--box-size);
-        margin-left: auto;
-        background: var(--mtt-color-text-decorated);
     }
 
     mark {

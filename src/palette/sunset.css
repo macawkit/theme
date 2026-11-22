@@ -116,7 +116,7 @@
     --glow-strength: 50%;
     --disabled-filter: opacity(0.5) saturate(0.5);
 
-    /* the highlights are too dark for a bar, a fill is lifted back toward the candy */
+    /* lift dark state highlights so bar fills stay bright against the warm ground */
     --fill-lift: 0.12;
 }
 

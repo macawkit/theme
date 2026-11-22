@@ -28,36 +28,21 @@
 }
 
 .share {
-    display: flex;
     gap: var(--element-inner-margin);
-    height: var(--bar-thickness);
 }
 
 .share > i {
-    --glow-source: var(--shine-color);
-    flex: var(--value);
-    height: 100%;
     border-radius: var(--pill);
     background: var(--gloss), var(--fill-color);
     box-shadow: 0 0 var(--glow-radius) var(--glow-color);
 }
 
-div[role=meter] {
-    position: relative;
-    height: var(--bar-thickness-small);
+[role=meter] {
     border-radius: var(--pill);
-    background: var(--background);
 }
 
-div[role=meter]::before {
-    --glow-source: var(--shine-color);
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: var(--value);
+[role=meter]::before {
     min-width: var(--bar-thickness-small);
-    height: 100%;
     border-radius: var(--pill);
     background: var(--candy-stripes), var(--gloss), var(--fill-color);
     box-shadow: 0 0 var(--glow-radius) var(--glow-color);
@@ -95,13 +80,4 @@ div[role=meter]::before {
     border-radius: 50%;
     background-image: var(--gloss);
     box-shadow: var(--raise-low), 0 0 var(--glow-radius) var(--glow-color);
-}
-
-.empty {
-    padding: calc(var(--margin) * 2) var(--margin);
-}
-
-.empty > .icon {
-    font-size: 200%;
-    color: var(--mtt-color-text-muted);
 }

@@ -1,8 +1,8 @@
 # Theme
 
-A small CSS kit for interface chrome: panels, controls, markers, and the layout around them. You write plain semantic HTML, and the kit styles it.
+A small CSS kit for interface chrome: panels, controls, status markers, and page layout. Write semantic HTML and the kit styles it.
 
-The [live demo](https://macawkit.github.io/theme/) shows every part, its source is [`demo.html`](demo.html). The kit is still early, things may change between minor versions.
+See every component in the [live demo](https://macawkit.github.io/theme/) ([`demo.html`](demo.html)). The kit is still early; details may change between minor versions.
 
 ## Install
 
@@ -14,7 +14,7 @@ bun add @macawkit/theme
 
 ## Use
 
-A page takes `theme.css`, one geometry, one palette, `icon.css` and `general.js`:
+Load `theme.css`, one **geometry**, one **palette**, `icon.css`, and `general.js`:
 
 ```js
 import '@macawkit/theme/theme.css';
@@ -24,7 +24,7 @@ import '@macawkit/theme/icon.css';
 import '@macawkit/theme/general';
 ```
 
-Without a bundler, link the built files:
+Or link the built files directly without a bundler:
 
 ```html
 <link rel="stylesheet" href="node_modules/@macawkit/theme/dist/theme.css">
@@ -34,60 +34,59 @@ Without a bundler, link the built files:
 <script src="node_modules/@macawkit/theme/dist/general.js" defer></script>
 ```
 
-- `theme.css` is the structure every geometry shares.
-- A **geometry** is the shape of things: `shell`, sharp, chipped and lit like a console, or `candy`, round, glossy and soft.
-- A **palette** is the colors: `hyacinth` and `mulberry` are dark, `cream` is light, `sunset` is a warm orange between them. Any geometry works with any palette.
-- `icon.css` is required, not only for `i.icon`: it draws the tick of a checkbox, the check of a chosen option, the pickers of date and time fields and the magnifier of a search field. Its icons are `data:` URIs, so a strict Content-Security-Policy needs `img-src data:`.
-- `general.js` runs tabs, comboboxes, sparks and meters, and adds `commandfor` to browsers that lack it. See [Script](#script).
+- **`theme.css`** — shared structure and behavior across all geometries.
+- **Geometry** — shape, typography, and motion: `shell` (sharp, chipped, console-lit) or `candy` (rounded, glossy, soft).
+- **Palette** — colors: `hyacinth` and `mulberry` (dark), `cream` (light), and `sunset` (warm orange). Any geometry pairs with any palette.
+- **`icon.css`** — required even if you don't use `<i class="icon i-…"></i>`; it also supplies checkbox ticks, option checkmarks, date/time pickers, and search icons. Icons use `data:` URIs, so a strict CSP needs `img-src data:`.
+- **`general.js`** — powers tabs, comboboxes, sparklines, fallback meters, and a `commandfor` polyfill. See [Script](#script).
 
 ## Layout
 
-### `.app`: a page with a navigation column
+### `.app`: sidebar and main content
 
 ```html
 <div class="app">
     <aside>
         <strong>Studio</strong>
         <nav><ul><li><a href="/" aria-current="true">Home</a></li>…</ul></nav>
-        <small>Last thing: sits at the bottom</small>
+        <small>Pinned to the bottom</small>
     </aside>
     <main class="page">…</main>
 </div>
 ```
 
-- The `aside` is the column on the start side. A `nav` in it is a navigation list, `aria-current` marks the current link, and a `small` in a link is a count beside it. The last thing in the column sits at its bottom.
-- The element after the `aside` is the page.
-- `--nav-width` sets the width of the column.
-- A `header` before the `aside` is a bar over the column and the page.
-- Below 600px the column goes above the page as a row, and its links scroll sideways like tabs.
+- `aside` is the sidebar (width controlled by `--nav-width`). A `nav` inside it renders a vertical link list; `aria-current` marks the active link, and a trailing `<small>` inside a link aligns to the end as a count. The last non-`nav` child sits at the bottom.
+- The sibling after `aside` is the main content area.
+- A `<header>` before `aside` spans across both the sidebar and the main area as a top bar.
+- Below `600px`, the sidebar stacks above the content and its nav links scroll horizontally.
 
-### `.page`: the page scrolls, not the window
+### `.page`: independent pane scrolling
 
-With `class="page"` on the page of an `.app`, the `.app` is held to the height of the screen and only the page scrolls. The column stays in place, and scrolls on its own if it is taller than the screen. The geometry draws the top of the page (Shell's lit grid, Candy's sky) on the `.page`, so it scrolls with the content. Without a `.page` the whole window scrolls and the top is drawn on the body (in Candy under a bar, on the page).
+Adding `class="page"` to the main area locks `.app` to the viewport height so the sidebar and page scroll independently. The geometry's top backdrop (Shell's lit grid, Candy's sky) renders on `.page` and scrolls with its content. Without `.page`, the whole window scrolls and the backdrop renders on `body` (or on the main pane under an `.app > header` in Candy).
 
-### `.center`: a page of one thing
+### `.center`: single-panel page
 
-`<main class="center"><section class="panel">…</section></main>` fills the window and centres one panel, as wide as a dialog. Use it for a sign-in, a confirmation or an error.
+`<main class="center"><section class="panel">…</section></main>` centers a single dialog-width panel in the viewport—useful for sign-in, confirmation, or error pages.
 
-### Boxes
+### Layout utilities
 
-| Class | What it does |
+| Class | Purpose |
 |---|---|
-| `.stack` | a column, spaced by `--margin` |
-| `.row` | a row that wraps, spaced by `--margin-tight`. `.row.between` pushes its ends apart |
-| `.tiles` | a grid of equal tiles at least `--tile-width` wide, as many as fit, at most `--tiles-max`. With fewer tiles than columns they share the row. A `.wide` tile takes a whole row |
-| `.cols` | a row of equal columns that never wraps, for a line of figures. `--rows` stacks it into rows |
-| `.tight` | a `.stack`, `.row` or `.tiles` with the tight gap |
-| `.scroll` | scrolls sideways inside its box, for anything wide, a table most of all |
+| `.stack` | Vertical flex column, gap `--margin` |
+| `.row` | Wrapping flex row, gap `--margin-tight` (`.row.between` pushes ends apart) |
+| `.tiles` | Responsive equal-width grid, at least `--tile-width` per column and at most `--tiles-max` columns; `.wide` spans a full row |
+| `.cols` | Non-wrapping equal-column grid for aligned figures; set `--rows` to stack into multiple rows |
+| `.tight` | Uses `--margin-tight` gap on `.stack`, `.row`, or `.tiles` |
+| `.scroll` | Horizontal scroll container for wide content, especially tables |
 
-`.stack`, `.row`, `.tiles`, `.card`, `.alert`, `.empty`, `footer` and the parts of `.app` space their children by their gap, so the children lose their own top and bottom margins. `.panel`, `.well` and the cells of a `dl` space by their padding, so only their first and last children lose the outer margin. These rules have no specificity, so a margin you set yourself always wins.
+Gap-spaced containers (`.stack`, `.row`, `.tiles`, `.card`, `.alert`, `.empty`, `footer`, and `.app` panes) strip vertical margins from direct children; padded containers (`.panel`, `.well`, `dt`, `dd`) strip outer margins from first/last children. All resets use `:where()`, so custom margins always win.
 
-## Parts
+## Components
 
 ### Surfaces
 
-- `.panel` is the main surface. A `header` in it holds the title and anything after it, and wraps when there is no room.
-- A page below a list leads back to it with a link before its title. Wrap the link and the heading in a `.title`, so the heading wraps beside the link and the rest of the header goes below when the line is full:
+- **`.panel`** — primary surface. A `<header>` inside holds a title and actions, wrapping when tight.
+- **Back link + heading (`.title`)** — wrap a back button and heading inside `.title` so the heading wraps beside the button while trailing header actions drop below:
 
   ```html
   <header>
@@ -98,25 +97,26 @@ With `class="page"` on the page of an `.app`, the `.app` is held to the height o
       <button class="alt">Edit</button>
   </header>
   ```
-- `.card` is a smaller surface inside a panel. `a.card` is a card you can click.
-- `.card.compact` is a tight card for a dense spot, a cell of a calendar say. It is tinted with `--color`: `<a class="card compact" href="…" style="--color: var(--color-category-3)">`. `.quiet` fades it, for something that is over.
-- `.well` is a sunken area inside a panel.
-- `.alert` is a message in a tone: `<div class="alert warning" role="status"><i class="icon i-warn"></i><div class="stack">…</div><button class="ghost small">…</button></div>`.
-- `.empty` says there is nothing here yet: `<div class="well empty">` with an icon, a `strong` line, a `small` note and a button if there is a way to start.
-- A `dialog` is drawn as a panel. A `footer` puts its buttons at the end.
+
+- **`.card`** — nested surface inside a panel. `a.card` is interactive.
+- **`.card.compact`** — dense, color-tinted card (e.g. calendar events) controlled by `--color`: `<a class="card compact" href="…" style="--color: var(--color-category-3)">`. Add `.quiet` to mute completed/past items.
+- **`.well`** — recessed container inside a panel.
+- **`.alert`** — toned banner: `<div class="alert warning" role="status"><i class="icon i-warn"></i><div class="stack">…</div><button class="ghost small">…</button></div>`.
+- **`.empty`** — empty-state layout: `<div class="well empty">` with an icon, `<strong>` headline, `<small>` note, and optional action button.
+- **`dialog`** — styled like a panel, with `<footer>` actions aligned to the end.
 
 ### Buttons
 
-- `button`, or `.button` on a link or a label.
-- `.alt` is the secondary style, `.ghost` has no body until hovered, `.danger` is for a destructive action, `.small` is shorter.
-- A toggle is a button with `aria-pressed`, or a `label.button` around a checkbox or a radio, which keeps the input focusable and part of the form.
-- An icon in a button gets as much room at its sides as above and below it, so a button with only an icon is square: `<button class="alt" title="Retry"><i class="icon i-refresh"></i></button>`. Give it a `title` or an `aria-label`.
+- `button`, or `.button` on `<a>` or `<label>`.
+- Variants: `.alt` (secondary), `.ghost` (transparent until hovered), `.danger` (destructive), `.small` (compact height).
+- **Toggles**: use `aria-pressed` on a `<button>`, or wrap a checkbox/radio in `<label class="button">` so it stays natively focusable and submits with forms.
+- **Icon buttons**: icons receive equal horizontal and vertical inset, making icon-only buttons square: `<button class="alt" title="Retry"><i class="icon i-refresh"></i></button>`. Always provide `title` or `aria-label`.
 
 ### Navigation
 
-- `nav.tabs` is a row of links, `aria-current="page"` on the current one. For tabs that switch panels in place, see [Tabs](#tabs).
-- `nav.crumbs` is a breadcrumb trail, the current page last.
-- `nav.pages` is pagination. Each page is a link, `aria-current="page"` marks the one shown, and `rel="prev"` and `rel="next"` mark the links back and forward. Anything that is not a link, such as "…", is a gap. The links can sit straight in the `nav` or in a list:
+- **`nav.tabs`** — horizontal link tabs (`aria-current="page"` on the active link). For in-page panel switching, see [Tabs](#tabs).
+- **`nav.crumbs`** — breadcrumb trail, current page last.
+- **`nav.pages`** — pagination links, either directly inside `<nav>` or inside a `<ul>`/`<ol>`. Mark the current page with `aria-current="page"`, previous/next links with `rel="prev"` / `rel="next"`, and any non-link item (such as `…`) as a gap:
 
   ```html
   <nav class="pages" aria-label="Pages">
@@ -130,36 +130,37 @@ With `class="page"` on the page of an `.app`, the `.app` is held to the height o
   </nav>
   ```
 
-  The back and forward links are drawn as `.alt` buttons. With only an icon (`<i class="icon i-chevron-left"></i>`) and a `title`, they are square. On the first page, leave out the back link, or keep it in place without `href` and with `role="link" aria-disabled="true"`; the same goes for the forward link on the last page. The row wraps if it does not fit, so keep the run of pages short on the server. `.small` makes it as tall as a small button. Under a table: `<footer class="row between"><small>61–80 of 128</small><nav class="pages small">…</nav></footer>`.
+  `rel="prev"` and `rel="next"` render as `.alt` buttons (square when icon-only). On the first/last page, omit the inactive link or render it without `href` using `role="link" aria-disabled="true"`. Add `.small` to match small button height, e.g. `<footer class="row between"><small>61–80 of 128</small><nav class="pages small">…</nav></footer>`.
 
-### Markers and figures
+### Markers, icons, and typography
 
-- `.badge` (with a dot of light) and `.tag` are short labels. They are only as wide as their word, and in a narrow spot they shrink: a tag with an icon keeps the icon and drops the word, a badge keeps its dot, a word alone is cut with "…". Give them a `title` if the word matters.
-- `.box` is a small square for one glyph or value, `<div class="box"><i class="icon i-user"></i></div>`. `.active` lights it.
-- `.swatch` shows one color, `--color`: `<span class="swatch" aria-hidden="true" style="--color: var(--color-category-7)"></span>` next to the name of what wears it. `.small` makes it tiny, `.quiet` fades it.
-- `.hero` is a big figure, `.label` a small caps label in the decorated color, `.note` a small caps label in the muted color. A label over a figure: `<div class="stack tight"><span class="note">Mailboxes</span><strong class="hero">42</strong></div>`.
-- `.num` on a table cell aligns a number to the end, with every digit the same width.
-- A `dl` is a grid of keys and values. Below 600px each key sits over its value. A value with no spaces, such as an address or a hash, wraps anywhere.
+- **Icons**: `<i class="icon i-mail"></i>` (see the demo for the full built-in set).
+- **`.badge` / `.tag`**: compact inline labels (`.badge` adds a leading status dot). In tight layouts they degrade gracefully: a tag with an icon keeps the icon, a badge keeps its dot, and text truncates with `…`. Add `title` if the full label matters.
+- **`.box`**: small square frame for a single icon or value (`<div class="box"><i class="icon i-user"></i></div>`); add `.active` to highlight it.
+- **`.swatch`**: color indicator using `--color` (`<span class="swatch" aria-hidden="true" style="--color: var(--color-category-7)"></span>`). Modifiers: `.small`, `.quiet`.
+- **`.hero`**, **`.label`**, **`.note`**: large KPI figure, accented small-caps label, and muted small-caps label.
+- **`.num`**: end-aligned tabular numbers for table cells.
+- **`dl`**: key/value grid that stacks keys above values below `600px` and wraps unbroken strings (hashes, addresses).
 
-### Data
+### Data visualizations
 
-- **Meter:** `<div role="meter" aria-label="Storage" aria-valuenow="37" aria-valuemin="0" aria-valuemax="100"></div>`. Min and max default to 0 and 100. Browsers that support typed `attr()` fill it with CSS alone and follow changes to `aria-valuenow`. In the others, `general.js` fills it; call `mtt.refresh()` after a change.
-- **Spark:** `<div class="spark" aria-label="Delivered, rising" data-values="40,45,44,55"></div>` draws the values as bars, the highest one full. The `aria-label` is what a screen reader reads; without one the spark is hidden from screen readers, so the text next to it has to say it all.
-- **Share:** `<div class="share"><i class="success" style="--value: 23"></i><i class="warning" style="--value: 37"></i></div>` is a bar split into parts by their `--value`.
+- **Meter**: `<div role="meter" aria-label="Storage" aria-valuenow="37" aria-valuemin="0" aria-valuemax="100"></div>` (`aria-valuemin` / `aria-valuemax` default to `0` and `100`). Browsers with typed CSS `attr()` update purely in CSS; others fall back to `general.js` (call `mtt.refresh()` after script updates).
+- **Sparkline**: `<div class="spark" aria-label="Delivered, rising" data-values="40,45,44,55"></div>` renders proportional bars scaled to the highest value. Without `aria-label` or `aria-labelledby`, it is marked `aria-hidden="true"` so adjacent text carries the meaning.
+- **Share bar**: `<div class="share"><i class="success" style="--value: 23"></i><i class="warning" style="--value: 37"></i></div>` splits a bar into proportional segments.
 
-### Tones and colors
+### Tones and category colors
 
-`.info`, `.signature`, `.success`, `.priority`, `.warning` and `.danger` give an element and everything in it a tone: its text, and the color of a badge, tag, alert, meter, spark or ghost button inside.
+`.info`, `.signature`, `.success`, `.priority`, `.warning`, and `.danger` apply a semantic tone to text and nested badges, tags, alerts, meters, sparks, and ghost buttons.
 
-A palette has 16 category colors, `--color-category-1` to `--color-category-16`, to tell things apart (whose a row is, say), not to show state. Every palette color has its name next to it as a string, the same token with `-name` at the end, `--color-category-3-name: "Peony"` in Hyacinth. Use it in a picker or a legend: `content: var(--color-category-3-name)` in CSS, or `getComputedStyle(document.documentElement).getPropertyValue('--color-category-3-name')` in a script.
+Each palette also defines 16 non-semantic category colors (`--color-category-1` through `--color-category-16`) for distinguishing items. Every palette color has a matching human-readable `-name` string token (e.g. `--color-category-3-name: "Peony"` in Hyacinth), usable via `content: var(--color-category-3-name)` in CSS or `getComputedStyle(document.documentElement).getPropertyValue(…)` in JS.
 
 ## Forms
 
-Fields are plain `input`, `select` and `textarea`, usually inside a `label` with the label text before the field and a `small` hint after it. A `fieldset` lays its labels out in a column, and its `legend` is the group's title. `:user-invalid` or `aria-invalid="true"` marks a field as wrong, and its hint takes the danger color. `<input type="checkbox" class="switch">` is a switch.
+Use plain `input`, `select`, and `textarea` elements inside `<label>`, with label text before the control and an optional `<small>` hint after it. A `<fieldset>` lays out its labels in a vertical grid with `<legend>` as the heading. `:user-invalid` or `aria-invalid="true"` styles the field as invalid and turns its `<small>` hint to the danger tone. `<input type="checkbox" class="switch">` renders a toggle switch.
 
 ### Combobox
 
-An `input` with `role="combobox"` and a `[role=listbox][popover]` list, linked by `aria-controls`. Each option needs an `id`.
+Pair an `<input role="combobox">` with a `[role="listbox"][popover]` linked by `aria-controls`. Every `[role="option"]` requires an `id`.
 
 ```html
 <label>
@@ -174,18 +175,18 @@ An `input` with `role="combobox"` and a `[role=listbox][popover]` list, linked b
 </ul>
 ```
 
-- **Typed:** what you type filters the options and highlights the match. Without the hidden input, the field posts its own text, so a value that is not in the list is allowed.
-- **Dropdown:** `inputmode="none"` makes it a dropdown you click instead of typing into. It stays a real input, so `required` works.
-- **Choice:** a hidden input right after the field limits it to the options. The hidden input posts the option's `data-value`, and the field shows its `data-label` or its text. Typing only searches. An option with `data-value=""` stands for "nothing" (such as "All students" in a filter); the field shows it while the value is empty.
-- **Choice of many:** `aria-multiselectable="true"` on the list, and a checkbox in each option, which is what the form posts. The list stays open while you pick, and the field shows the checked labels.
-- `data-find` adds search terms to an option, `data-empty` is the text when nothing matches, and a `role="presentation"` item is a caption over the options after it.
-- A combobox fires `change` only when its value changes, as a `select` does. To choose an option from a script, call `option.click()`.
+- **Free text**: typing filters options and highlights matches. Without a trailing `<input type="hidden">`, the input submits its own text (custom values allowed).
+- **Dropdown**: add `inputmode="none"` to make it click/keyboard-only while keeping native `required` validation.
+- **Single choice**: a trailing `<input type="hidden">` restricts selection to listed options; the hidden input submits `data-value` while the visible field displays `data-label` (or text content). An option with `data-value=""` acts as the empty/reset option (e.g. "All students").
+- **Multi-select**: add `aria-multiselectable="true"` on the listbox and place a `<input type="checkbox">` inside each option. The list stays open while toggling, checkboxes submit the form values, and the field shows a comma-separated summary.
+- **Helpers**: `data-find` adds extra search terms, `data-empty` sets the empty-state message, and `role="presentation"` renders sticky group headings.
+- **Events**: `change` fires only when the value actually changes (matching `<select>`). To select an option programmatically, call `option.click()`.
 
 ### Dialogs
 
-`<button commandfor="edit" command="show-modal">` opens `<dialog id="edit">` as a modal, and `command="close"` closes it, with no script. `general.js` adds this to browsers that do not support it yet. Put the dialog's content in a `<form method="dialog">` with a `footer` for the buttons. In a dialog taller than the window, the content scrolls and the footer stays at the bottom.
+Use `<button commandfor="edit" command="show-modal">` and `command="close"` to control `<dialog id="edit">` without custom JS (`general.js` polyfills browsers without `commandfor`). Wrap dialog contents in `<form method="dialog">` with a `<footer>` for actions; on tall dialogs, the body scrolls while the footer stays pinned.
 
-`<dialog id="edit" data-open>` opens as a modal when the page loads. Use it for a form the server sends back with errors. When it closes, the focus goes to a button outside it with `commandfor="edit"`.
+Add `data-open` to open a dialog as a modal on page load (for example, server-rendered form errors). On close, focus returns to an external button targeting that dialog via `commandfor`.
 
 ### Tabs
 
@@ -198,29 +199,27 @@ An `input` with `role="combobox"` and a `[role=listbox][popover]` list, linked b
 <div id="p-hold" role="tabpanel" aria-labelledby="t-hold" hidden>…</div>
 ```
 
-A click or the arrow keys, Home and End choose a tab and show its panel. A row that does not fit scrolls sideways, and the chosen tab is scrolled into view. `.small` on the row makes it shorter.
+Clicking or using Arrow keys, Home, and End switches tabs (skipping disabled tabs) and toggles their linked panels. Overflowing tab rows scroll horizontally and keep the active tab in view. Add `.small` to shorten the bar.
 
-## Small screens
+## Responsive behavior
 
-The kit keeps its parts usable at any width. Arranging the page is up to you.
-
-- Most parts adapt to their box, not to the screen. Headers wrap, rows of tabs scroll sideways, and a heading breaks a word too long for its line.
-- Put anything wide in a `.scroll`, a table most of all. A table in it is never narrower than `--table-min-width`, which is 450px by default; raise it for a table with many columns.
-- The kit uses one breakpoint, 600px. Below it a `dl` puts each key over its value, the column of `.app` goes above the page, and spacing gets a little tighter. Use the same width if your page rearranges itself for phones.
-- On touch screens the geometry makes controls taller. Size things with `--element-height` and `--element-height-small` instead of fixed numbers, so they follow.
-- Focus rings and glows reach `--overhang` past their element. A box of your own that clips (scrolling, `overflow: hidden`) needs at least that much padding, or they are cut off. The kit's own boxes already have it.
+- Most components adapt to their container: headers wrap, tab bars scroll horizontally, and headings break long words.
+- Wrap wide tables in `.scroll`. Tables inside `.scroll` enforce a minimum width of `--table-min-width` (`450px` by default).
+- The kit uses one viewport breakpoint (`600px`): below it, `dl` stacks vertically, `.app`'s sidebar moves above the content, and spacing tightens.
+- On coarse pointers (touch), controls grow taller—use `--element-height` and `--element-height-small` instead of hardcoded pixels so custom elements follow.
+- Focus rings and glows extend `--overhang` beyond an element's box. Custom clipping/scrolling containers should add at least `--overhang` padding to avoid clipping them.
 
 ## Script
 
-`general.js` listens on the whole document, so tabs, comboboxes and dialog buttons added later work without any call. Sparks, meters, `data-open` dialogs, new rows of tabs and checkboxes changed by script in a choice of many are handled when the page loads. After you add or change those, call `mtt.refresh()`, or `mtt.refresh(element)` to handle only that element and what is inside it.
+`general.js` uses document-level event delegation, so dynamically added tabs, comboboxes, and dialog triggers work automatically. Elements that require initialization—sparks, fallback meters, `data-open` dialogs, new tablists, and scripted checkbox changes in multi-select comboboxes—are initialized on load. After inserting or updating those dynamically, call `mtt.refresh()` (or `mtt.refresh(element)` to scope it to a subtree).
 
 ## Licenses
 
-The code is MIT. The bundled fonts, Space Grotesk, Nunito and JetBrains Mono, are under the SIL Open Font License; their license texts are next to the font files.
+Code is MIT. Bundled fonts (Space Grotesk, Nunito, JetBrains Mono) are licensed under the SIL Open Font License; license files sit alongside the fonts.
 
 ## Develop
 
-Sources are in `src/`. `demo.html` links them directly, so you can see a change without building.
+Sources live in `src/`. `demo.html` links them directly for live editing without a build step.
 
 ```sh
 npm run build          # dist/, unminified

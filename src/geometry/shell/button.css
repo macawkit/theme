@@ -11,7 +11,7 @@ nav.pages a,
         border-color var(--transition);
 }
 
-/* :where, so any other filter wins */
+/* zero specificity so disabled and state filters override cleanly */
 :where(button, .button, nav.pages a[rel]) {
     --elevation: var(--unlit);
     filter: var(--unlit) var(--elevation);
@@ -22,6 +22,9 @@ nav.pages a,
 }
 
 :is(button, .button, :where(nav.pages a[rel])) {
+    --shadow-ink: color-mix(in oklab, var(--shadow-color), var(--background-color, var(--shadow-color)) 35%);
+    --raised: drop-shadow(0 3px 5px color-mix(in srgb, var(--shadow-ink) min(var(--shadow-strength) * 2.5, 100%), #0000));
+
     &:not(.alt, :where(nav.pages a), [role=tab])::before {
         clip-path: var(--chipped-corner);
         pointer-events: none;
@@ -40,8 +43,9 @@ nav.pages a,
         clip-path: var(--chipped-corner-small);
     }
 
-    /* starts a chip inside the body, so it blurs twice the glow to reach past the edge */
+    /* inset by --chip to stay behind the clipped corner; doubled blur reaches past the edge */
     &:not(.ghost, [role=tab])::after {
+        --glow-color: color-mix(in srgb, var(--glow-source, var(--background-color)) var(--glow-strength), #0000);
         z-index: -2;
         content: "";
         position: absolute;
@@ -53,7 +57,7 @@ nav.pages a,
         opacity: 0;
         background-color: var(--background-color);
         filter: drop-shadow(0 0 calc(var(--glow-radius) * 2) var(--glow-color));
-        /* eases its color with the body, or an .alt it covers snaps back on leave */
+        /* transition background-color with the body so .alt doesn't snap on hover leave */
         transition:
             opacity var(--transition),
             background-color var(--transition);
@@ -97,7 +101,7 @@ nav.pages a,
         --elevation: var(--raised);
     }
 
-    /* moved by a whole pixel, never scaled: the icon is drawn apart for its shine and would land off the text */
+    /* integer pixel press, no scale: icons have their own filter layer and would drift from text */
     &:is(:active, .active):not(:disabled, [aria-disabled=true], [role=tab]) {
         --elevation: var(--unlit);
         translate: 0 var(--press-translate);
@@ -109,7 +113,7 @@ nav.pages a,
     }
 }
 
-/* the frame is part of the padding, so an alt is as wide as a plain button */
+/* subtract the 1px border from padding so .alt matches plain button width */
 :is(button, .button).alt,
 nav.pages a[rel],
 .box {
@@ -186,7 +190,7 @@ nav.pages a[rel] {
             inset var(--transition-fast);
     }
 
-    /* no chipped body to start inside of, the halo is as large as the frame */
+    /* .alt has no chipped corner to stay inside, so the glow matches the full box */
     &::after {
         top: 0;
         left: 0;
@@ -223,10 +227,6 @@ nav.tabs > a,
 nav.pages a:not([rel]),
 :is(button, .button)[role=tab] {
     color: var(--mtt-color-text);
-}
-
-nav.tabs > a:is(.hover, :hover) {
-    transition: filter var(--transition);
 }
 
 nav.tabs > a[aria-current=page],

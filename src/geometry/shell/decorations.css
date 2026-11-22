@@ -16,15 +16,10 @@
 }
 
 .share {
-    display: flex;
     gap: var(--element-inner-margin-small);
-    height: var(--bar-thickness);
 }
 
 .share > i {
-    --glow-source: var(--shine-color);
-    flex: var(--value);
-    height: 100%;
     background: var(--fill-color);
     box-shadow: 0 0 var(--glow-radius) var(--glow-color);
 }
@@ -55,20 +50,7 @@
     box-shadow: 0 0 calc(var(--glow-radius) / 2) calc(var(--shine-radius) / 2) var(--shine-color);
 }
 
-div[role=meter] {
-    height: var(--bar-thickness-small);
-    background: var(--background);
-    position: relative;
-}
-
-div[role=meter]::before {
-    --glow-source: var(--shine-color);
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: var(--value);
-    height: 100%;
+[role=meter]::before {
     background: var(--fill-color);
     box-shadow: 0 0 var(--glow-radius) var(--glow-color);
 }
@@ -76,13 +58,4 @@ div[role=meter]::before {
 .swatch {
     --glow-source: var(--background-color);
     box-shadow: 0 0 var(--glow-radius) var(--glow-color);
-}
-
-.empty {
-    padding: calc(var(--margin) * 2) var(--margin);
-}
-
-.empty > .icon {
-    font-size: 200%;
-    color: var(--mtt-color-text-muted);
 }

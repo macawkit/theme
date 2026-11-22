@@ -1,4 +1,8 @@
-// scrolls only the row, never the page
+function isDisabled (element) {
+    return element.matches(':disabled, [aria-disabled=true]');
+}
+
+// scroll only the horizontal container, never the page
 function reveal (row, item) {
     const style = getComputedStyle(row);
     const shown = row.getBoundingClientRect();
@@ -12,16 +16,23 @@ function reveal (row, item) {
         row.scrollLeft += box.right - end;
 }
 
+function tabsOf (list) {
+    return [...list.querySelectorAll(':scope > [role=tab]')];
+}
+
 function select (list, tab) {
+    if (isDisabled(tab))
+        return;
+
     reveal(list, tab);
 
-    for (const candidate of list.querySelectorAll('[role=tab]')) {
+    for (const candidate of tabsOf(list)) {
         const selected = candidate === tab;
         candidate.setAttribute('aria-selected', String(selected));
         candidate.tabIndex = selected ? 0 : -1;
 
         const id = candidate.getAttribute('aria-controls');
-        const panel = document.getElementById(id);
+        const panel = id ? document.getElementById(id) : null;
         if (panel)
             panel.hidden = !selected;
     }
@@ -29,7 +40,7 @@ function select (list, tab) {
     placeChosen(list);
 }
 
-// tells the row where its chosen tab is, for a geometry that draws the mark on the row
+// expose active tab geometry on the tablist for sliding indicators (e.g. Candy)
 const resized = new ResizeObserver(entries => {
     for (const list of new Set(entries.map(entry => entry.target.closest('[role=tablist]'))))
         if (list)
@@ -47,52 +58,30 @@ function placeChosen (list) {
 }
 
 function watchTabs (root) {
-    for (const list of within(root, '[role=tablist]'))
-        for (const element of [list, ...list.querySelectorAll(':scope > [role=tab]')])
+    for (const list of within(root, '[role=tablist]')) {
+        const tabs = tabsOf(list);
+        const active = tabs.find(tab => tab.getAttribute('aria-selected') === 'true')
+            ?? tabs.find(tab => !isDisabled(tab));
+        for (const tab of tabs)
+            tab.tabIndex = tab === active ? 0 : -1;
+
+        for (const element of [list, ...tabs])
             resized.observe(element);
+
+        placeChosen(list);
+    }
 }
 
-document.addEventListener('click', event => {
-    const tab = event.target.closest('[role=tablist] [role=tab]');
-    if (tab)
-        select(tab.closest('[role=tablist]'), tab);
-});
-
-document.addEventListener('keydown', event => {
-    const current = event.target.closest('[role=tablist] [role=tab]');
-    if (!current)
-        return;
-
-    const list = current.closest('[role=tablist]');
-    const tabs = [...list.querySelectorAll('[role=tab]')];
-    const index = tabs.indexOf(current);
-    let next;
-
-    if (event.key === 'ArrowRight')
-        next = tabs[(index + 1) % tabs.length];
-    else if (event.key === 'ArrowLeft')
-        next = tabs[(index - 1 + tabs.length) % tabs.length];
-    else if (event.key === 'Home')
-        next = tabs[0];
-    else if (event.key === 'End')
-        next = tabs.at(-1);
-    else
-        return;
-
-    event.preventDefault();
-    select(list, next);
-    next.focus();
-});
-
 function revealChosen (root) {
-    for (const row of within(root, '[role=tablist], nav.tabs, .app > aside > nav > :is(ul, ol)')) {
+    const rows = '[role=tablist], nav.tabs, .app > aside > nav:not(.tabs, .crumbs, .pages, :has(> :is(ul, ol))), .app > aside > nav:not(.tabs, .crumbs, .pages) > :is(ul, ol)';
+    for (const row of within(root, rows)) {
         const chosen = row.querySelector(':scope > :is([aria-selected=true], [aria-current]:not([aria-current=false])), :scope > li > [aria-current]:not([aria-current=false])');
         if (chosen)
             reveal(row, chosen);
     }
 }
 
-// an unnamed spark is decoration, a named one is read as one image
+// unlabeled sparks are decorative; labeled ones are exposed as a single image
 function drawSpark (spark) {
     if (spark.hasAttribute('aria-label') || spark.hasAttribute('aria-labelledby')) {
         if (!spark.hasAttribute('role'))
@@ -101,8 +90,13 @@ function drawSpark (spark) {
         spark.setAttribute('aria-hidden', 'true');
     }
 
-    if (!spark.dataset.values)
+    if (!('values' in spark.dataset))
         return;
+
+    if (spark.dataset.values.trim() === '') {
+        spark.replaceChildren();
+        return;
+    }
 
     const values = spark.dataset.values.split(',').map(value => Math.max(Number(value) || 0, 0));
     const top = Math.max(...values);
@@ -116,10 +110,16 @@ function drawSpark (spark) {
 
 const metersInCSS = CSS.supports('width', 'calc(attr(data-mtt type(<number>), 0) * 1%)');
 
+function numericAttr (element, name, fallback) {
+    const raw = element.getAttribute(name);
+    const parsed = raw !== null && raw.trim() !== '' ? Number(raw) : NaN;
+    return Number.isFinite(parsed) ? parsed : fallback;
+}
+
 function fillMeter (meter) {
-    const value = Number(meter.getAttribute('aria-valuenow'));
-    const min = Number(meter.getAttribute('aria-valuemin') ?? 0);
-    const max = Number(meter.getAttribute('aria-valuemax') ?? 100);
+    const value = numericAttr(meter, 'aria-valuenow', 0);
+    const min = numericAttr(meter, 'aria-valuemin', 0);
+    const max = numericAttr(meter, 'aria-valuemax', 100);
     const share = max > min ? (value - min) / (max - min) : 0;
 
     meter.style.setProperty('--value', `${Math.min(Math.max(share, 0), 1) * 100}%`);
@@ -144,7 +144,7 @@ function refresh (root = document) {
         drawSpark(spark);
 
     if (!metersInCSS)
-        for (const meter of within(root, 'div[role=meter]'))
+        for (const meter of within(root, '[role=meter]'))
             fillMeter(meter);
 
     for (const field of within(root, 'input[role=combobox]'))
@@ -153,12 +153,15 @@ function refresh (root = document) {
 
     watchTabs(root);
 
-    // once the fonts have given the tabs their widths
+    // wait for webfonts so tab widths are final before scrolling the active item into view
     document.fonts.ready.then(() => revealChosen(root));
 }
 
 globalThis.mtt = Object.assign(globalThis.mtt ?? {}, { refresh });
-refresh();
+if (document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', () => refresh(), { once: true });
+else
+    refresh();
 
 function listOf (field) {
     return document.getElementById(field.getAttribute('aria-controls'));
@@ -168,6 +171,10 @@ function isCombobox (target) {
     return target instanceof HTMLInputElement
         && target.matches('[role=combobox][aria-controls]')
         && Boolean(listOf(target)?.hasAttribute('popover'));
+}
+
+function isInteractiveCombobox (target) {
+    return isCombobox(target) && !isDisabled(target) && !target.readOnly;
 }
 
 function isDropdown (field) {
@@ -191,11 +198,12 @@ function boxOf (option) {
     return option.querySelector(':scope > input[type=checkbox]');
 }
 
-function checkedOf (field) {
+function checkedOf (field, sync = true) {
     const checked = [];
     for (const option of listOf(field).querySelectorAll('[role=option]')) {
         const on = Boolean(boxOf(option)?.checked);
-        option.setAttribute('aria-checked', String(on));
+        if (sync)
+            option.setAttribute('aria-checked', String(on));
         if (on)
             checked.push(option);
     }
@@ -203,8 +211,8 @@ function checkedOf (field) {
     return checked;
 }
 
-function summaryOf (field) {
-    return checkedOf(field).map(labelOf).join(', ');
+function summaryOf (field, sync = true) {
+    return checkedOf(field, sync).map(labelOf).join(', ');
 }
 
 function labelOf (option) {
@@ -227,7 +235,7 @@ function textOfOption (option) {
     return option.dataset.value ?? option.textContent.trim();
 }
 
-// the marked one first, so of two options with one value the chosen one stays
+// prefer the already-marked option when multiple options share the same value
 function currentOf (field) {
     if (isMultiple(field))
         return checkedOf(field)[0] ?? null;
@@ -263,7 +271,7 @@ function activate (field, option) {
     for (const row of listOf(field).querySelectorAll('[role=option]'))
         row.setAttribute('aria-selected', String(row === option));
 
-    // only the list scrolls, not the page
+    // scroll only the listbox, not the outer page
     option?.scrollIntoView({ block: 'nearest', container: 'nearest' });
     if (option?.id)
         field.setAttribute('aria-activedescendant', option.id);
@@ -271,7 +279,7 @@ function activate (field, option) {
         field.removeAttribute('aria-activedescendant');
 }
 
-// manual, or a click on its own field would light-dismiss it and leave aria-expanded stale
+// use manual popovers so clicking the input doesn't light-dismiss the list and desync aria-expanded
 function expand (field, open) {
     const list = listOf(field);
     const shown = open && (shownOptions(list).length > 0 || list.hasAttribute('data-empty'));
@@ -294,9 +302,9 @@ function showList (field) {
         activate(field, current);
 }
 
-// only inside the elements of the row, a mark in its own text would split the flex row
+// wrap direct text nodes before splitting so <mark> doesn't become a separate flex item
 function mark (row, needle) {
-    for (const old of row.querySelectorAll('mark'))
+    for (const old of row.querySelectorAll('mark, span[data-mtt-mark]'))
         old.replaceWith(...old.childNodes);
 
     row.normalize();
@@ -307,11 +315,18 @@ function mark (row, needle) {
     const walker = document.createTreeWalker(row, NodeFilter.SHOW_TEXT);
     while (walker.nextNode()) {
         const at = walker.currentNode.data.toLowerCase().indexOf(needle);
-        if (at !== -1 && walker.currentNode.parentNode !== row)
+        if (at !== -1)
             hits.push([walker.currentNode, at]);
     }
 
     for (const [node, at] of hits) {
+        if (node.parentNode === row) {
+            const wrapper = document.createElement('span');
+            wrapper.dataset.mttMark = '';
+            node.before(wrapper);
+            wrapper.append(node);
+        }
+
         const hit = node.splitText(at);
         hit.splitText(needle.length);
         const highlight = document.createElement('mark');
@@ -324,6 +339,7 @@ function filter (field, query) {
     const needle = query.trim().toLowerCase();
     const list = listOf(field);
     let caption = null;
+    let firstShown = null;
     for (const row of list.children) {
         if (row.getAttribute('role') === 'presentation') {
             caption = row;
@@ -332,27 +348,34 @@ function filter (field, query) {
         }
 
         row.hidden = !matches(row, needle);
-        if (caption && !row.hidden)
-            caption.hidden = false;
+        if (!row.hidden) {
+            if (caption)
+                caption.hidden = false;
+            if (!firstShown)
+                firstShown = row;
 
-        mark(row, needle);
+            mark(row, needle);
+        }
     }
 
-    activate(field, isChoice(field) && needle !== '' ? shownOptions(list)[0] : null);
+    activate(field, isChoice(field) && needle !== '' ? firstShown : null);
 }
 
 function toggle (field, option) {
     const box = boxOf(option);
-    const searched = field.value !== summaryOf(field);
+    if (!box || box.disabled)
+        return;
+
+    const searched = field.value !== summaryOf(field, false);
     box.checked = !box.checked;
     option.setAttribute('aria-checked', String(box.checked));
     if (!searched)
-        field.value = summaryOf(field);
+        field.value = summaryOf(field, false);
 
     box.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
-// change fires only when the value changes, as on a select
+// fire change only when the value actually changes, matching <select>
 function choose (field, option) {
     if (isMultiple(field)) {
         toggle(field, option);
@@ -377,6 +400,7 @@ function choose (field, option) {
 }
 
 function settle (field) {
+    let chose = false;
     if (isMultiple(field))
         field.value = summaryOf(field);
     else if (valueOf(field)) {
@@ -388,31 +412,34 @@ function settle (field) {
         const found = typed === '' ? [] : options.filter(option => matches(option, typed));
         const option = named ?? (found.length === 1 ? found[0] : undefined);
 
-        if (typed === '' && current)
+        if (typed === '' && current) {
             choose(field, null);
-        else if (option && option !== current)
+            chose = true;
+        } else if (option && option !== current) {
             choose(field, option);
-        else
+            chose = true;
+        } else
             field.value = current ? labelOf(current) : '';
     }
 
-    filter(field, '');
+    if (!chose)
+        filter(field, '');
 }
 
-// typing in a choice only searches, its own change is swallowed, choose fires the real one
+// suppress native change from search typing in choice comboboxes; choose() dispatches the real one
 document.addEventListener('change', event => {
     if (event.isTrusted && isCombobox(event.target) && isChoice(event.target))
         event.stopImmediatePropagation();
 }, true);
 
-// a dropdown stays a validated input, so required works, but takes no typing
+// dropdowns stay real inputs (so required works) while blocking typed input
 document.addEventListener('beforeinput', event => {
-    if (isCombobox(event.target) && isDropdown(event.target))
+    if (isInteractiveCombobox(event.target) && isDropdown(event.target))
         event.preventDefault();
 });
 
 document.addEventListener('input', event => {
-    if (!isCombobox(event.target))
+    if (!isInteractiveCombobox(event.target))
         return;
 
     filter(event.target, event.target.value);
@@ -420,20 +447,47 @@ document.addEventListener('input', event => {
     listOf(event.target).scrollTop = 0;
 });
 
-// the list keeps the focus in its field
+// keep focus in the combobox when clicking the list, while still allowing scrollbar drags
 document.addEventListener('mousedown', event => {
-    if (event.target.closest('[role=listbox][popover]'))
-        event.preventDefault();
+    if (!(event.target instanceof Element))
+        return;
+
+    const list = event.target.closest('[role=listbox][popover]');
+    if (!list)
+        return;
+
+    if (event.target === list) {
+        const box = list.getBoundingClientRect();
+        if (event.clientX >= box.left + list.clientLeft + list.clientWidth
+            || event.clientY >= box.top + list.clientTop + list.clientHeight)
+            return;
+    }
+
+    event.preventDefault();
 });
 
+const needsCommandFor = !('commandForElement' in HTMLButtonElement.prototype);
+
 document.addEventListener('click', event => {
+    if (!(event.target instanceof Element))
+        return;
+
+    const tab = event.target.closest('[role=tablist] > [role=tab]');
+    if (tab) {
+        select(tab.closest('[role=tablist]'), tab);
+        return;
+    }
+
     const option = event.target.closest('[role=listbox][popover] [role=option]');
     if (option) {
         const id = CSS.escape(option.closest('[role=listbox]').id);
         const field = document.querySelector(`[role=combobox][aria-controls="${id}"]`);
-        if (field)
+        if (field && isInteractiveCombobox(field))
             choose(field, option);
-    } else if (isCombobox(event.target)) {
+        return;
+    }
+
+    if (isInteractiveCombobox(event.target)) {
         const field = event.target;
         if (field.getAttribute('aria-expanded') !== 'true') {
             showList(field);
@@ -441,29 +495,93 @@ document.addEventListener('click', event => {
                 field.select();
         } else if (isDropdown(field))
             expand(field, false);
+        return;
+    }
+
+    // polyfill commandfor="id" command="show-modal|close" where unsupported
+    if (needsCommandFor) {
+        const button = event.target.closest('button[commandfor]');
+        if (!button)
+            return;
+
+        const dialog = document.getElementById(button.getAttribute('commandfor'));
+        if (!(dialog instanceof HTMLDialogElement))
+            return;
+
+        const command = button.getAttribute('command');
+        if (command === 'show-modal' && !dialog.open) {
+            event.preventDefault();
+            dialog.showModal();
+        } else if (command === 'close' && dialog.open) {
+            event.preventDefault();
+            dialog.close();
+        }
     }
 });
 
-// Chrome leaves the caret at the end, the text shows from its start
+// reset horizontal scroll on blur so truncated values read from the start
 document.addEventListener('focusout', event => {
     if (!isCombobox(event.target))
         return;
 
-    expand(event.target, false);
     settle(event.target);
-    event.target.setSelectionRange(0, 0);
+    if (event.target.getAttribute('aria-expanded') === 'true')
+        expand(event.target, false);
+    event.target.scrollLeft = 0;
 });
 
-// Enter submits with no focusout, so a search in progress is settled first
+// Enter submits without focusout, so settle pending searches and re-check validity first
 document.addEventListener('submit', event => {
-    for (const field of event.target.elements)
-        if (isCombobox(field))
-            settle(field);
+    const validate = !event.target.noValidate && !event.submitter?.formNoValidate;
+    let invalid = null;
+    for (const field of event.target.elements) {
+        if (!isCombobox(field))
+            continue;
+
+        settle(field);
+        if (validate && !invalid && !field.checkValidity())
+            invalid = field;
+    }
+
+    if (invalid) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        invalid.reportValidity();
+    }
 }, true);
 
 document.addEventListener('keydown', event => {
+    if (!(event.target instanceof Element))
+        return;
+
+    const currentTab = event.target.closest('[role=tablist] > [role=tab]');
+    if (currentTab) {
+        const list = currentTab.closest('[role=tablist]');
+        const tabs = tabsOf(list).filter(tab => !isDisabled(tab));
+        const index = tabs.indexOf(currentTab);
+        if (index === -1)
+            return;
+
+        let next;
+        if (event.key === 'ArrowRight')
+            next = tabs[(index + 1) % tabs.length];
+        else if (event.key === 'ArrowLeft')
+            next = tabs[(index - 1 + tabs.length) % tabs.length];
+        else if (event.key === 'Home')
+            next = tabs[0];
+        else if (event.key === 'End')
+            next = tabs.at(-1);
+        else
+            return;
+
+        event.preventDefault();
+        select(list, next);
+        next.focus();
+        return;
+    }
+
     const field = event.target;
-    if (!isCombobox(field))
+    if (!isInteractiveCombobox(field))
         return;
 
     const open = field.getAttribute('aria-expanded') === 'true';
@@ -483,11 +601,11 @@ document.addEventListener('keydown', event => {
         activate(field, options.at(active ? (index + step) % options.length : Math.min(step, 0)));
     } else if ((event.key === 'PageDown' || event.key === 'PageUp') && open && options.length > 0) {
         event.preventDefault();
-        const page = Math.max(1, Math.floor(list.clientHeight / options[0].offsetHeight));
+        const page = Math.max(1, Math.floor(list.clientHeight / (options[0].offsetHeight || 1)));
         const to = (active ? index : -1) + (event.key === 'PageDown' ? page : -page);
         activate(field, options[Math.min(Math.max(to, 0), options.length - 1)]);
     } else if ((event.key === 'Home' || event.key === 'End') && open && isDropdown(field)) {
-        // a field that is typed in keeps these for its caret
+        // leave Home/End to caret navigation in typed comboboxes
         event.preventDefault();
         activate(field, options.at(event.key === 'Home' ? 0 : -1));
     } else if (event.key === 'Escape' && open) {
@@ -507,25 +625,7 @@ document.addEventListener('keydown', event => {
     }
 });
 
-// commandfor for the browsers that have none yet
-if (!('commandForElement' in HTMLButtonElement.prototype))
-    document.addEventListener('click', event => {
-        const button = event.target.closest('button[commandfor]');
-        if (!button)
-            return;
-
-        const dialog = document.getElementById(button.getAttribute('commandfor'));
-        if (!(dialog instanceof HTMLDialogElement))
-            return;
-
-        const command = button.getAttribute('command');
-        if (command === 'show-modal' && !dialog.open)
-            dialog.showModal();
-        else if (command === 'close')
-            dialog.close();
-    });
-
-// a dialog opened on load has no opener to give the focus back to, it goes to a button outside it that opens it
+// dialogs opened via data-open have no opener; return focus to an external commandfor trigger on close
 document.addEventListener('close', event => {
     const dialog = event.target;
     const focused = document.activeElement;

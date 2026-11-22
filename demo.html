@@ -9,14 +9,14 @@
     <link rel="stylesheet" href="src/palette/hyacinth.css" id="palette">
     <script>
         /*
-            The look comes from the query, ?geometry=candy&palette=cream, so a link to the page keeps it. Applied here, before the page is painted.
-            The new name takes the place of the old one in the href, so the same works on the sources and on the built site
+            Apply ?geometry=…&palette=… before first paint so shared links preserve the theme.
+            Replacing only the name segment works on both src/ and built Pages URLs.
         */
         const look = new URLSearchParams(location.search);
         function wear (kind, name) {
             const link = document.getElementById(kind);
             const href = link.getAttribute('href').replace(new RegExp(`${kind}/[a-z]+`), `${kind}/${name}`);
-            // the same href set again makes Firefox load the sheet anew, and the page flashes unstyled
+            // skip no-op writes: reassigning the same href makes Firefox reload and flash unstyled
             if (link.getAttribute('href') !== href)
                 link.href = href;
         }
@@ -26,7 +26,7 @@
     </script>
     <link rel="stylesheet" href="src/icon.css">
     <style>
-        /* on a phone the column is a row over the page, the two pickers share a line in it */
+        /* place the two theme pickers side by side when the sidebar stacks on narrow viewports */
         @media (width < 600px) {
             #look {
                 flex: 1 1 100%;
@@ -37,13 +37,13 @@
             }
         }
 
-        /* a wide screen stops growing, a line of panels further apart than that no longer reads as one page */
+        /* cap content width on ultrawide displays */
         .app > main > * {
             width: 100%;
             max-width: 1400px;
         }
 
-        /* The palette: every color, the palette's own name for it in bold, what it is for under it */
+        /* palette swatches: color chip, palette name, and token role */
         .chips {
             display: grid;
             grid-template-columns: repeat(var(--n, 8), minmax(0, 1fr));
@@ -75,7 +75,7 @@
             overflow-wrap: anywhere;
         }
 
-        /* the category colors, each swatch beside its name: eight round the hues, then eight between them */
+        /* 16 category colors: 8 primary hues on the top row, 8 intermediates below */
         .legend {
             display: grid;
             grid-template-columns: repeat(8, minmax(0, 1fr));
@@ -100,7 +100,7 @@
             content: var(--name, none);
         }
 
-        /* the six tones go down in pairs, info over signature and so on; in CSS, not inline, so a phone can stack them */
+        /* two rows of three tones on desktop; stacked into a single column on narrow screens */
         .tones {
             --rows: 2;
         }
@@ -127,9 +127,8 @@
         }
 
         /*
-            The stat tiles: five across, two over three in a narrower panel, and one under another on a phone, each a line wide.
-            Sized by the panel, not the window, the column beside the page takes its share. In a tile the name and the spark
-            share a line, so the sparks of a row line up, and on a phone the spark sits at the end
+            Responsive KPI grid sized to its panel container:
+            5-up wide -> 2 over 3 mid -> 1-up stacked on phones with the sparkline pinned to the end.
         */
         #dashboard > .stack {
             container-type: inline-size;
@@ -190,7 +189,7 @@
             }
         }
 
-        /* a specimen that needs a ground of its own: a dialog shown in place, a page in a box */
+        /* grounded specimen container for inline dialogs and mini page previews */
         .demo {
             display: grid;
         }
@@ -200,12 +199,12 @@
             margin: var(--margin) auto;
         }
 
-        /* a page in a box: as tall as a short window, not as the one the demo is in */
+        /* constrain inline .center/.app specimens instead of letting them fill the viewport */
         .demo > :is(.center, .app) {
             min-height: calc(var(--element-height) * 9);
         }
 
-        /* whose a message is: the swatch stays beside the sender, and the cell is as wide as the address, a table too wide scrolls */
+        /* sender cell: swatch beside address, recipient line aligned beneath the address */
         .sender {
             display: grid;
             grid-template-columns: auto auto;
@@ -218,7 +217,7 @@
             grid-column: 2;
         }
 
-        /* the state matrices: the state names down the side stay on one line */
+        /* keep state-matrix row labels on a single line */
         .matrix th:first-child {
             white-space: nowrap;
         }
@@ -1255,6 +1254,8 @@
                         <span class="row"><span class="box"><i class="icon i-user"></i></span><code class="small">user</code></span>
                         <span class="row"><span class="box"><i class="icon i-lock"></i></span><code class="small">lock</code></span>
                         <span class="row"><span class="box"><i class="icon i-arrow"></i></span><code class="small">arrow</code></span>
+                        <span class="row"><span class="box"><i class="icon i-chevron-left"></i></span><code class="small">chevron-left</code></span>
+                        <span class="row"><span class="box"><i class="icon i-chevron-right"></i></span><code class="small">chevron-right</code></span>
                         <span class="row"><span class="box"><i class="icon i-info"></i></span><code class="small">info</code></span>
                         <span class="row"><span class="box"><i class="icon i-success"></i></span><code class="small">success</code></span>
                         <span class="row"><span class="box"><i class="icon i-warn"></i></span><code class="small">warn</code></span>
@@ -1407,7 +1408,7 @@
 <script>
     document.getElementById('dmarc').indeterminate = true;
 
-    // The first group of toggles in Buttons is aria-pressed, one of them on at a time
+    // Single-select behavior for the aria-pressed toggle groups in the Buttons section
     for (const group of document.querySelectorAll('#buttons [role=group]:has(> [aria-pressed])'))
         group.addEventListener('click', event => {
             const pressed = event.target.closest('[aria-pressed]');
@@ -1416,7 +1417,7 @@
                     button.setAttribute('aria-pressed', String(button === pressed));
         });
 
-    // The look picked in the column: the page takes it at once and keeps it in the query
+    // Sidebar geometry/palette pickers: apply immediately and sync to query params
     const form = document.getElementById('look');
     const kinds = {
         geometry: [...document.querySelectorAll('#geometries [role=option]')],
@@ -1424,7 +1425,6 @@
     };
     const field = kind => form.querySelector(`[aria-controls=${kinds[kind][0].parentElement.id}]`);
     const title = option => option.dataset.value ?? option.textContent.trim();
-    // the field holds the look, its list ticks the option as it opens
     const current = kind => kinds[kind].find(option => title(option) === field(kind).value) ?? kinds[kind][0];
 
     for (const kind of Object.keys(kinds)) {
@@ -1433,7 +1433,7 @@
             field(kind).value = title(picked);
     }
 
-    // the names of the look are not tokens, the palette's colors name themselves
+    // Update page headings and document title for the active geometry/palette pair
     function name () {
         const geometry = title(current('geometry'));
         const palette = title(current('palette'));
@@ -1453,7 +1453,7 @@
         name();
     }
 
-    // one the query names but the list does not have falls back to the first
+    // Fall back to defaults when query params name an unknown geometry or palette
     if (look.has('geometry') || look.has('palette'))
         apply();
     else
@@ -1461,7 +1461,7 @@
 
     form.addEventListener('change', apply);
 
-    // The column follows the page: the section most in sight is the current one
+    // Scrollspy: mark the sidebar link for whichever section has the most visible height
     const links = new Map([...document.querySelectorAll('.app > aside nav a')].map(link => [link.hash.slice(1), link]));
     const seen = new Map();
     const spy = new IntersectionObserver(entries => {

@@ -13,8 +13,8 @@ let type = BuildType.debug;
 if (requested === 'release')
     type = BuildType.release;
 
-// Every geometry is a directory with index.css, every palette is a single file.
-// Each becomes its own stylesheet, so a consumer can pick the combination.
+// Each geometry directory (index.css) and palette file builds to its own stylesheet
+// so consumers can combine them freely.
 const entryPoints = {
     theme: './src/theme.css',
     icon: './src/icon.css',
@@ -43,7 +43,7 @@ const result = await esbuild.build({
     metafile: true
 });
 
-// The fonts are under SIL OFL, their licenses have to travel with them
+// Copy SIL OFL font licenses alongside the bundled fonts.
 for (const entry of readdirSync('./src/font'))
     if (entry.endsWith('.OFL.txt'))
         copyFileSync(`./src/font/${entry}`, `./dist/font/${entry}`);

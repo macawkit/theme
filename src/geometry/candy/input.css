@@ -3,16 +3,10 @@
     --rim-color: var(--mtt-color-line);
     --halo: color-mix(in srgb, var(--rim-color) 0%, #0000);
 
-    inline-size: 100%;
-    min-inline-size: 0;
-    min-block-size: var(--element-height);
-    margin: 0;
-    padding: 0 calc(var(--margin-tight) + var(--margin-minimal));
-    border: 0;
+    padding-inline: calc(var(--margin-tight) + var(--margin-minimal));
     border-radius: var(--pill);
 
     color: var(--mtt-color-text-bright);
-    caret-color: var(--mtt-color-line-decorated);
     font-family: var(--font);
     font-weight: 600;
 
@@ -40,10 +34,6 @@
             --field-surface: var(--color-danger);
             --halo: color-mix(in srgb, var(--color-danger-highlight) calc(var(--glow-strength) / 2), #0000);
         }
-
-        label:has(> &) > small {
-            color: var(--color-danger-text);
-        }
     }
 
     &:is(:disabled, [aria-disabled=true]) {
@@ -64,37 +54,16 @@
             right var(--chevron-end) center / var(--chevron) var(--chevron);
 }
 
-input:is([type=date], [type=datetime-local], [type=month], [type=week], [type=time]) {
-    &::-webkit-calendar-picker-indicator {
-        inline-size: var(--box-size);
-        block-size: var(--box-size);
-        padding: 0;
-        cursor: pointer;
-        background: var(--mtt-color-text-muted);
-        transition: background-color var(--transition);
-    }
-
-    &::-webkit-calendar-picker-indicator:hover {
-        background-color: var(--mtt-color-text-bright);
-    }
-}
-
-/* :not([type]) matches the specificity of the fields above */
+/* :not([type]) matches the (0,1,1) specificity of the shared field rule above */
 textarea:not([type]) {
-    min-block-size: 64px;
-    padding-block: var(--margin-tight);
     border-radius: var(--radius-small);
-    line-height: var(--line-height);
-    resize: vertical;
 }
 
 :is(input, textarea)::placeholder {
-    color: var(--mtt-color-text-muted);
     font-weight: 500;
-    opacity: 1;
 }
 
-@supports (anchor-name: --mtt-field-control) {
+@supports (anchor-scope: --mtt-field-control) {
     label:has(> input[type=search]) {
         position: relative;
         anchor-scope: --mtt-field-control;
@@ -102,6 +71,11 @@ textarea:not([type]) {
         > input[type=search] {
             anchor-name: --mtt-field-control;
             padding-inline-start: var(--element-height);
+        }
+
+        /* preserve the combobox popover anchor from theme.css */
+        > input[type=search][role=combobox][aria-expanded=true] {
+            anchor-name: --mtt-field-control, --mtt-combobox;
         }
 
         &::before {

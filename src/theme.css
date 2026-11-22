@@ -7,7 +7,7 @@
     --color: var(--mtt-color-main-highlight);
     --shine-color: var(--mtt-color-line-decorated);
     --background: var(--mtt-color-main-dimmed);
-    /* even pixels, so an icon in an even-height element sits on whole pixels */
+    /* round to even pixels so icons center cleanly in even-height controls */
     --icon-size: 1.2em;
 
     @supports (width: round(1em, 2px)) {
@@ -95,7 +95,7 @@ header > .title {
     flex: auto;
 }
 
-/* a back link and the heading after it stay on one line, the heading wraps beside it */
+/* keep back link and heading together while allowing the heading to wrap */
 header > .title {
     display: flex;
     align-items: center;
@@ -129,7 +129,7 @@ footer {
     margin-top: var(--margin);
 }
 
-/* stays in sight over what scrolls under it: the padding of the dialog below becomes its own, a shadow covers the gap above */
+/* sticky footer over scrolling dialog content; negative margin absorbs dialog padding, shadow masks the gap above */
 dialog > form > footer {
     position: sticky;
     z-index: 2;
@@ -140,7 +140,7 @@ dialog > form > footer {
     box-shadow: 0 calc(-1 * var(--margin)) var(--mtt-color-panel);
 }
 
-/* the browser gives a dialog the canvas text color, not the body one */
+/* UA stylesheet sets CanvasText on dialog, overriding inherited body color */
 dialog {
     width: min(100%, var(--column-width) * 3);
     color: var(--mtt-color-text);
@@ -246,11 +246,9 @@ nav.tabs.small > a,
 .small[role=tablist] > :is(button, .button)[role=tab],
 :is(button, .button).small {
     --inset: var(--margin-tight);
-    color: var(--mtt-color-text-bright);
-    font-weight: 700;
 }
 
-/* an icon gets as much room at its sides as above and below it, so an icon alone makes a square button */
+/* equalize icon horizontal and vertical inset so icon-only buttons are square */
 nav.tabs > a,
 nav.pages a,
 :is(button, .button) {
@@ -264,9 +262,10 @@ nav.pages a,
     }
 }
 
-/* :where keeps the states as light as a bare a, so nav links and any class with a color of its own keep it */
+/* :where() keeps link states at element specificity so nav links and tone classes win */
 a {
     color: var(--mtt-color-text-decorated);
+    transition: color var(--transition);
 
     &:where(:visited) {
         color: var(--mtt-color-text);
@@ -304,7 +303,7 @@ nav:not(.tabs, .crumbs, .pages) a small {
 }
 
 nav:not(.tabs, .crumbs, .pages) a > small:last-child:not(:first-child) {
-    margin-left: auto;
+    margin-inline-start: auto;
 }
 
 nav.crumbs {
@@ -378,6 +377,14 @@ nav.pages > :is(ul, ol) > li:has(> [rel=next]) {
     margin-inline-start: var(--margin-tight);
 }
 
+th {
+    text-align: start;
+}
+
+th, td {
+    padding: var(--margin-tight);
+}
+
 dl {
     display: grid;
     grid-template-columns: var(--key-width) minmax(0, 1fr);
@@ -388,6 +395,7 @@ dt, dd {
     display: flex;
     flex-direction: column;
     min-width: 0;
+    padding: var(--margin-tight) 0;
     overflow-wrap: anywhere;
 }
 
@@ -403,6 +411,10 @@ dd {
     dl {
         grid-template-columns: minmax(0, 1fr);
         row-gap: 0;
+    }
+
+    dt:not(:last-of-type) {
+        padding-bottom: 0;
     }
 }
 
@@ -424,7 +436,7 @@ code {
     gap: var(--margin);
 }
 
-/* these space their children by gap or padding, so the children lose their margins; :where lets a page margin win */
+/* gap- and padding-spaced containers strip child margins at zero specificity so explicit margins still win */
 :where(.stack, .card, .alert, .empty, .row, .tiles, footer, .app > header, .app > aside, .app > aside + *) > :where(:not(dialog, [popover])) {
     margin-block: 0;
 }
@@ -474,7 +486,7 @@ code {
     gap: var(--margin-tight);
 }
 
-/* the padding is room for the focus ring and glow the scrolling box would clip, the negative margin keeps the box in place */
+/* pad by --overhang so scrolling doesn't clip focus rings or glows, then pull back with negative margin */
 :is([role=tablist], nav.tabs) {
     display: flex;
     min-width: 0;
@@ -485,7 +497,7 @@ code {
     flex: none;
 }
 
-/* the offsets of its tabs are measured from here, see general.js */
+/* offsetParent for active tab measurements in general.js */
 [role=tablist] {
     position: relative;
 }
@@ -500,7 +512,7 @@ code {
     margin: calc(-1 * var(--overhang));
 }
 
-/* the cells of a table leave room for a ring at the sides already */
+/* table cell padding already leaves horizontal room for focus rings */
 .scroll {
     padding-block: var(--overhang);
     margin-block: calc(-1 * var(--overhang));
@@ -565,12 +577,31 @@ a.card.compact {
     }
 }
 
+.alert {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--margin-tight);
+    min-width: 0;
+}
+
+.alert > .stack {
+    gap: 0;
+    min-width: 0;
+}
+
 .empty {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: var(--margin-tight);
+    padding: calc(var(--margin) * 2) var(--margin);
     text-align: center;
+}
+
+.empty > .icon {
+    font-size: 200%;
+    color: var(--mtt-color-text-muted);
 }
 
 .center {
@@ -688,30 +719,108 @@ label > span {
     line-height: var(--heading-line-height);
 }
 
-/* out of sight, but still focusable and validated */
+/* visually hidden, still focusable and form-validated */
 .button > input:is([type=radio], [type=checkbox]) {
     position: absolute;
     opacity: 0;
     pointer-events: none;
 }
 
-/* the label is not :disabled itself */
+/* <label> itself doesn't match :disabled */
 .button:has(> input:disabled) {
     pointer-events: none;
 }
 
+label:has(:is(input, select, textarea, button):disabled, [aria-disabled=true]),
+:is(:disabled, [aria-disabled=true]) {
+    cursor: not-allowed;
+    filter: var(--disabled-filter);
+}
+
+/* avoid double-filtering disabled controls inside a disabled label or fieldset */
+:is(label:has(:is(input, select, textarea, button):disabled, [aria-disabled=true]), :disabled, [aria-disabled=true])
+    :is(label:has(:is(input, select, textarea, button):disabled, [aria-disabled=true]), :disabled, [aria-disabled=true]) {
+    filter: none;
+}
+
 fieldset {
+    display: grid;
+    gap: var(--margin);
+    align-items: start;
     min-inline-size: 0;
     margin: 0;
     padding: 0;
     border: 0;
 }
 
+fieldset label {
+    display: grid;
+    gap: var(--margin-minimal);
+}
+
+fieldset label i {
+    vertical-align: middle;
+    margin: 0 var(--margin-minimal);
+}
+
 legend {
     padding: 0;
 }
 
-/* inputmode=none makes it a dropdown, clicked and not typed in */
+:is(input:not([type=checkbox], [type=radio]), select, textarea) {
+    inline-size: 100%;
+    min-inline-size: 0;
+    min-block-size: var(--element-height);
+    margin: 0;
+    padding-block: 0;
+    border: 0;
+    caret-color: var(--mtt-color-line-decorated);
+}
+
+/* :not([type]) matches the (0,1,1) specificity of the shared field rule above */
+textarea:not([type]) {
+    min-block-size: 64px;
+    padding-block: var(--margin-tight);
+    line-height: var(--line-height);
+    resize: vertical;
+}
+
+:is(input, textarea)::placeholder {
+    color: var(--mtt-color-text-muted);
+    opacity: 1;
+}
+
+label:has(> :is(input, select, textarea):is(:user-invalid, [aria-invalid=true], .error)) > small {
+    color: var(--color-danger-text);
+}
+
+input:is([type=date], [type=datetime-local], [type=month], [type=week], [type=time]) {
+    &::-webkit-calendar-picker-indicator {
+        inline-size: var(--box-size);
+        block-size: var(--box-size);
+        padding: 0;
+        cursor: pointer;
+        background: var(--mtt-color-text-muted);
+        transition: background-color var(--transition);
+    }
+
+    &::-webkit-calendar-picker-indicator:hover {
+        background-color: var(--mtt-color-text-bright);
+    }
+}
+
+input[type=radio],
+input[type=checkbox]:not(.switch) {
+    width: var(--box-size);
+    height: var(--box-size);
+}
+
+input[type=checkbox].switch {
+    width: calc(var(--element-height-tiny) * 2);
+    height: var(--element-height-tiny);
+}
+
+/* inputmode="none" turns the combobox into a click/keyboard dropdown */
 input[role=combobox][inputmode=none] {
     cursor: pointer;
     caret-color: transparent;
@@ -721,6 +830,19 @@ input[role=combobox][inputmode=none] {
     margin: 0;
     padding: 0;
     list-style: none;
+    font-family: var(--font);
+    font-size: 1rem;
+    letter-spacing: normal;
+    text-transform: none;
+    color: var(--mtt-color-text);
+
+    small {
+        font-size: var(--decrease-font-size);
+    }
+
+    &[data-empty]::after {
+        color: var(--mtt-color-text-muted);
+    }
 }
 
 [role=listbox][popover] {
@@ -735,18 +857,28 @@ input[role=combobox][inputmode=none] {
     min-height: var(--element-height);
     padding: 0 var(--margin-tight);
     cursor: pointer;
+
+    &:is([aria-current=true], [aria-checked=true])::before {
+        content: "";
+        order: 1;
+        flex: none;
+        width: var(--box-size);
+        height: var(--box-size);
+        margin-inline-start: auto;
+        background: var(--mtt-color-text-decorated);
+    }
 }
 
 [role=listbox] > [role=presentation] {
     padding: var(--margin-tight) var(--margin-tight) var(--margin-minimal);
 }
 
-/* only what the form posts, the row shows it checked */
+/* checkbox submits form values; the option row displays the checked state */
 [role=listbox] > [role=option] > input[type=checkbox] {
     display: none;
 }
 
-/* keyboard scrolling stops below a sticky caption */
+/* keep keyboard-focused options clear of sticky group captions */
 [role=listbox][popover] {
     &:has(> [role=presentation]) {
         scroll-padding-block-start: calc(var(--margin-tight) + var(--line-height) + var(--margin-minimal));
@@ -767,7 +899,7 @@ input[role=combobox][inputmode=none] {
     padding: 0 var(--margin-tight);
 }
 
-/* without anchors the browser shows the list in the middle of the window */
+/* anchor the popover to the open combobox; without anchor positioning it falls back to UA centering */
 @supports (anchor-name: --mtt-combobox) {
     [role=combobox][aria-expanded=true] {
         anchor-name: --mtt-combobox;
@@ -781,7 +913,7 @@ input[role=combobox][inputmode=none] {
         width: anchor-size(width);
         max-height: min(calc(var(--element-height) * 8), 100% - 2 * var(--margin-minimal));
         margin: var(--margin-minimal) 0;
-        /* at least three rows, or the browser shrinks it to nothing instead of flipping it */
+        /* enforce at least 3 rows so flip-block triggers instead of collapsing the list */
         min-height: calc-size(max-content, min(size, var(--element-height) * 3));
     }
 }
@@ -799,9 +931,37 @@ input[role=combobox][inputmode=none] {
     background: var(--mtt-color-line-highlight);
 }
 
-/* browsers without typed attr() are filled by general.js */
+.share {
+    display: flex;
+    height: var(--bar-thickness);
+}
+
+.share > i {
+    --glow-source: var(--shine-color);
+    flex: var(--value);
+    height: 100%;
+}
+
+[role=meter] {
+    display: block;
+    position: relative;
+    height: var(--bar-thickness-small);
+    background: var(--background);
+}
+
+[role=meter]::before {
+    --glow-source: var(--shine-color);
+    content: "";
+    position: absolute;
+    top: 0;
+    inset-inline-start: 0;
+    width: var(--value);
+    height: 100%;
+}
+
+/* browsers without typed attr() fall back to general.js */
 @supports (width: calc(attr(data-mtt type(<number>), 0) * 1%)) {
-    div[role=meter] {
+    [role=meter] {
         --value: clamp(
             0%,
             (attr(aria-valuenow type(<number>), 0) - attr(aria-valuemin type(<number>), 0))
@@ -809,6 +969,29 @@ input[role=combobox][inputmode=none] {
             100%
         );
     }
+}
+
+.spark > i,
+.share > i,
+[role=meter]::before {
+    --fill-color: var(--color);
+}
+
+@supports (color: oklch(from red l c h)) {
+    .spark > i,
+    .share > i,
+    [role=meter]::before {
+        --fill-color: oklch(from var(--color) calc(l + var(--fill-lift, 0)) c h);
+    }
+}
+
+.spark > i:last-child,
+.share > i,
+[role=meter]::before,
+.badge::before,
+.swatch,
+.alert::after {
+    --glow-color: color-mix(in srgb, var(--glow-source, #0000) var(--glow-strength), #0000);
 }
 
 :is(.info, .signature, .success, .priority, .warning, .danger) {

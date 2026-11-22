@@ -40,7 +40,7 @@
     --animation-ease: cubic-bezier(.3, .7, .4, 1);
     --transition: var(--animation-duration) var(--animation-ease);
     --transition-bounce: var(--animation-duration) cubic-bezier(.34, 1.56, .64, 1);
-    /* whole pixels, so the text lands on them */
+    /* integer pixels to keep text crisp during hover */
     --hop: -2px;
     --press-squeeze: 0.96;
     --overhang: max(var(--glow-radius), var(--highlight-thickness) * 2);
@@ -73,18 +73,6 @@
     :root {
         --element-height: 44px;
         --element-height-small: 36px;
-    }
-}
-
-/* declared on every element, so each is computed from that element's own inputs */
-*, ::before, ::after {
-    --glow-color: color-mix(in srgb, var(--glow-source, #0000) var(--glow-strength), #0000);
-    --fill-color: var(--color);
-}
-
-@supports (color: oklch(from red l c h)) {
-    *, ::before, ::after {
-        --fill-color: oklch(from var(--color) calc(l + var(--fill-lift, 0)) c h);
     }
 }
 
@@ -121,15 +109,11 @@ h1, h2, h3, .hero {
     letter-spacing: -0.01em;
 }
 
-th {
-    text-align: left;
-}
-
 .label {
     color: var(--mtt-color-text-decorated);
 }
 
-th, .note, fieldset, .small, small, [role=listbox] > [role=presentation] {
+th, .note, fieldset, .small:not(button, .button, nav, [role=tablist], [role=tab]), small, [role=listbox] > [role=presentation] {
     color: var(--mtt-color-text-muted);
 }
 
@@ -147,15 +131,7 @@ fieldset small {
     text-transform: none;
 }
 
-th, td {
-    padding: var(--margin-tight);
-}
-
-dt, dd {
-    padding: var(--margin-tight) 0;
-}
-
-/* separate, so a row under the pointer can be a rounded pill */
+/* separate borders so hovered rows can render rounded pill ends */
 table {
     border-collapse: separate;
     border-spacing: 0;
@@ -165,6 +141,12 @@ thead th,
 tbody tr:not(:last-of-type) > td,
 dt:not(:last-of-type), dd:not(:last-of-type) {
     border-bottom: 1px solid var(--mtt-color-line-dimmed);
+}
+
+@media (width < 600px) {
+    dt:not(:last-of-type) {
+        border-bottom: none;
+    }
 }
 
 tbody :is(td, th) {
@@ -182,13 +164,6 @@ tbody tr:hover > :is(td, th) {
     &:last-child {
         border-start-end-radius: var(--radius-small);
         border-end-end-radius: var(--radius-small);
-    }
-}
-
-@media (width < 600px) {
-    dt:not(:last-of-type) {
-        padding-bottom: 0;
-        border-bottom: none;
     }
 }
 
@@ -210,43 +185,17 @@ header > .label {
     box-shadow: inset 0 0 0 1px var(--mtt-color-line-dimmed);
 }
 
-label:has(input:disabled, [aria-disabled=true]),
-:is(:disabled, [aria-disabled=true]) {
-    cursor: not-allowed;
-    filter: var(--disabled-filter);
-}
-
-a {
-    transition: color var(--transition);
-}
-
 :is(a, button, .button, input:is([type=checkbox], [type=radio])):is(:focus-visible, .focus),
 .button:has(> input:focus-visible) {
     outline: var(--highlight-thickness) solid color-mix(in srgb, var(--mtt-color-line-decorated) 70%, #0000);
     outline-offset: 2px;
 }
 
-/* a card clips, the ring runs inside it */
+/* cards clip overflow, so draw the focus ring inside the border */
 a.card:is(:focus-visible, .focus) {
     outline-offset: calc(-1 * var(--highlight-thickness));
 }
 
 a:not(.button, .card, nav.tabs > a, nav.pages a):is(:focus-visible, .focus) {
     border-radius: var(--radius-tiny);
-}
-
-fieldset {
-    display: grid;
-    gap: var(--margin);
-    align-items: start;
-}
-
-fieldset label {
-    display: grid;
-    gap: var(--margin-minimal);
-}
-
-fieldset label i {
-    vertical-align: middle;
-    margin: 0 var(--margin-minimal);
 }

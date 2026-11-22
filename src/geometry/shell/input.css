@@ -1,16 +1,10 @@
 :is(input:not([type=checkbox], [type=radio]), select, textarea) {
     --field-corners: var(--ticks);
 
-    inline-size: 100%;
-    min-inline-size: 0;
-    min-block-size: var(--element-height);
-    margin: 0;
-    padding: 0 var(--margin-tight);
-    border: 0;
+    padding-inline: var(--margin-tight);
     border-radius: 0;
 
     color: var(--field-ink);
-    caret-color: var(--mtt-color-line-decorated);
     font-family: var(--mono);
 
     background:
@@ -51,10 +45,6 @@
             --field-surface: var(--color-danger);
             --tick-color: var(--color-danger-text);
         }
-
-        label:has(> &) > small {
-            color: var(--color-danger-text);
-        }
     }
 
     &:is(:disabled, [aria-disabled=true]),
@@ -64,7 +54,7 @@
     }
 }
 
-/* as specific as the fields above, so their padding does not win */
+/* matches (0,1,1) specificity of the field rule above so padding-inline-end wins */
 :is(select, input[role=combobox]) {
     --chevron: 5px;
     --chevron-end: 10px;
@@ -77,36 +67,8 @@
             right var(--chevron-end) center / var(--chevron) var(--chevron);
 }
 
-input:is([type=date], [type=datetime-local], [type=month], [type=week], [type=time]) {
-    &::-webkit-calendar-picker-indicator {
-        inline-size: var(--box-size);
-        block-size: var(--box-size);
-        padding: 0;
-        cursor: pointer;
-        background: var(--mtt-color-text-muted);
-        transition: background-color var(--transition);
-    }
-
-    &::-webkit-calendar-picker-indicator:hover {
-        background-color: var(--mtt-color-text-bright);
-    }
-}
-
-/* :not([type]) matches the specificity of the fields above */
-textarea:not([type]) {
-    min-block-size: 64px;
-    padding-block: var(--margin-tight);
-    line-height: var(--line-height);
-    resize: vertical;
-}
-
-:is(input, textarea)::placeholder {
-    color: var(--mtt-color-text-muted);
-    opacity: 1;
-}
-
-/* drawn on the anchor box of the field, whatever else the label holds */
-@supports (anchor-name: --mtt-field-control) {
+/* anchor corner ticks and search icon directly to the control inside any label layout */
+@supports (anchor-scope: --mtt-field-control) {
     label:has(> :is(input:not([type=checkbox], [type=radio]), select, textarea)) {
         position: relative;
         anchor-scope: --mtt-field-control;
@@ -116,7 +78,7 @@ textarea:not([type]) {
             --field-corners: none;
         }
 
-        /* an open combobox stays the anchor of its list, see theme.css */
+        /* preserve the combobox popover anchor from theme.css */
         > [role=combobox][aria-expanded=true] {
             anchor-name: --mtt-field-control, --mtt-combobox;
         }
@@ -167,6 +129,7 @@ textarea:not([type]) {
 
     label:has(> :is(input:not([type=checkbox], [type=radio], :disabled, [aria-disabled=true]), select, textarea):is(:focus, .focus))::after {
         --glow-source: var(--tick-color);
+        --glow-color: color-mix(in srgb, var(--glow-source, #0000) var(--glow-strength), #0000);
         filter:
             drop-shadow(0 0 var(--shine-radius) color-mix(in srgb, var(--tick-color) var(--shining), #0000))
             drop-shadow(0 0 var(--glow-radius) var(--glow-color));

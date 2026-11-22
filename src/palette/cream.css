@@ -116,7 +116,7 @@
     --glow-strength: 50%;
     --disabled-filter: opacity(0.5) saturate(0.5);
 
-    /* the state inks are too dark for a bar, a fill is lifted a step lighter */
+    /* lift dark state inks so bar fills stay vibrant on light surfaces */
     --fill-lift: 0.08;
 }
 

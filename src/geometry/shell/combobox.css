@@ -1,22 +1,9 @@
 [role=listbox] {
-    font-family: var(--font);
-    font-size: 1rem;
-    letter-spacing: normal;
-    text-transform: none;
-    color: var(--mtt-color-text);
     background-color: var(--mtt-color-body);
     border: 1px solid var(--mtt-color-line);
 
-    small {
-        font-size: var(--decrease-font-size);
-    }
-
     &[popover] > [role=presentation] {
         background-color: var(--mtt-color-body);
-    }
-
-    &[data-empty]::after {
-        color: var(--mtt-color-text-muted);
     }
 }
 
@@ -33,16 +20,6 @@
     &[aria-selected=true] {
         background-color: var(--mtt-color-main-dimmed);
         color: var(--mtt-color-text-bright);
-    }
-
-    &:is([aria-current=true], [aria-checked=true])::before {
-        content: "";
-        order: 1;
-        flex: none;
-        width: var(--box-size);
-        height: var(--box-size);
-        margin-left: auto;
-        background: var(--mtt-color-text-decorated);
     }
 
     mark {

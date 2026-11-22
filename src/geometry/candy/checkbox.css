@@ -4,6 +4,7 @@ input[type=checkbox] {
     --gloss-layer: none;
     --rim-color: var(--mtt-color-line);
     --elevation: var(--flat);
+    --glow-color: color-mix(in srgb, var(--glow-source, #0000) var(--glow-strength), #0000);
     --glow-reach: 0px;
 
     border-radius: var(--radius-tiny);
@@ -15,12 +16,6 @@ input[type=checkbox] {
     transition:
         background-color var(--transition),
         box-shadow var(--transition);
-}
-
-input[type=radio],
-input[type=checkbox]:not(.switch) {
-    width: var(--box-size);
-    height: var(--box-size);
 }
 
 input[type=radio],
@@ -99,9 +94,6 @@ input[type=radio] {
 }
 
 input[type=checkbox].switch {
-    width: calc(var(--element-height-tiny) * 2);
-    height: var(--element-height-tiny);
-
     &::before {
         top: var(--element-inner-margin);
         left: var(--element-inner-margin);

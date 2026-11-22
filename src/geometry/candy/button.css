@@ -6,6 +6,7 @@ nav.pages a,
     --rim-color: #0000;
     --rim-width: 0px;
     --elevation: var(--raise-low);
+    --glow-color: color-mix(in srgb, var(--glow-source, #0000) var(--glow-strength), #0000);
     --glow-reach: 0px;
     --lift: 0px;
     --squeeze: 1;
@@ -26,7 +27,7 @@ nav.pages a,
         scale var(--transition-bounce);
 }
 
-/* kept on a layer: promoted only while moving, its text would change smoothing as it settles */
+/* pre-promote to a compositor layer so text antialiasing doesn't snap when bounce settles */
 :is(button, .button, nav.pages a[rel]):not([role=tab], :disabled, [aria-disabled=true], :has(> input:disabled)) {
     will-change: translate, scale;
 }
@@ -130,6 +131,7 @@ nav.pages a,
 
 .box.active {
     --glow-source: var(--mtt-color-line-decorated);
+    --glow-color: color-mix(in srgb, var(--glow-source, #0000) var(--glow-strength), #0000);
     background: var(--gloss), var(--mtt-color-button);
     box-shadow:
         inset 0 0 0 2px var(--mtt-color-line-decorated),
@@ -137,7 +139,7 @@ nav.pages a,
         0 0 var(--glow-radius) var(--glow-color);
 }
 
-/* the groove is drawn on the content box, so it scrolls with the tabs and leaves out the overhang */
+/* draw the pill track on local content-box so it scrolls with the tabs and excludes overhang padding */
 :is([role=tablist], nav.tabs, .app > aside > nav:not(.tabs, .crumbs, .pages) > :is(ul, ol)) {
     --groove-color: color-mix(in srgb, var(--mtt-color-main-dimmed) var(--glow-strength), #0000);
     --groove-end: calc(var(--element-height) / 2) 100% no-repeat local content-box;
@@ -188,7 +190,7 @@ nav.tabs > a[aria-current=page],
     color: var(--mtt-color-text-bright);
 }
 
-/* with general.js one candy moves from tab to tab, under them */
+/* sliding active-tab pill driven by --mtt-tab-left / --mtt-tab-width from general.js */
 [role=tablist][data-mtt-tab] {
     &::before {
         content: "";
