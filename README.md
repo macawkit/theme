@@ -152,7 +152,7 @@ Gap-spaced containers (`.stack`, `.row`, `.tiles`, `.card`, `.alert`, `.empty`, 
 
 `.info`, `.signature`, `.success`, `.priority`, `.warning`, and `.danger` apply a semantic tone to text and nested badges, tags, alerts, meters, sparks, and ghost buttons.
 
-Each palette also defines 16 non-semantic category colors (`--color-category-1` through `--color-category-16`) for distinguishing items. Every palette color has a matching human-readable `-name` string token (e.g. `--color-category-3-name: "Peony"` in Hyacinth), usable via `content: var(--color-category-3-name)` in CSS or `getComputedStyle(document.documentElement).getPropertyValue(…)` in JS.
+Each palette also defines 16 non-semantic category colors (`--color-category-1` through `--color-category-16`) for distinguishing items. Every palette color has a matching human-readable `-name` string token (e.g. `--color-category-3-name: "Hot pink"` in Hyacinth, `"Peony"` in Cream), usable via `content: var(--color-category-3-name)` in CSS or inside `.swatches` pickers without JS resolution.
 
 ## Forms
 
@@ -180,8 +180,37 @@ Pair an `<input role="combobox">` with a `[role="listbox"][popover]` linked by `
 - **Single choice**: a trailing `<input type="hidden">` restricts selection to listed options; the hidden input submits `data-value` while the visible field displays `data-label` (or text content). An option with `data-value=""` acts as the empty/reset option (e.g. "All students").
 - **Multi-select**: add `aria-multiselectable="true"` on the listbox and place a `<input type="checkbox">` inside each option. The list stays open while toggling, checkboxes submit the form values, and the field shows a comma-separated summary.
 - **Rich options & leading markers**: options can contain custom HTML—such as `<span class="swatch" aria-hidden="true" style="--color: var(--color-category-3)"></span>`, `<i class="icon i-…"></i>`, `<svg>`, `<img>`, or trailing `<small>` hints. In single-choice comboboxes and dropdowns (except `type="search"`), a leading `.swatch`, `i.icon`, `svg`, or `img` on the chosen option is automatically mirrored inside the closed field, making it easy to build palette color pickers, icon dropdowns, or avatar selectors without custom controls.
-- **Helpers**: `data-find` adds extra search terms, `data-empty` sets the empty-state message, and `role="presentation"` renders sticky group headings.
+- **Helpers**: `data-find` adds extra search terms, `data-empty` sets the empty-state message, `data-clear` (or `data-clear="Clear …"` for a custom `aria-label`) adds an inline clear button whenever a value is present, and `role="presentation"` renders sticky group headings.
 - **Events**: `change` fires only when the value actually changes (matching `<select>`). To select an option programmatically, call `option.click()`.
+
+### Swatch picker
+
+Use `.swatches` with native `<input type="radio">` elements to pick from CSS palette colors—either **inline** (zero JS) or inside a **popover** paired with `button.picker`:
+
+```html
+<!-- Inline -->
+<div class="swatches" role="radiogroup" aria-label="Student color">
+    <input type="radio" name="color" value="" aria-label="None">
+    <input type="radio" name="color" value="1" style="--color: var(--color-category-1); --name: var(--color-category-1-name)">
+    <input type="radio" name="color" value="3" style="--color: var(--color-category-3); --name: var(--color-category-3-name)" checked>
+</div>
+
+<!-- Popover dropdown reusing the exact same .swatches -->
+<label>
+    Student color
+    <button type="button" class="picker" popovertarget="student-colors" data-clear>None</button>
+</label>
+<div class="swatches" id="student-colors" role="radiogroup" aria-label="Student color" popover>
+    <input type="radio" name="color" value="1" style="--color: var(--color-category-1); --name: var(--color-category-1-name)">
+    <input type="radio" name="color" value="3" style="--color: var(--color-category-3); --name: var(--color-category-3-name)" checked>
+</div>
+```
+
+- **Pure CSS color & name**: `--color` paints the swatch and `--name` renders the palette-dependent name via CSS `content: var(--name)`—no CSS resolution in JS, so palette switches update immediately. Omit `--color` (e.g. `value=""`) for a "None" swatch; omit `--name` for swatch-only or `data-label`/`aria-label` text.
+- **Clear button**: add `data-clear` (or `data-clear="Clear color"`) on `button.picker` inside `<label>` to show an inline `×` button whenever a color is selected, so the popover stays a clean 2×8 grid of 16 colors without needing a "None" swatch.
+- **Native form control**: preselection (`checked`), `required` validation, `disabled`, form submission, `form.reset()`, and arrow-key navigation work natively on the radio inputs.
+- **Standalone trigger**: outside `<label>`, `button.picker` collapses to a compact square/circle swatch trigger (supports `.small`).
+- **Grid sizing**: `.swatches` wraps at `--swatch-columns` (`8` by default) in popovers; add `.small` for compact swatches.
 
 ### Dialogs
 

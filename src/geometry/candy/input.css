@@ -1,4 +1,4 @@
-:is(input:not([type=checkbox], [type=radio], [type=range], [type=submit], [type=reset], [type=button], [type=hidden]), select, textarea) {
+:is(input:not([type=checkbox], [type=radio], [type=range], [type=submit], [type=reset], [type=button], [type=hidden]), select, textarea, button.picker) {
     --field-surface: var(--mtt-color-body);
     --rim-color: var(--mtt-color-line);
     --halo: color-mix(in srgb, var(--rim-color) 0%, #0000);
@@ -30,7 +30,7 @@
     }
 }
 
-:is(input, select, textarea) {
+:is(input, select, textarea, button.picker) {
     &:is(:user-invalid, [aria-invalid=true], .error) {
         --rim-color: var(--color-danger-highlight);
 
@@ -46,7 +46,7 @@
     }
 }
 
-:is(select, input[role=combobox]) {
+:is(select, input[role=combobox], label > button.picker) {
     --chevron: 6px;
     --chevron-end: 15px;
     padding-inline-end: 40px;
@@ -167,5 +167,13 @@ textarea:not([type]) {
 
     label:has(> [data-mtt-lead]) > [data-mtt-lead] {
         --field-inset: calc(var(--margin-tight) + 2px);
+    }
+
+    label:has(> button[data-mtt-clear]:not([hidden])) {
+        --clear-end: 34px;
+
+        > button[data-mtt-clear] {
+            border-radius: 50%;
+        }
     }
 }

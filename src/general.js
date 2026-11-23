@@ -165,8 +165,23 @@ function refresh (root = document) {
 
         if (isMultiple(field))
             field.value = summaryOf(field);
-        else
-            syncLead(field, currentOf(field));
+        else {
+            const current = currentOf(field);
+            if (valueOf(field))
+                field.value = current ? labelOf(current) : '';
+            markCurrent(field, current);
+            syncLead(field, current);
+        }
+        syncClear(field);
+    }
+
+    for (const button of within(root, 'button.picker[popovertarget]'))
+        syncPicker(button);
+
+    for (const swatches of within(root, '.swatches[popover]')) {
+        const button = pickerTrigger(swatches);
+        if (button)
+            syncPicker(button);
     }
 
     watchTabs(root);
@@ -180,6 +195,160 @@ if (document.readyState === 'loading')
     document.addEventListener('DOMContentLoaded', () => refresh(), { once: true });
 else
     refresh();
+
+function pickerTarget (button) {
+    const id = button.getAttribute('popovertarget');
+    const target = id ? document.getElementById(id) : null;
+    return target?.matches('.swatches[popover]') ? target : null;
+}
+
+function pickerTrigger (swatches) {
+    return swatches.id
+        ? document.querySelector(`button.picker[popovertarget="${CSS.escape(swatches.id)}"]`)
+        : null;
+}
+
+function syncPicker (button) {
+    const swatches = pickerTarget(button);
+    if (!swatches)
+        return;
+
+    if (!('mttPlaceholder' in button.dataset))
+        button.dataset.mttPlaceholder = button.dataset.placeholder ?? button.textContent.trim();
+
+    const chosen = swatches.querySelector('input[type=radio]:checked');
+    const label = chosen?.dataset.label ?? chosen?.getAttribute('aria-label') ?? '';
+    const hasColor = Boolean(chosen && (chosen.style.getPropertyValue('--color') || (chosen.value !== '' && chosen.className)));
+
+    const value = document.createElement('span');
+    value.dataset.mttValue = '';
+    if (chosen) {
+        if (chosen.className)
+            value.className = chosen.className;
+        for (const prop of chosen.style)
+            if (prop.startsWith('--'))
+                value.style.setProperty(prop, chosen.style.getPropertyValue(prop));
+    }
+
+    if (hasColor) {
+        const swatch = document.createElement('span');
+        swatch.className = 'swatch';
+        swatch.setAttribute('aria-hidden', 'true');
+        value.append(swatch);
+    }
+
+    const name = document.createElement('span');
+    name.dataset.mttName = '';
+    const fallback = chosen ? label : button.dataset.mttPlaceholder;
+    if (fallback)
+        name.dataset.label = fallback;
+    value.append(name);
+
+    button.replaceChildren(value);
+    button.toggleAttribute('data-mtt-empty', !chosen || !hasColor);
+    if (!button.hasAttribute('aria-expanded'))
+        button.setAttribute('aria-expanded', String(swatches.matches(':popover-open')));
+    syncClear(button);
+}
+
+function clearable (control) {
+    if (control.matches('button.picker[popovertarget]')) {
+        const swatches = pickerTarget(control);
+        if (!swatches || isDisabled(control))
+            return false;
+
+        const chosen = swatches.querySelector('input[type=radio]:checked');
+        return Boolean(chosen && chosen.value !== '' && !chosen.disabled);
+    }
+
+    if (!isInteractiveCombobox(control))
+        return false;
+
+    if (isMultiple(control))
+        return checkedOf(control, false).some(option => !boxOf(option)?.disabled);
+
+    const hidden = valueOf(control);
+    return hidden ? hidden.value !== '' || (!isDropdown(control) && control.value !== '') : control.value !== '';
+}
+
+function syncClear (control) {
+    const label = control.parentElement;
+    if (label?.tagName !== 'LABEL')
+        return;
+
+    let clear = label.querySelector(':scope > button[data-mtt-clear]');
+    if (!control.hasAttribute('data-clear') || control.type === 'search') {
+        clear?.remove();
+        return;
+    }
+
+    if (!clear) {
+        clear = document.createElement('button');
+        clear.type = 'button';
+        clear.dataset.mttClear = '';
+        clear.setAttribute('aria-label', control.dataset.clear || 'Clear');
+        (isCombobox(control) ? (valueOf(control) ?? control) : control).after(clear);
+    }
+
+    clear.hidden = !clearable(control);
+}
+
+function clearControl (control) {
+    if (control.matches('button.picker[popovertarget]')) {
+        const swatches = pickerTarget(control);
+        if (!swatches || isDisabled(control))
+            return;
+
+        const chosen = swatches.querySelector('input[type=radio]:checked');
+        const reset = [...swatches.querySelectorAll('input[type=radio]:not(:disabled)')].find(radio => radio.value === '');
+        if (reset && reset !== chosen) {
+            reset.checked = true;
+            reset.dispatchEvent(new Event('change', { bubbles: true }));
+        } else if (chosen && chosen.value !== '' && !chosen.disabled) {
+            chosen.checked = false;
+            syncPicker(control);
+            chosen.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+
+        if (swatches.matches(':popover-open'))
+            swatches.hidePopover();
+        control.focus();
+        return;
+    }
+
+    if (!isInteractiveCombobox(control))
+        return;
+
+    if (isMultiple(control)) {
+        for (const option of checkedOf(control, false)) {
+            const box = boxOf(option);
+            if (!box || box.disabled)
+                continue;
+
+            box.checked = false;
+            option.setAttribute('aria-checked', 'false');
+            box.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        control.value = summaryOf(control, false);
+        filter(control, '');
+        expand(control, false);
+        syncClear(control);
+    } else if (valueOf(control)) {
+        choose(control, null);
+    } else {
+        const changed = control.value !== '';
+        control.value = '';
+        markCurrent(control, null);
+        syncLead(control, null);
+        filter(control, '');
+        expand(control, false);
+        syncClear(control);
+        if (changed)
+            control.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    control.focus();
+}
 
 function listOf (field) {
     return document.getElementById(field.getAttribute('aria-controls'));
@@ -407,6 +576,7 @@ function toggle (field, option) {
     if (!searched)
         field.value = summaryOf(field, false);
 
+    syncClear(field);
     box.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
@@ -431,6 +601,7 @@ function choose (field, option) {
 
     filter(field, '');
     expand(field, false);
+    syncClear(field);
     if ((value ? value.value : field.value) !== before)
         field.dispatchEvent(new Event('change', { bubbles: true }));
 }
@@ -440,28 +611,33 @@ function settle (field) {
     if (isMultiple(field))
         field.value = summaryOf(field);
     else if (valueOf(field)) {
-        const typed = field.value.trim().toLowerCase();
         const current = currentOf(field);
-        const options = [...listOf(field).querySelectorAll('[role=option]')];
-        const isNamed = option => [labelOf(option), option.dataset.value].some(name => name?.toLowerCase() === typed);
-        const named = current && isNamed(current) ? current : options.find(isNamed);
-        const found = typed === '' ? [] : options.filter(option => matches(option, typed));
-        const option = named ?? (found.length === 1 ? found[0] : undefined);
-
-        if (typed === '' && current) {
-            choose(field, null);
-            chose = true;
-        } else if (option && option !== current) {
-            choose(field, option);
-            chose = true;
-        } else
+        if (isDropdown(field)) {
             field.value = current ? labelOf(current) : '';
+        } else {
+            const typed = field.value.trim().toLowerCase();
+            const options = [...listOf(field).querySelectorAll('[role=option]')];
+            const isNamed = option => [labelOf(option), option.dataset.value].some(name => name?.toLowerCase() === typed);
+            const named = current && isNamed(current) ? current : options.find(isNamed);
+            const found = typed === '' ? [] : options.filter(option => matches(option, typed));
+            const option = named ?? (found.length === 1 ? found[0] : undefined);
+
+            if (typed === '' && current && labelOf(current) !== '') {
+                choose(field, null);
+                chose = true;
+            } else if (option && option !== current) {
+                choose(field, option);
+                chose = true;
+            } else
+                field.value = current ? labelOf(current) : '';
+        }
     }
 
     if (!chose) {
         filter(field, '');
         if (!isMultiple(field))
             syncLead(field, currentOf(field));
+        syncClear(field);
     }
 }
 
@@ -469,6 +645,50 @@ function settle (field) {
 document.addEventListener('change', event => {
     if (event.isTrusted && isCombobox(event.target) && isChoice(event.target))
         event.stopImmediatePropagation();
+}, true);
+
+document.addEventListener('change', event => {
+    if (!(event.target instanceof HTMLInputElement) || event.target.type !== 'radio')
+        return;
+
+    const swatches = event.target.closest('.swatches[popover]');
+    const button = swatches && pickerTrigger(swatches);
+    if (button)
+        syncPicker(button);
+});
+
+document.addEventListener('beforetoggle', event => {
+    const swatches = event.target;
+    if (!(swatches instanceof Element) || !swatches.matches('.swatches[popover]'))
+        return;
+
+    pickerTrigger(swatches)?.setAttribute('aria-expanded', String(event.newState === 'open'));
+}, true);
+
+document.addEventListener('toggle', event => {
+    const swatches = event.target;
+    if (!(swatches instanceof Element) || !swatches.matches('.swatches[popover]'))
+        return;
+
+    const open = event.newState === 'open';
+    pickerTrigger(swatches)?.setAttribute('aria-expanded', String(open));
+    if (open)
+        (swatches.querySelector('input[type=radio]:checked:not(:disabled)')
+            ?? swatches.querySelector('input[type=radio]:not(:disabled)'))?.focus();
+}, true);
+
+document.addEventListener('invalid', event => {
+    const radio = event.target;
+    if (!(radio instanceof HTMLInputElement) || radio.type !== 'radio')
+        return;
+
+    const swatches = radio.closest('.swatches[popover]:not(:popover-open)');
+    if (!swatches)
+        return;
+
+    event.preventDefault();
+    swatches.showPopover();
+    requestAnimationFrame(() => radio.reportValidity());
 }, true);
 
 // dropdowns stay real inputs (so required works) while blocking typed input
@@ -489,6 +709,7 @@ document.addEventListener('input', event => {
     filter(event.target, event.target.value);
     expand(event.target, true);
     listOf(event.target).scrollTop = 0;
+    syncClear(event.target);
 });
 
 document.addEventListener('reset', event => {
@@ -496,10 +717,15 @@ document.addEventListener('reset', event => {
         requestAnimationFrame(() => refresh(event.target));
 });
 
-// keep focus in the combobox when clicking the list, while still allowing scrollbar drags
+// keep focus in the combobox when clicking the list or clear button, while still allowing scrollbar drags
 document.addEventListener('mousedown', event => {
     if (!(event.target instanceof Element))
         return;
+
+    if (event.target.closest('button[data-mtt-clear]')) {
+        event.preventDefault();
+        return;
+    }
 
     const list = event.target.closest('[role=listbox][popover]');
     if (!list)
@@ -521,9 +747,28 @@ document.addEventListener('click', event => {
     if (!(event.target instanceof Element))
         return;
 
+    const clear = event.target.closest('button[data-mtt-clear]');
+    if (clear) {
+        event.preventDefault();
+        const control = clear.parentElement?.querySelector(':scope > :is(input[role=combobox], button.picker[popovertarget])');
+        if (control)
+            clearControl(control);
+        return;
+    }
+
     const tab = event.target.closest('[role=tablist] > [role=tab]');
     if (tab) {
         select(tab.closest('[role=tablist]'), tab);
+        return;
+    }
+
+    const swatch = event.target.closest('.swatches[popover] input[type=radio]');
+    if (swatch && event.detail > 0 && !swatch.disabled) {
+        const swatches = swatch.closest('.swatches[popover]');
+        if (swatches.matches(':popover-open')) {
+            swatches.hidePopover();
+            pickerTrigger(swatches)?.focus();
+        }
         return;
     }
 
@@ -626,6 +871,21 @@ document.addEventListener('keydown', event => {
         event.preventDefault();
         select(list, next);
         next.focus();
+        return;
+    }
+
+    const swatch = event.target.closest('.swatches[popover] input[type=radio]');
+    if (swatch && event.key === 'Enter') {
+        event.preventDefault();
+        if (!swatch.checked && !swatch.disabled) {
+            swatch.checked = true;
+            swatch.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        const swatches = swatch.closest('.swatches[popover]');
+        if (swatches.matches(':popover-open')) {
+            swatches.hidePopover();
+            pickerTrigger(swatches)?.focus();
+        }
         return;
     }
 

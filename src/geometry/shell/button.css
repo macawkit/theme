@@ -1,6 +1,6 @@
 nav.tabs > a,
 nav.pages a,
-:is(button, .button, input:is([type=submit], [type=reset], [type=button])) {
+:is(button:not(.picker, [data-mtt-clear]), .button, input:is([type=submit], [type=reset], [type=button])) {
     --background-color: var(--mtt-color-button);
     background-color: transparent;
     transition:
@@ -12,16 +12,16 @@ nav.pages a,
 }
 
 /* zero specificity so disabled and state filters override cleanly */
-:where(button, .button, input:is([type=submit], [type=reset], [type=button]), nav.pages a[rel]) {
+:where(button:not(.picker, [data-mtt-clear]), .button, input:is([type=submit], [type=reset], [type=button]), nav.pages a[rel]) {
     --elevation: var(--unlit);
     filter: var(--unlit) var(--elevation);
 }
 
-:where(button, .button, nav.pages a[rel]) > * {
+:where(button:not(.picker, [data-mtt-clear]), .button, nav.pages a[rel]) > * {
     filter: var(--unlit);
 }
 
-:is(button, .button, input:is([type=submit], [type=reset], [type=button]), :where(nav.pages a[rel])) {
+:is(button:not(.picker, [data-mtt-clear]), .button, input:is([type=submit], [type=reset], [type=button]), :where(nav.pages a[rel])) {
     --shadow-ink: color-mix(in oklab, var(--shadow-color), var(--background-color, var(--shadow-color)) 35%);
     --raised: drop-shadow(0 3px 5px color-mix(in srgb, var(--shadow-ink) min(var(--shadow-strength) * 2.5, 100%), #0000));
 

@@ -28,7 +28,8 @@ i.icon::before {
     mask: var(--mtt-icon-clock) 50% / contain no-repeat;
 }
 
-:where(input[type=search])::-webkit-search-cancel-button {
+:where(input[type=search])::-webkit-search-cancel-button,
+:where(button[data-mtt-clear])::before {
     mask: var(--mtt-icon-x) 50% / contain no-repeat;
 }
 

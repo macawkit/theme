@@ -1,4 +1,4 @@
-:is(input:not([type=checkbox], [type=radio], [type=range], [type=submit], [type=reset], [type=button], [type=hidden]), select, textarea) {
+:is(input:not([type=checkbox], [type=radio], [type=range], [type=submit], [type=reset], [type=button], [type=hidden]), select, textarea, button.picker) {
     --field-corners: var(--ticks);
 
     padding-inline: var(--margin-tight);
@@ -38,7 +38,7 @@
     }
 }
 
-:is(input, select, textarea) {
+:is(input, select, textarea, button.picker) {
     &:is(:user-invalid, [aria-invalid=true], .error) {
         &,
         label:has(> &) {
@@ -60,7 +60,7 @@
 }
 
 /* matches (0,1,1) specificity of the field rule above so padding-inline-end wins */
-:is(select, input[role=combobox]) {
+:is(select, input[role=combobox], label > button.picker) {
     --chevron: 5px;
     --chevron-end: 10px;
     padding-inline-end: 34px;
@@ -122,18 +122,22 @@ input[type=range] {
 
 /* anchor corner ticks and search icon directly to the control inside any label layout */
 @supports (anchor-scope: --mtt-field-control) {
-    label:has(> :is(input:not([type=checkbox], [type=radio], [type=range], [type=submit], [type=reset], [type=button], [type=hidden]), select, textarea)) {
+    label:has(> :is(input:not([type=checkbox], [type=radio], [type=range], [type=submit], [type=reset], [type=button], [type=hidden]), select, textarea, button.picker)) {
         position: relative;
         anchor-scope: --mtt-field-control;
 
-        > :is(input:not([type=checkbox], [type=radio], [type=range], [type=submit], [type=reset], [type=button], [type=hidden]), select, textarea) {
+        > :is(input:not([type=checkbox], [type=radio], [type=range], [type=submit], [type=reset], [type=button], [type=hidden]), select, textarea, button.picker) {
             anchor-name: --mtt-field-control;
             --field-corners: none;
         }
 
-        /* preserve the combobox popover anchor from theme.css */
+        /* preserve the combobox and picker popover anchors from theme.css */
         > [role=combobox][aria-expanded=true] {
             anchor-name: --mtt-field-control, --mtt-combobox;
+        }
+
+        > button.picker[aria-expanded=true] {
+            anchor-name: --mtt-field-control, --mtt-picker;
         }
 
         &::after {
@@ -180,7 +184,7 @@ input[type=range] {
         }
     }
 
-    label:has(> :is(input:not([type=checkbox], [type=radio], [type=range], [type=submit], [type=reset], [type=button], [type=hidden], :disabled, [aria-disabled=true]), select, textarea):is(:focus, .focus))::after {
+    label:has(> :is(input:not([type=checkbox], [type=radio], [type=range], [type=submit], [type=reset], [type=button], [type=hidden], :disabled, [aria-disabled=true]), select, textarea, button.picker:not(:disabled, [aria-disabled=true])):is(:focus, .focus))::after {
         --glow-source: var(--tick-color);
         --glow-color: color-mix(in srgb, var(--glow-source, #0000) var(--glow-strength), #0000);
         filter:

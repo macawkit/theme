@@ -135,3 +135,48 @@ input:is([type=radio], [type=checkbox]):checked {
 input:is([type=radio], [type=checkbox]):checked:is(.hover, :hover):not(:disabled, [aria-disabled=true]) {
     --background-color: var(--mtt-color-main-highlight);
 }
+
+.swatches > input[type=radio] {
+    --glow-source: var(--color, var(--mtt-color-line-highlight));
+    background:
+        linear-gradient(var(--color, #0000), var(--color, #0000)),
+        linear-gradient(
+            135deg,
+            #0000 calc(50% - 0.75px),
+            var(--mtt-color-text-muted) calc(50% - 0.75px) calc(50% + 0.75px),
+            #0000 calc(50% + 0.75px)
+        ),
+        var(--mtt-color-body);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--mtt-color-line-highlight) 55%, #0000);
+
+    &::before {
+        content: none;
+    }
+
+    &:is(:hover, .hover):not(:disabled, [aria-disabled=true], :checked) {
+        box-shadow:
+            0 0 0 1px var(--mtt-color-line-decorated),
+            0 0 var(--glow-radius) var(--glow-color);
+    }
+
+    &:checked {
+        --glow-source: var(--color, var(--mtt-color-line-highlight));
+        background:
+            linear-gradient(var(--color, #0000), var(--color, #0000)),
+            linear-gradient(
+                135deg,
+                #0000 calc(50% - 0.75px),
+                var(--mtt-color-text-muted) calc(50% - 0.75px) calc(50% + 0.75px),
+                #0000 calc(50% + 0.75px)
+            ),
+            var(--mtt-color-body);
+        box-shadow:
+            0 0 0 2px var(--mtt-color-panel),
+            0 0 0 4px var(--mtt-color-text-bright),
+            0 0 var(--glow-radius) var(--glow-color);
+    }
+
+    &:checked:is(:focus-visible, .focus) {
+        outline-offset: 5px;
+    }
+}

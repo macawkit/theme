@@ -1,4 +1,5 @@
-[role=listbox] {
+[role=listbox],
+.swatches[popover] {
     font-weight: 500;
     background-color: var(--mtt-color-panel);
     border: 1px solid var(--mtt-color-line);

@@ -77,8 +77,8 @@
 input:is([type=submit], [type=reset], [type=button]).alt,
 nav.pages a[rel]::before,
 .box::before,
-:is(input:not([type=checkbox], [type=radio], [type=range], [type=submit], [type=reset], [type=button], [type=hidden]), select, textarea),
-label:has(> :is(input:not([type=checkbox], [type=radio], [type=range], [type=submit], [type=reset], [type=button], [type=hidden]), select, textarea))::after {
+:is(input:not([type=checkbox], [type=radio], [type=range], [type=submit], [type=reset], [type=button], [type=hidden]), select, textarea, button.picker),
+label:has(> :is(input:not([type=checkbox], [type=radio], [type=range], [type=submit], [type=reset], [type=button], [type=hidden]), select, textarea, button.picker))::after {
     --tick: linear-gradient(var(--tick-color), var(--tick-color));
     --ticks:
         var(--tick) 0 0 / var(--tick-size) 1px,
@@ -164,7 +164,7 @@ dt:not(:last-of-type), dd:not(:last-of-type) {
     box-shadow: inset 0 0 0 1px var(--mtt-color-line-dimmed);
 }
 
-:is(a, button, .button, input:is([type=checkbox], [type=radio], [type=submit], [type=reset], [type=button])):is(:focus-visible, .focus),
+:is(a, button:not(.picker), .button, input:is([type=checkbox], [type=radio], [type=submit], [type=reset], [type=button])):is(:focus-visible, .focus),
 .button:has(> input:focus-visible) {
     outline: var(--highlight-thickness) solid var(--mtt-color-line-decorated);
     outline-offset: var(--highlight-thickness);

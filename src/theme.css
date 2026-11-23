@@ -172,7 +172,8 @@ nav.tabs > a {
 
 select,
 input,
-textarea {
+textarea,
+button.picker {
     outline: 0;
     appearance: none;
     -webkit-appearance: none;
@@ -202,7 +203,7 @@ nav.pages a > img,
 }
 
 nav a,
-:is(button, .button, input:is([type=submit], [type=reset], [type=button])) {
+:is(button:not(.picker, [data-mtt-clear]), .button, input:is([type=submit], [type=reset], [type=button])) {
     font-weight: 700;
     white-space: nowrap;
     cursor: pointer;
@@ -213,7 +214,7 @@ nav a,
 
 nav.tabs > a,
 nav.pages a,
-:is(button, .button, input:is([type=submit], [type=reset], [type=button])) {
+:is(button:not(.picker, [data-mtt-clear]), .button, input:is([type=submit], [type=reset], [type=button])) {
     --inset: var(--margin);
     display: inline-flex;
     justify-content: center;
@@ -245,14 +246,14 @@ nav.tabs > a.small,
 nav.tabs.small > a,
 [role=tablist] > :is(button, .button)[role=tab].small,
 .small[role=tablist] > :is(button, .button)[role=tab],
-:is(button, .button, input:is([type=submit], [type=reset], [type=button])).small {
+:is(button:not(.picker, [data-mtt-clear]), .button, input:is([type=submit], [type=reset], [type=button])).small {
     --inset: var(--margin-tight);
 }
 
 /* equalize icon horizontal and vertical inset so icon-only buttons are square */
 nav.tabs > a,
 nav.pages a,
-:is(button, .button) {
+:is(button:not(.picker, [data-mtt-clear]), .button) {
     &:has(> :is(.icon, svg, img)) {
         --trim: calc(var(--inset) - (var(--element-height) - var(--icon-size)) / 2);
         gap: calc(var(--margin-tight) + var(--trim));
@@ -768,7 +769,7 @@ legend {
     padding: 0;
 }
 
-:is(input:not([type=checkbox], [type=radio], [type=range], [type=submit], [type=reset], [type=button], [type=hidden]), select, textarea) {
+:is(input:not([type=checkbox], [type=radio], [type=range], [type=submit], [type=reset], [type=button], [type=hidden]), select, textarea, button.picker) {
     inline-size: 100%;
     min-inline-size: 0;
     min-block-size: var(--element-height);
@@ -791,7 +792,7 @@ textarea:not([type]) {
     opacity: 1;
 }
 
-label:has(> :is(input, select, textarea):is(:user-invalid, [aria-invalid=true], .error)) > small {
+label:has(> :is(input, select, textarea, button.picker):is(:user-invalid, [aria-invalid=true], .error)) > small {
     color: var(--color-danger-text);
 }
 
@@ -909,9 +910,10 @@ input[type=color] {
     }
 }
 
-/* mirror a leading marker (.swatch, icon, svg, img) from the chosen option into the combobox field */
+/* mirror a leading marker (.swatch, icon, svg, img) and optional clear button inside comboboxes and pickers */
 @supports not (anchor-scope: --mtt-field-control) {
-    [data-mtt-lead] {
+    [data-mtt-lead],
+    button[data-mtt-clear] {
         display: none;
     }
 }
@@ -945,6 +947,55 @@ input[type=color] {
         > :is(svg, img)[data-mtt-lead] {
             width: var(--icon-size);
             height: var(--icon-size);
+        }
+    }
+
+    label:has(> button[data-mtt-clear]:not([hidden])) {
+        position: relative;
+        anchor-scope: --mtt-field-control;
+
+        > :is(input[role=combobox], button.picker) {
+            anchor-name: --mtt-field-control;
+            padding-inline-end: calc(var(--clear-end, 28px) + var(--element-height-tiny) + var(--margin-minimal));
+        }
+
+        > input[role=combobox][aria-expanded=true] {
+            anchor-name: --mtt-field-control, --mtt-combobox;
+        }
+
+        > button.picker[aria-expanded=true] {
+            anchor-name: --mtt-field-control, --mtt-picker;
+        }
+
+        > button[data-mtt-clear] {
+            position: absolute;
+            position-anchor: --mtt-field-control;
+            z-index: 2;
+            inset-inline-end: calc(anchor(end) + var(--clear-end, 28px));
+            inset-block-start: anchor(center);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            inline-size: var(--element-height-tiny);
+            block-size: var(--element-height-tiny);
+            padding: 0;
+            border: 0;
+            background: transparent;
+            cursor: pointer;
+            transform: translateY(-50%);
+
+            &::before {
+                content: "";
+                display: block;
+                inline-size: var(--box-size);
+                block-size: var(--box-size);
+                background-color: var(--mtt-color-text-muted);
+                transition: background-color var(--transition);
+            }
+
+            &:is(:hover, .hover, :focus-visible)::before {
+                background-color: var(--mtt-color-text-bright);
+            }
         }
     }
 }
@@ -1055,6 +1106,124 @@ input[role=combobox][inputmode=none] {
         margin: var(--margin-minimal) 0;
         /* enforce at least 3 rows so flip-block triggers instead of collapsing the list */
         min-height: calc-size(max-content, min(size, var(--element-height) * 3));
+    }
+}
+
+button.picker {
+    display: inline-flex;
+    align-items: center;
+    text-align: start;
+    letter-spacing: normal;
+    text-transform: none;
+    cursor: pointer;
+
+    > [data-mtt-value] {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--margin-tight);
+        min-width: 0;
+    }
+
+    > [data-mtt-value] > [data-mtt-name] {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        &::before {
+            content: var(--name, attr(data-label));
+        }
+    }
+
+    &[data-mtt-empty] > [data-mtt-value] > [data-mtt-name] {
+        color: var(--mtt-color-text-muted);
+    }
+
+    &:not(label > *) {
+        inline-size: var(--element-height);
+        block-size: var(--element-height);
+        justify-content: center;
+        padding: 0;
+
+        > [data-mtt-value] > [data-mtt-name] {
+            display: none;
+        }
+
+        &[data-mtt-empty] > [data-mtt-value]::before {
+            content: "";
+            display: inline-block;
+            width: var(--box-size);
+            height: var(--box-size);
+            background:
+                linear-gradient(
+                    135deg,
+                    #0000 calc(50% - 0.75px),
+                    var(--mtt-color-text-muted) calc(50% - 0.75px) calc(50% + 0.75px),
+                    #0000 calc(50% + 0.75px)
+                );
+            box-shadow: inset 0 0 0 1px var(--mtt-color-line);
+        }
+    }
+}
+
+.swatches {
+    --color: #0000;
+    --swatch-size: 24px;
+    --swatch-gap: var(--margin-tight);
+    --swatch-columns: 8;
+
+    &.small {
+        --swatch-size: var(--element-height-tiny);
+        --swatch-gap: var(--margin-minimal);
+    }
+
+    &:not([popover]),
+    &[popover]:popover-open {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--swatch-gap);
+    }
+
+    > input[type=radio] {
+        flex: none;
+        width: var(--swatch-size);
+        height: var(--swatch-size);
+        margin: 0;
+        padding: 0;
+        cursor: pointer;
+
+        &::before {
+            content: none;
+        }
+    }
+}
+
+@media (pointer: coarse) {
+    .swatches {
+        --swatch-size: var(--element-height-small);
+    }
+}
+
+.swatches[popover] {
+    inset: auto;
+    margin: 0;
+    padding: var(--margin-tight);
+    max-inline-size: min(
+        calc(var(--swatch-columns) * var(--swatch-size) + (var(--swatch-columns) - 1) * var(--swatch-gap) + var(--margin-tight) * 2 + 2px),
+        calc(100vw - var(--margin) * 2)
+    );
+}
+
+@supports (anchor-name: --mtt-picker) {
+    button.picker[aria-expanded=true] {
+        anchor-name: --mtt-picker;
+    }
+
+    .swatches[popover] {
+        position-anchor: --mtt-picker;
+        position-area: block-end span-inline-end;
+        position-try: flip-block, flip-inline, flip-block flip-inline;
+        margin: var(--margin-minimal) 0;
     }
 }
 

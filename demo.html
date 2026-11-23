@@ -734,7 +734,7 @@
                     </ul>
                     <label>
                         Bounce copies to
-                        <input role="combobox" aria-controls="bounces" aria-expanded="false" inputmode="none" placeholder="Nobody">
+                        <input role="combobox" aria-controls="bounces" aria-expanded="false" inputmode="none" placeholder="Nobody" data-clear>
                         <small>Choice of many · aria-multiselectable</small>
                     </label>
                     <ul role="listbox" id="bounces" aria-label="Bounce copies to" aria-multiselectable="true" popover="manual">
@@ -782,18 +782,40 @@
                     </label>
                     <label>
                         Marker color
-                        <input role="combobox" inputmode="none" aria-controls="marker-colors" aria-expanded="false" autocomplete="off" value="Alerts">
+                        <input role="combobox" inputmode="none" aria-controls="marker-colors" aria-expanded="false" autocomplete="off" placeholder="None" data-clear>
                         <input type="hidden" name="marker" value="3">
-                        <small>Combobox with .swatch options</small>
+                        <small>Combobox with .swatch options · data-clear</small>
                     </label>
                     <ul role="listbox" id="marker-colors" aria-label="Marker color" popover="manual">
-                        <li role="option" id="mc-none" data-value="">None</li>
                         <li role="option" id="mc-1" data-value="1"><span class="swatch" aria-hidden="true" style="--color: var(--color-category-1)"></span>Personal</li>
                         <li role="option" id="mc-3" data-value="3"><span class="swatch" aria-hidden="true" style="--color: var(--color-category-3)"></span>Alerts</li>
                         <li role="option" id="mc-5" data-value="5"><span class="swatch" aria-hidden="true" style="--color: var(--color-category-5)"></span>Billing</li>
                         <li role="option" id="mc-7" data-value="7"><span class="swatch" aria-hidden="true" style="--color: var(--color-category-7)"></span>Ops</li>
                         <li role="option" id="mc-8" data-value="8"><span class="swatch" aria-hidden="true" style="--color: var(--color-category-8)"></span>System</li>
                     </ul>
+                    <label>
+                        Palette color
+                        <button type="button" class="picker" popovertarget="palette-colors" data-clear>None</button>
+                        <small>Popover .swatches · CSS color &amp; name</small>
+                    </label>
+                    <div class="swatches" id="palette-colors" role="radiogroup" aria-label="Palette color" popover>
+                        <input type="radio" name="palette-color" value="1" style="--color: var(--color-category-1); --name: var(--color-category-1-name)">
+                        <input type="radio" name="palette-color" value="2" style="--color: var(--color-category-2); --name: var(--color-category-2-name)">
+                        <input type="radio" name="palette-color" value="3" style="--color: var(--color-category-3); --name: var(--color-category-3-name)" checked>
+                        <input type="radio" name="palette-color" value="4" style="--color: var(--color-category-4); --name: var(--color-category-4-name)">
+                        <input type="radio" name="palette-color" value="5" style="--color: var(--color-category-5); --name: var(--color-category-5-name)">
+                        <input type="radio" name="palette-color" value="6" style="--color: var(--color-category-6); --name: var(--color-category-6-name)">
+                        <input type="radio" name="palette-color" value="7" style="--color: var(--color-category-7); --name: var(--color-category-7-name)">
+                        <input type="radio" name="palette-color" value="8" style="--color: var(--color-category-8); --name: var(--color-category-8-name)">
+                        <input type="radio" name="palette-color" value="9" style="--color: var(--color-category-9); --name: var(--color-category-9-name)">
+                        <input type="radio" name="palette-color" value="10" style="--color: var(--color-category-10); --name: var(--color-category-10-name)">
+                        <input type="radio" name="palette-color" value="11" style="--color: var(--color-category-11); --name: var(--color-category-11-name)">
+                        <input type="radio" name="palette-color" value="12" style="--color: var(--color-category-12); --name: var(--color-category-12-name)">
+                        <input type="radio" name="palette-color" value="13" style="--color: var(--color-category-13); --name: var(--color-category-13-name)">
+                        <input type="radio" name="palette-color" value="14" style="--color: var(--color-category-14); --name: var(--color-category-14-name)">
+                        <input type="radio" name="palette-color" value="15" style="--color: var(--color-category-15); --name: var(--color-category-15-name)">
+                        <input type="radio" name="palette-color" value="16" style="--color: var(--color-category-16); --name: var(--color-category-16-name)">
+                    </div>
                     <label>
                         Accent
                         <input type="color" value="#fb80ca">
@@ -842,6 +864,21 @@
                         <label><input type="radio" name="tls" checked>Required</label>
                         <label><input type="radio" name="tls">Opportunistic</label>
                         <label><input type="radio" name="tls" disabled>None</label>
+                    </div>
+                    <div class="stack tight" role="radiogroup" aria-labelledby="swatches-label">
+                        <span class="label" id="swatches-label">Swatches · inline</span>
+                        <div class="swatches">
+                            <input type="radio" name="inline-color" value="" aria-label="None">
+                            <input type="radio" name="inline-color" value="1" style="--color: var(--color-category-1)">
+                            <input type="radio" name="inline-color" value="2" style="--color: var(--color-category-2)">
+                            <input type="radio" name="inline-color" value="3" style="--color: var(--color-category-3)" checked>
+                            <input type="radio" name="inline-color" value="4" style="--color: var(--color-category-4)">
+                            <input type="radio" name="inline-color" value="5" style="--color: var(--color-category-5)">
+                            <input type="radio" name="inline-color" value="6" style="--color: var(--color-category-6)">
+                            <input type="radio" name="inline-color" value="7" style="--color: var(--color-category-7)">
+                            <input type="radio" name="inline-color" value="8" style="--color: var(--color-category-8)">
+                        </div>
+                        <small>Native radio group, zero JS</small>
                     </div>
                     <div class="stack">
                         <label>

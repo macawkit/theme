@@ -101,7 +101,7 @@ body {
 
 h1, h2, h3, h4, .hero,
 nav a,
-:is(button, .button, input:is([type=submit], [type=reset], [type=button])) {
+:is(button:not(.picker, [data-mtt-clear]), .button, input:is([type=submit], [type=reset], [type=button])) {
     font-weight: 800;
 }
 
@@ -185,7 +185,7 @@ header > .label {
     box-shadow: inset 0 0 0 1px var(--mtt-color-line-dimmed);
 }
 
-:is(a, button, .button, input:is([type=checkbox], [type=radio], [type=submit], [type=reset], [type=button])):is(:focus-visible, .focus),
+:is(a, button:not(.picker), .button, input:is([type=checkbox], [type=radio], [type=submit], [type=reset], [type=button])):is(:focus-visible, .focus),
 .button:has(> input:focus-visible) {
     outline: var(--highlight-thickness) solid color-mix(in srgb, var(--mtt-color-line-decorated) 70%, #0000);
     outline-offset: 2px;
