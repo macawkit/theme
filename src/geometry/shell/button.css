@@ -277,16 +277,6 @@ nav:not(.tabs, .crumbs, .pages) a {
         background-color var(--transition),
         color var(--transition);
 
-    &::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        z-index: -1;
-        pointer-events: none;
-        background-color: transparent;
-        transition: background-color var(--transition);
-    }
-
     &:is(.hover, :hover) {
         color: var(--mtt-color-text-bright);
     }
@@ -297,16 +287,40 @@ nav:not(.tabs, .crumbs, .pages) a {
 
     &[aria-current] {
         color: var(--mtt-color-text-bright);
+        background-color: var(--mtt-color-main-dimmed);
 
-        &::before {
-            background-color: var(--mtt-color-main-dimmed);
-
-            @media (width >= 600px) {
-                clip-path: var(--chipped-corner);
-            }
+        @media (width >= 600px) {
+            background: linear-gradient(
+                315deg,
+                #0000 calc(var(--chip) * 0.7071),
+                var(--mtt-color-main-dimmed) calc(var(--chip) * 0.7071 + 0.5px)
+            );
         }
 
         small {
+            color: var(--mtt-color-text-decorated);
+        }
+    }
+}
+
+:is(nav.numbered, .app.numbered > aside > nav):not(.tabs, .crumbs, .pages) {
+    counter-reset: mtt-nav;
+
+    > a,
+    > :is(ul, ol) > li > a {
+        counter-increment: mtt-nav;
+
+        &::before {
+            content: counter(mtt-nav, decimal-leading-zero);
+            flex: none;
+            font-family: var(--mono);
+            font-size: var(--decrease-font-size);
+            line-height: var(--heading-line-height);
+            color: var(--mtt-color-text-muted);
+            transition: color var(--transition);
+        }
+
+        &[aria-current]::before {
             color: var(--mtt-color-text-decorated);
         }
     }

@@ -73,16 +73,58 @@
 }
 
 input[type=range] {
-    --range-track: linear-gradient(to right, var(--fill-color) var(--value, 0%), var(--background) 0);
-    --thumb-bg: var(--mtt-color-text-bright);
-    --thumb-shadow: 0 0 0 1px var(--fill-color);
+    --thumb-width: calc(var(--box-size) - var(--highlight-thickness));
+    --thumb-height: var(--element-height-tiny);
+    --thumb-needle-height: var(--chip);
+    --track-rim: var(--mtt-color-line);
+    --thumb-bg: var(--mtt-color-main-dimmed);
+    --thumb-rim: var(--mtt-color-line);
+    --thumb-needle: var(--shine-color);
+    --thumb-glow: 0 0 0 #0000;
     --thumb-outline: none;
+    --tick-color: var(--mtt-color-line-highlight);
+    --tick-size: var(--element-inner-margin);
+    --range-track:
+        linear-gradient(to right, var(--fill-color) var(--value, 0%), #0000 0)
+            1px center / calc(100% - 2px) var(--bar-thickness-small) no-repeat,
+        repeating-linear-gradient(
+            90deg,
+            color-mix(in srgb, var(--mtt-color-line-highlight) 40%, #0000) 0 1px,
+            #0000 1px var(--chip)
+        ) 1px center / calc(100% - 2px) 100% no-repeat,
+        var(--mtt-color-body);
+    --thumb-face:
+        linear-gradient(var(--thumb-needle), var(--thumb-needle))
+            center / var(--highlight-thickness) var(--thumb-needle-height),
+        var(--ticks),
+        var(--thumb-bg);
+
+    /* subtle calibrated end-stops flanking the rail */
+    background:
+        linear-gradient(var(--mtt-color-line-highlight), var(--mtt-color-line-highlight)) 0 center / 1px var(--thumb-width) no-repeat,
+        linear-gradient(var(--mtt-color-line-highlight), var(--mtt-color-line-highlight)) 100% center / 1px var(--thumb-width) no-repeat;
+
+    &.small {
+        --thumb-height: var(--box-size);
+        --thumb-needle-height: var(--chip-small);
+    }
 
     &:is(:hover, .hover, :active, .active):not(:disabled, [aria-disabled=true]) {
-        --thumb-bg: var(--mtt-color-text-brightest);
-        --thumb-shadow:
-            0 0 0 1px var(--shine-color),
-            0 0 var(--glow-radius) var(--glow-color);
+        --track-rim: var(--mtt-color-line-highlight);
+        --thumb-glow: 0 0 var(--glow-radius) var(--glow-color);
+    }
+
+    &:is(:hover, .hover):not(:disabled, [aria-disabled=true]) {
+        --thumb-bg: var(--mtt-color-button);
+        --thumb-rim: var(--mtt-color-line-highlight);
+        --tick-color: var(--shine-color);
+    }
+
+    &:is(:active, .active):not(:disabled, [aria-disabled=true]) {
+        --thumb-bg: var(--mtt-color-main);
+        --thumb-rim: var(--shine-color);
+        --thumb-needle: var(--mtt-color-text-brightest);
+        --tick-color: var(--mtt-color-text-brightest);
     }
 
     &:is(:focus-visible, .focus) {
@@ -90,33 +132,42 @@ input[type=range] {
     }
 
     &::-webkit-slider-runnable-track {
+        block-size: var(--bar-thickness);
         background: var(--range-track);
+        box-shadow: inset 0 0 0 1px var(--track-rim);
+        transition: box-shadow var(--transition);
     }
 
     &::-moz-range-track {
+        block-size: var(--bar-thickness);
         background: var(--range-track);
+        box-shadow: inset 0 0 0 1px var(--track-rim);
+        transition: box-shadow var(--transition);
     }
 
     &::-webkit-slider-thumb {
+        inline-size: var(--thumb-width);
+        block-size: var(--thumb-height);
+        margin-block-start: calc((var(--bar-thickness) - var(--thumb-height)) / 2);
         border-radius: 0;
-        background-color: var(--thumb-bg);
-        box-shadow: var(--thumb-shadow);
+        background: var(--thumb-face);
+        background-repeat: no-repeat;
+        box-shadow: inset 0 0 0 1px var(--thumb-rim), var(--thumb-glow);
         outline: var(--thumb-outline);
         outline-offset: var(--highlight-thickness);
-        transition:
-            background-color var(--transition),
-            box-shadow var(--transition);
+        transition: background var(--transition), box-shadow var(--transition);
     }
 
     &::-moz-range-thumb {
+        inline-size: var(--thumb-width);
+        block-size: var(--thumb-height);
         border-radius: 0;
-        background-color: var(--thumb-bg);
-        box-shadow: var(--thumb-shadow);
+        background: var(--thumb-face);
+        background-repeat: no-repeat;
+        box-shadow: inset 0 0 0 1px var(--thumb-rim), var(--thumb-glow);
         outline: var(--thumb-outline);
         outline-offset: var(--highlight-thickness);
-        transition:
-            background-color var(--transition),
-            box-shadow var(--transition);
+        transition: background var(--transition), box-shadow var(--transition);
     }
 }
 

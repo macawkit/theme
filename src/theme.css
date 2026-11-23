@@ -80,23 +80,26 @@ textarea {
     font: inherit;
 }
 
-header {
+header,
+summary {
+    --header-inset: var(--margin-tight);
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: var(--margin-tight);
-    padding-bottom: var(--margin-tight);
+    min-height: calc(var(--element-height-small) + var(--header-inset));
+    padding-bottom: var(--header-inset);
 }
 
-header > :is(h1, h2, h3, h4, h5, h6),
-header > .title {
+:is(header, summary) > :is(h1, h2, h3, h4, h5, h6),
+:is(header, summary) > .title {
     margin: 0;
     flex: auto;
 }
 
 /* keep back link and heading together while allowing the heading to wrap */
-header > .title {
+:is(header, summary) > .title {
     display: flex;
     align-items: center;
     gap: var(--margin-tight);
@@ -113,6 +116,98 @@ header > .title {
     }
 }
 
+summary {
+    justify-content: flex-start;
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--mtt-color-text-bright);
+    list-style: none;
+
+    &::-webkit-details-marker {
+        display: none;
+    }
+
+    &::after {
+        content: "";
+        flex: none;
+        width: var(--icon-size);
+        height: var(--icon-size);
+        margin-inline-start: auto;
+        background-color: var(--mtt-color-text-muted);
+        rotate: 90deg;
+        transition:
+            rotate var(--transition),
+            background-color var(--transition);
+    }
+
+    &:is(:hover, .hover)::after {
+        background-color: var(--mtt-color-text-bright);
+    }
+}
+
+details:not([open]) > summary {
+    --header-inset: 0px;
+}
+
+details[open] > summary::after {
+    rotate: -90deg;
+}
+
+@keyframes mtt-stuck {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* sticky page head; bleeds across page padding (including geometry insets) and reveals a band once scrolled */
+header.sticky {
+    position: sticky;
+    top: var(--page-inset-top, 0px);
+    z-index: 2;
+    min-height: calc(var(--element-height-small) + var(--margin-tight) * 2);
+    margin-inline: calc(-1 * (var(--margin) + var(--page-inset-start, 0px))) calc(-1 * var(--margin));
+    padding: var(--margin-tight) var(--margin) var(--margin-tight) calc(var(--margin) + var(--page-inset-start, 0px));
+    margin-block: calc(-1 * var(--margin-tight)) calc(var(--header-inset) - var(--margin-tight));
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: calc(-1 * var(--page-inset-top, 0px)) 0 0;
+        z-index: -1;
+        pointer-events: none;
+    }
+}
+
+@supports (animation-timeline: scroll()) {
+    header.sticky::before {
+        opacity: 0;
+        animation: mtt-stuck linear both;
+        animation-timeline: scroll(nearest);
+        animation-range: 0px var(--margin-tight);
+    }
+}
+
+@supports (container-type: scroll-state) {
+    header.sticky {
+        container-type: scroll-state;
+
+        &::before {
+            opacity: 0;
+            animation: none;
+            transition: opacity var(--transition);
+        }
+    }
+
+    @container scroll-state(stuck: top) {
+        header.sticky::before {
+            opacity: 1;
+        }
+    }
+}
+
 footer {
     display: flex;
     flex-wrap: wrap;
@@ -121,7 +216,7 @@ footer {
     gap: var(--margin-tight);
 }
 
-:where(header) {
+:where(header, details[open] > summary) {
     margin-bottom: var(--margin);
 }
 
@@ -226,8 +321,13 @@ nav.pages a,
 
 nav:not(.tabs, .crumbs, .pages) a {
     display: flex;
+    min-height: var(--element-height);
+    height: auto;
+    padding: var(--margin-tight);
+    line-height: var(--heading-line-height);
+    white-space: normal;
+    overflow-wrap: anywhere;
     color: var(--mtt-color-text);
-    padding: var(--margin);
 }
 
 .small, small {
@@ -300,11 +400,19 @@ nav:not(.tabs, .crumbs, .pages) :is(ul, ol) {
     flex-direction: column;
 }
 
+nav:not(.tabs, .crumbs, .pages) a > span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 nav:not(.tabs, .crumbs, .pages) a small {
+    flex: none;
     font-family: var(--mono);
 }
 
-nav:not(.tabs, .crumbs, .pages) a > small:last-child:not(:first-child) {
+nav:not(.tabs, .crumbs, .pages) a > small:last-child {
     margin-inline-start: auto;
 }
 
@@ -492,7 +600,7 @@ code {
 :is([role=tablist], nav.tabs) {
     display: flex;
     min-width: 0;
-    max-width: 100%;
+    max-width: calc(100% + var(--overhang) * 2);
 }
 
 :is([role=tablist], nav.tabs) > * {
@@ -532,6 +640,11 @@ code {
     gap: var(--margin-tight);
 }
 
+.panel {
+    min-width: 0;
+    isolation: isolate;
+}
+
 .well {
     padding: var(--margin-tight);
     background-color: var(--mtt-color-body);
@@ -542,6 +655,7 @@ code {
     flex-direction: column;
     gap: var(--margin);
     min-width: 0;
+    isolation: isolate;
 }
 
 .card.compact {
@@ -657,6 +771,17 @@ a.card.compact {
     padding: var(--margin);
 }
 
+.app > aside + * {
+    --page-inset-top: 0px;
+    --page-inset-start: 0px;
+    padding-block-start: calc(var(--margin) + var(--page-inset-top));
+    padding-inline-start: calc(var(--margin) + var(--page-inset-start));
+}
+
+.page:has(> header.sticky) {
+    scroll-padding-top: calc(var(--element-height) + var(--margin) + var(--page-inset-top, 0px));
+}
+
 .app > aside > :where(:last-child:not(:first-child, nav)) {
     margin-block-start: auto;
 }
@@ -694,6 +819,12 @@ a.card.compact {
     .app > aside > nav > :is(ul, ol) > li,
     .app > aside > nav > a {
         flex: none;
+    }
+
+    .app > aside > nav:not(.tabs, .crumbs, .pages) a {
+        white-space: nowrap;
+        height: var(--element-height);
+        padding: 0 var(--margin);
     }
 }
 
@@ -1001,6 +1132,11 @@ input[type=color] {
 }
 
 input[type=radio],
+input[type=checkbox] {
+    flex: none;
+}
+
+input[type=radio],
 input[type=checkbox]:not(.switch) {
     width: var(--box-size);
     height: var(--box-size);
@@ -1185,7 +1321,6 @@ button.picker {
     }
 
     > input[type=radio] {
-        flex: none;
         width: var(--swatch-size);
         height: var(--swatch-size);
         margin: 0;

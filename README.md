@@ -55,7 +55,8 @@ Or link the built files directly without a bundler:
 </div>
 ```
 
-- `aside` is the sidebar (width controlled by `--nav-width`). A `nav` inside it renders a vertical link list; `aria-current` marks the active link, and a trailing `<small>` inside a link aligns to the end as a count. The last non-`nav` child sits at the bottom.
+- `aside` is the sidebar (width controlled by `--nav-width`). A `nav` inside it renders a vertical link list; `aria-current` marks the active link, a trailing `<small>` inside a link aligns to the end as a count, and wrapping the label in `<span>` truncates long labels with `…` instead of wrapping. The last non-`nav` child sits at the bottom.
+- Add `.numbered` to a sidebar `<nav>`, a panel container (such as `<main class="page numbered">` or `.tiles.numbered`), or `.app.numbered` for both: Shell automatically numbers links and panel heads (`01`, `02`, …) via CSS counters while Candy stays unnumbered.
 - The sibling after `aside` is the main content area.
 - A `<header>` before `aside` spans across both the sidebar and the main area as a top bar.
 - Below `600px`, the sidebar stacks above the content and its nav links scroll horizontally.
@@ -85,7 +86,9 @@ Gap-spaced containers (`.stack`, `.row`, `.tiles`, `.card`, `.alert`, `.empty`, 
 
 ### Surfaces
 
-- **`.panel`** — primary surface. A `<header>` inside holds a title and actions, wrapping when tight.
+- **`.panel`** — primary surface. A `<header>` inside holds a title and actions, wrapping when tight. Headers reserve `--element-height-small` so title-only and `.small`-button heads align across side-by-side panels.
+- **Sticky page head (`header.sticky`)** — pins a page `<header>` to the top of `.page` (or the viewport) and reveals a surface band once scrolled, automatically matching each geometry's `--page-inset-top` / `--page-inset-start` offsets with no JS.
+- **Folded surface (`<details>`)** — native `<details>` with `<summary>` styled like a header and a rotating chevron; composes with `.panel`, `.card`, `.well`, or bare `<details>` with no JS.
 - **Back link + heading (`.title`)** — wrap a back button and heading inside `.title` so the heading wraps beside the button while trailing header actions drop below:
 
   ```html
@@ -216,7 +219,7 @@ Use `.swatches` with native `<input type="radio">` elements to pick from CSS pal
 
 Use `<button commandfor="edit" command="show-modal">` and `command="close"` to control `<dialog id="edit">` without custom JS (`general.js` polyfills browsers without `commandfor`). Wrap dialog contents in `<form method="dialog">` with a `<footer>` for actions; on tall dialogs, the body scrolls while the footer stays pinned.
 
-Add `data-open` to open a dialog as a modal on page load (for example, server-rendered form errors). On close, focus returns to an external button targeting that dialog via `commandfor`.
+Add `data-open` to open a dialog as a modal on page load or after dynamic insertion (for example, server-rendered form errors or htmx-fetched dialogs). On close, focus returns to whatever element had focus when the dialog opened, falling back to an external button targeting that dialog via `commandfor`.
 
 ### Tabs
 

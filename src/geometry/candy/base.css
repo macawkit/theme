@@ -100,6 +100,7 @@ body {
 }
 
 h1, h2, h3, h4, .hero,
+summary,
 nav a,
 :is(button:not(.picker, [data-mtt-clear]), .button, input:is([type=submit], [type=reset], [type=button])) {
     font-weight: 800;
@@ -167,11 +168,12 @@ tbody tr:hover > :is(td, th) {
     }
 }
 
-header {
-    padding-bottom: 0;
+header,
+summary {
+    --header-inset: 0px;
 }
 
-header > .label {
+:is(header, summary) > .label {
     display: inline-flex;
     align-items: center;
     height: var(--element-height-tiny);
@@ -185,7 +187,7 @@ header > .label {
     box-shadow: inset 0 0 0 1px var(--mtt-color-line-dimmed);
 }
 
-:is(a, button:not(.picker), .button, input:is([type=checkbox], [type=radio], [type=submit], [type=reset], [type=button])):is(:focus-visible, .focus),
+:is(a, button:not(.picker), .button, summary, input:is([type=checkbox], [type=radio], [type=submit], [type=reset], [type=button])):is(:focus-visible, .focus),
 .button:has(> input:focus-visible) {
     outline: var(--highlight-thickness) solid color-mix(in srgb, var(--mtt-color-line-decorated) 70%, #0000);
     outline-offset: 2px;
@@ -196,6 +198,6 @@ a.card:is(:focus-visible, .focus) {
     outline-offset: calc(-1 * var(--highlight-thickness));
 }
 
-a:not(.button, .card, nav.tabs > a, nav.pages a):is(:focus-visible, .focus) {
+:is(a:not(.button, .card, nav.tabs > a, nav.pages a), summary):is(:focus-visible, .focus) {
     border-radius: var(--radius-tiny);
 }

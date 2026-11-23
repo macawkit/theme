@@ -225,7 +225,7 @@
     <script src="src/general.js" defer></script>
 </head>
 <body>
-<div class="app">
+<div class="app numbered">
     <aside>
         <strong>@macawkit/theme</strong>
         <form id="look">
@@ -256,28 +256,28 @@
             </fieldset>
         </form>
         <nav aria-label="Sections">
-            <ul>
-                <li><a href="#palette" aria-current="true"><small>01</small>Palette<small>49</small></a></li>
-                <li><a href="#dashboard"><small>02</small>Dashboard</a></li>
-                <li><a href="#buttons"><small>03</small>Buttons</a></li>
-                <li><a href="#forms"><small>04</small>Forms</a></li>
-                <li><a href="#tones"><small>05</small>Tones<small>6</small></a></li>
-                <li><a href="#alerts"><small>06</small>Alerts</a></li>
-                <li><a href="#navigation"><small>07</small>Navigation</a></li>
-                <li><a href="#queue"><small>08</small>Table</a></li>
-                <li><a href="#dialog"><small>09</small>Dialog</a></li>
-                <li><a href="#surfaces"><small>10</small>Surfaces · icons<small>22</small></a></li>
-                <li><a href="#type"><small>11</small>Typography</a></li>
-                <li><a href="#pages"><small>12</small>Pages</a></li>
-                <li><a href="#empty"><small>13</small>Empty</a></li>
-                <li><a href="#bar"><small>14</small>App bar</a></li>
-            </ul>
+            <ol>
+                <li><a href="#palette" aria-current="true">Palette<small>49</small></a></li>
+                <li><a href="#dashboard">Dashboard</a></li>
+                <li><a href="#buttons">Buttons</a></li>
+                <li><a href="#forms">Forms</a></li>
+                <li><a href="#tones">Tones<small>6</small></a></li>
+                <li><a href="#alerts">Alerts</a></li>
+                <li><a href="#navigation">Navigation</a></li>
+                <li><a href="#queue">Table</a></li>
+                <li><a href="#dialog">Dialog</a></li>
+                <li><a href="#surfaces" title="Surfaces · icons"><span>Surfaces · icons</span><small>22</small></a></li>
+                <li><a href="#type">Typography</a></li>
+                <li><a href="#pages">Pages</a></li>
+                <li><a href="#empty">Empty</a></li>
+                <li><a href="#bar">App bar</a></li>
+            </ol>
         </nav>
         <small>0.5.0 · MIT · <a href="https://github.com/macawkit/theme">Source</a><br>This page is an <code>.app</code> itself</small>
     </aside>
 
     <main class="page">
-        <header>
+        <header class="sticky">
             <h1 id="look-name">Shell on Hyacinth</h1>
             <div class="row">
                 <code>npm install @macawkit/theme</code>
@@ -288,9 +288,8 @@
 
         <section class="panel" id="palette">
             <header>
-                <span class="label">01</span>
-                <h2 id="palette-name">Hyacinth</h2>
-                <span class="note">every color has a name · --…-name</span>
+                <h2>Palette</h2>
+                <span class="note"><span id="palette-name">Hyacinth</span> · every color has a name · --…-name</span>
             </header>
             <dl>
                 <dt class="note">Main</dt>
@@ -406,7 +405,6 @@
 
         <section class="panel" id="dashboard">
             <header>
-                <span class="label">02</span>
                 <h2>Dashboard</h2>
                 <div class="row" role="radiogroup" aria-label="Period">
                     <label class="button ghost small"><input type="radio" name="period" checked>24h</label>
@@ -499,7 +497,6 @@
 
         <section class="panel" id="buttons">
             <header>
-                <span class="label">03</span>
                 <h2>Buttons</h2>
                 <span class="note">actions · toggles · groups</span>
             </header>
@@ -634,8 +631,7 @@
 
         <section class="panel" id="forms">
             <header>
-                <span class="label">04</span>
-                <h2>Relay settings</h2>
+                <h2>Forms</h2>
                 <span class="note">fields · combobox · choices</span>
             </header>
             <form class="stack" action="#forms" onsubmit="event.preventDefault()">
@@ -914,7 +910,6 @@
 
         <section class="panel" id="tones">
             <header>
-                <span class="label">05</span>
                 <h2>Tones</h2>
                 <span class="note">one class re-tones all it holds</span>
             </header>
@@ -1020,7 +1015,6 @@
         <div class="tiles" style="--tile-width: 480px">
             <section class="panel" id="alerts">
                 <header>
-                    <span class="label">06</span>
                     <h2>Alerts</h2>
                     <span class="note">.alert · a tone</span>
                 </header>
@@ -1064,7 +1058,6 @@
 
             <section class="panel" id="navigation">
                 <header>
-                    <span class="label">07</span>
                     <h2>Navigation</h2>
                     <span class="note">crumbs · back · tabs · pages · links</span>
                 </header>
@@ -1132,8 +1125,7 @@
 
         <section class="panel" id="queue">
             <header>
-                <span class="label">08</span>
-                <h2>Queue</h2>
+                <h2>Table</h2>
                 <nav class="tabs small" aria-label="Filter">
                     <a href="#queue">All</a>
                     <a href="#queue" aria-current="page">Deferred</a>
@@ -1209,7 +1201,6 @@
         <div class="tiles" style="--tile-width: 480px">
             <section class="panel" id="dialog">
                 <header>
-                    <span class="label">09</span>
                     <h2>Dialog</h2>
                     <span class="note">dialog · dl · footer</span>
                 </header>
@@ -1271,7 +1262,6 @@
 
             <section class="panel" id="surfaces">
                 <header>
-                    <span class="label">10</span>
                     <h2>Surfaces · icons</h2>
                     <span class="note">.panel · .well · .card · .box</span>
                 </header>
@@ -1306,6 +1296,13 @@
                         <a class="card compact quiet" href="#surfaces" style="--color: var(--color-category-15)"><b>uucp</b><small>retired</small></a>
                     </div>
                     <small><code>.card.compact</code>, one of many in a dense spot. It wears <code>--color</code> as a swatch does, the fifth is under the pointer, the sixth has the focus, the last two are <code>.quiet</code>, over.</small>
+                    <details class="card">
+                        <summary>
+                            <h3>Folded details</h3>
+                            <span class="note">details · summary</span>
+                        </summary>
+                        <small>Native <code>&lt;details&gt;</code> with <code>&lt;summary&gt;</code> as its head—works bare or on <code>.panel</code>, <code>.card</code>, and <code>.well</code> with no script.</small>
+                    </details>
                     <span class="label">Icons · i.icon.i-…</span>
                     <div class="row">
                         <span class="row"><span class="box"><i class="icon i-search"></i></span><code class="small">search</code></span>
@@ -1340,7 +1337,6 @@
         <div class="tiles" style="--tile-width: 480px">
             <section class="panel" id="type">
                 <header>
-                    <span class="label">11</span>
                     <h2>Typography</h2>
                     <span class="note">--font · --mono for labels &amp; data</span>
                 </header>
@@ -1388,7 +1384,6 @@
             <div class="stack">
                 <section class="panel" id="pages">
                     <header>
-                        <span class="label">12</span>
                         <h2>Pages</h2>
                         <span class="note">.app · .center</span>
                     </header>
@@ -1419,7 +1414,6 @@
 
                 <section class="panel" id="empty">
                     <header>
-                        <span class="label">13</span>
                         <h2>Empty</h2>
                         <span class="note">.empty</span>
                     </header>
@@ -1442,7 +1436,6 @@
 
         <section class="panel" id="bar">
             <header>
-                <span class="label">14</span>
                 <h2>App bar</h2>
                 <span class="note">.app &gt; header</span>
             </header>

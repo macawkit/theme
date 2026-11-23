@@ -142,11 +142,17 @@ function within (root, selector) {
     return found;
 }
 
+const dialogOpeners = new WeakMap();
+
 function refresh (root = document) {
     for (const dialog of within(root, 'dialog[data-open]')) {
         dialog.removeAttribute('data-open');
-        if (!dialog.open)
+        if (!dialog.open) {
+            const opener = document.activeElement;
+            if (opener instanceof Element && opener !== document.body && !dialog.contains(opener))
+                dialogOpeners.set(dialog, opener);
             dialog.showModal();
+        }
     }
 
     for (const spark of within(root, '.spark'))
@@ -934,11 +940,25 @@ document.addEventListener('keydown', event => {
     }
 });
 
-// dialogs opened via data-open have no opener; return focus to an external commandfor trigger on close
+// dialogs opened via data-open have no native opener; return focus to the pre-open element, else an external commandfor trigger
 document.addEventListener('close', event => {
     const dialog = event.target;
+    if (!(dialog instanceof HTMLDialogElement))
+        return;
+
+    const opener = dialogOpeners.get(dialog);
+    dialogOpeners.delete(dialog);
+
     const focused = document.activeElement;
-    if (!(dialog instanceof HTMLDialogElement) || !dialog.id || (focused && focused !== document.body && !dialog.contains(focused)))
+    if (focused && focused !== document.body && !dialog.contains(focused))
+        return;
+
+    if (opener?.isConnected) {
+        opener.focus();
+        return;
+    }
+
+    if (!dialog.id)
         return;
 
     const openers = document.querySelectorAll(`button[commandfor="${CSS.escape(dialog.id)}"]`);

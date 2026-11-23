@@ -473,6 +473,9 @@ class FakeElement {
             for (const c of this.childNodes) copy.append(c.cloneNode(true));
         return copy;
     }
+    get isConnected () {
+        return document.body.contains(this);
+    }
     contains (node) {
         let cur = node;
         while (cur) {
@@ -1045,6 +1048,45 @@ test('Tabs, ResizeObserver, revealChosen, sparks, meters, ranges, dialogs', asyn
     t1.focus();
     dlg.dispatchEvent(new FakeEvent('close'));
     assert.equal(document.activeElement, t1);
+
+    // Dynamically inserted data-open dialog (no id, no commandfor) restores focus to pre-open activeElement
+    const trigger = el('button', { type: 'button' });
+    const dynDlg = el('dialog', { 'data-open': '' });
+    document.body.append(trigger, dynDlg);
+    trigger.focus();
+    globalThis.mtt.refresh(dynDlg);
+    assert.equal(dynDlg.open, true);
+    document.activeElement = document.body;
+    dynDlg.close();
+    assert.equal(document.activeElement, trigger);
+
+    // Closing a dialog with no id and no recorded opener is a safe no-op
+    dynDlg.showModal();
+    document.activeElement = document.body;
+    dynDlg.close();
+    assert.equal(document.activeElement, document.body);
+
+    // If pre-open trigger was removed before close, fall back to external commandfor opener
+    const ephemeral = el('button', { type: 'button' });
+    const fallbackTrigger = el('button', { commandfor: 'dlg-fb', command: 'show-modal' });
+    const fbDlg = el('dialog', { id: 'dlg-fb', 'data-open': '' });
+    document.body.append(ephemeral, fallbackTrigger, fbDlg);
+    ephemeral.focus();
+    globalThis.mtt.refresh(fbDlg);
+    ephemeral.remove();
+    document.activeElement = document.body;
+    fbDlg.close();
+    assert.equal(document.activeElement, fallbackTrigger);
+
+    // Opening a data-open dialog when focus is already inside it does not record an internal opener
+    const innerBtn = el('button', { type: 'button' });
+    const innerDlg = el('dialog', { 'data-open': '' }, [innerBtn]);
+    document.body.append(innerDlg);
+    innerBtn.focus();
+    globalThis.mtt.refresh(innerDlg);
+    document.activeElement = document.body;
+    innerDlg.close();
+    assert.equal(document.activeElement, document.body);
 });
 
 test('Comboboxes: typed choice, free text, multiselect, filtering, marking, keyboard, submit, mousedown', () => {

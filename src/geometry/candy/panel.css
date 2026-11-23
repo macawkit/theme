@@ -95,6 +95,13 @@ dialog::backdrop {
     }
 }
 
+header.sticky::before {
+    background-color: color-mix(in srgb, var(--mtt-color-body) 85%, #0000);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--mtt-color-line-dimmed);
+    box-shadow: var(--raise-low);
+}
+
 /* extend .page under the rounded sidebar edge so its backdrop fills the outer corner */
 .app:not(:has(> header)) {
     > aside {
@@ -104,13 +111,13 @@ dialog::backdrop {
 
     > aside + .page {
         @media (width >= 600px) {
-            margin-inline-start: calc(-1 * var(--radius));
-            padding-inline-start: calc(var(--margin) + var(--radius));
+            --page-inset-start: var(--radius);
+            margin-inline-start: calc(-1 * var(--page-inset-start));
         }
 
         @media (width < 600px) {
-            margin-block-start: calc(-1 * var(--radius));
-            padding-block-start: calc(var(--margin) + var(--radius));
+            --page-inset-top: var(--radius);
+            margin-block-start: calc(-1 * var(--page-inset-top));
         }
     }
 }

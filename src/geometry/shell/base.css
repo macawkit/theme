@@ -75,6 +75,7 @@
 /* computed on each tick-bearing element from its own --tick-color and --tick-size */
 :is(button, .button).alt::before,
 input:is([type=submit], [type=reset], [type=button]).alt,
+input[type=range],
 nav.pages a[rel]::before,
 .box::before,
 :is(input:not([type=checkbox], [type=radio], [type=range], [type=submit], [type=reset], [type=button], [type=hidden]), select, textarea, button.picker),
@@ -164,7 +165,7 @@ dt:not(:last-of-type), dd:not(:last-of-type) {
     box-shadow: inset 0 0 0 1px var(--mtt-color-line-dimmed);
 }
 
-:is(a, button:not(.picker), .button, input:is([type=checkbox], [type=radio], [type=submit], [type=reset], [type=button])):is(:focus-visible, .focus),
+:is(a, button:not(.picker), .button, summary, input:is([type=checkbox], [type=radio], [type=submit], [type=reset], [type=button])):is(:focus-visible, .focus),
 .button:has(> input:focus-visible) {
     outline: var(--highlight-thickness) solid var(--mtt-color-line-decorated);
     outline-offset: var(--highlight-thickness);
