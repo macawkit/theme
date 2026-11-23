@@ -1,0 +1,125 @@
+:root {
+    --mtt-color-body: #eaf2f6;
+    --mtt-color-body-name: "Frost";
+    --mtt-color-panel: #f7fbfd;
+    --mtt-color-panel-name: "Snow";
+
+    --mtt-color-main-dimmed: #d2ecf3;
+    --mtt-color-main-dimmed-name: "Iceberg";
+    --mtt-color-button: #b4dfeb;
+    --mtt-color-button-name: "Crevasse";
+    --mtt-color-main: #2940b5;
+    --mtt-color-main-name: "Ultramarine";
+    --mtt-color-main-highlight: #3350db;
+    --mtt-color-main-highlight-name: "Cobalt";
+
+    --mtt-color-text-muted: #546b7d;
+    --mtt-color-text-muted-name: "Granite";
+    --mtt-color-text: #2e4456;
+    --mtt-color-text-name: "Slate";
+    --mtt-color-text-decorated: #0a6b85;
+    --mtt-color-text-decorated-name: "Fjord";
+    --mtt-color-text-bright: #122230;
+    --mtt-color-text-bright-name: "Abyss";
+    --mtt-color-text-brightest: #ffffff;
+    --mtt-color-text-brightest-name: "White";
+
+    --mtt-color-line: #bfd6e2;
+    --mtt-color-line-name: "Hail";
+    --mtt-color-line-dimmed: #d7e6ee;
+    --mtt-color-line-dimmed-name: "Rime";
+    --mtt-color-line-highlight: #7ca7bd;
+    --mtt-color-line-highlight-name: "Mist";
+    --mtt-color-line-decorated: #0a7a99;
+    --mtt-color-line-decorated-name: "Lagoon";
+
+    --color-info: var(--mtt-color-main-dimmed);
+    --color-info-name: var(--mtt-color-main-dimmed-name);
+    --color-info-highlight: var(--mtt-color-line-decorated);
+    --color-info-highlight-name: var(--mtt-color-line-decorated-name);
+    --color-info-text: var(--mtt-color-text-decorated);
+    --color-info-text-name: var(--mtt-color-text-decorated-name);
+
+    --color-signature: #dce2f8;
+    --color-signature-name: "Ice blue";
+    --color-signature-highlight: #2f4dd4;
+    --color-signature-highlight-name: "Sapphire";
+    --color-signature-text: #1f328c;
+    --color-signature-text-name: "Indigo";
+
+    --color-success: #d7efe4;
+    --color-success-name: "Dew";
+    --color-success-highlight: #1d7f52;
+    --color-success-highlight-name: "Spruce";
+    --color-success-text: #115736;
+    --color-success-text-name: "Pine";
+
+    --color-priority: #e8dff6;
+    --color-priority-name: "Lavender";
+    --color-priority-highlight: #7345c4;
+    --color-priority-highlight-name: "Iris";
+    --color-priority-text: #4d298f;
+    --color-priority-text-name: "Amethyst";
+
+    --color-warning: #f5e8cc;
+    --color-warning-name: "Sand";
+    --color-warning-highlight: #a66208;
+    --color-warning-highlight-name: "Ochre";
+    --color-warning-text: #734304;
+    --color-warning-text-name: "Bronze";
+
+    --color-danger: #f7dce0;
+    --color-danger-name: "Blush";
+    --color-danger-highlight: #c4293d;
+    --color-danger-highlight-name: "Rowan";
+    --color-danger-text: #871928;
+    --color-danger-text-name: "Garnet";
+
+    --color-category-1: #4275d6;
+    --color-category-1-name: "Cornflower";
+    --color-category-2: #845ec7;
+    --color-category-2-name: "Wisteria";
+    --color-category-3: #cf619d;
+    --color-category-3-name: "Peony";
+    --color-category-4: #d6565e;
+    --color-category-4-name: "Coral";
+    --color-category-5: #db7d39;
+    --color-category-5-name: "Apricot";
+    --color-category-6: #c49e2b;
+    --color-category-6-name: "Gorse";
+    --color-category-7: #3d965c;
+    --color-category-7-name: "Fern";
+    --color-category-8: #1e939e;
+    --color-category-8-name: "Glacier teal";
+    --color-category-9: #58718c;
+    --color-category-9-name: "Payne's grey";
+    --color-category-10: #8f5c82;
+    --color-category-10-name: "Heather";
+    --color-category-11: #a65b4a;
+    --color-category-11-name: "Terracotta";
+    --color-category-12: #7d6f5d;
+    --color-category-12-name: "Pebble";
+    --color-category-13: #768744;
+    --color-category-13-name: "Lichen";
+    --color-category-14: #699c8c;
+    --color-category-14-name: "Sage";
+    --color-category-15: #7c86c7;
+    --color-category-15-name: "Periwinkle";
+    --color-category-16: #529bc9;
+    --color-category-16-name: "Sky blue";
+
+    --shadow-color: #133148;
+    --shadow-strength: 16%;
+
+    --glow-radius: 0px;
+    --shine-radius: 0px;
+    --glow-strength: 50%;
+    --disabled-filter: opacity(0.5) saturate(0.5);
+
+    /* lift dark state inks so bar fills stay vibrant on light surfaces */
+    --fill-lift: 0.08;
+}
+
+html {
+    color-scheme: light;
+}

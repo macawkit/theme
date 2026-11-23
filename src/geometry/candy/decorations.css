@@ -81,3 +81,15 @@
     background-image: var(--gloss);
     box-shadow: var(--raise-low), 0 0 var(--glow-radius) var(--glow-color);
 }
+
+input[type=color]::-webkit-color-swatch {
+    border-radius: var(--pill);
+    background-image: var(--gloss);
+    box-shadow: var(--raise-low);
+}
+
+input[type=color]::-moz-color-swatch {
+    border-radius: var(--pill);
+    background-image: var(--gloss);
+    box-shadow: var(--raise-low);
+}

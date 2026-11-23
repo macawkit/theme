@@ -1,4 +1,4 @@
-:is(input:not([type=checkbox], [type=radio]), select, textarea) {
+:is(input:not([type=checkbox], [type=radio], [type=range], [type=submit], [type=reset], [type=button], [type=hidden]), select, textarea) {
     --field-corners: var(--ticks);
 
     padding-inline: var(--margin-tight);
@@ -23,6 +23,11 @@
         --field-ink: var(--mtt-color-text-bright);
         --tick-color: var(--mtt-color-line-highlight);
         --tick-size: calc(var(--chip) / 2);
+    }
+
+    &:is(:hover, .hover):where(:not(:disabled, [aria-disabled=true], :user-invalid, [aria-invalid=true], .error)),
+    label:has(> &:is(:hover, .hover):where(:not(:disabled, [aria-disabled=true], :user-invalid, [aria-invalid=true], .error))) {
+        --tick-color: var(--mtt-color-line-decorated);
     }
 
     &:is(:focus, .focus),
@@ -67,13 +72,61 @@
             right var(--chevron-end) center / var(--chevron) var(--chevron);
 }
 
+input[type=range] {
+    --range-track: linear-gradient(to right, var(--fill-color) var(--value, 0%), var(--background) 0);
+    --thumb-bg: var(--mtt-color-text-bright);
+    --thumb-shadow: 0 0 0 1px var(--fill-color);
+    --thumb-outline: none;
+
+    &:is(:hover, .hover, :active, .active):not(:disabled, [aria-disabled=true]) {
+        --thumb-bg: var(--mtt-color-text-brightest);
+        --thumb-shadow:
+            0 0 0 1px var(--shine-color),
+            0 0 var(--glow-radius) var(--glow-color);
+    }
+
+    &:is(:focus-visible, .focus) {
+        --thumb-outline: var(--highlight-thickness) solid var(--mtt-color-line-decorated);
+    }
+
+    &::-webkit-slider-runnable-track {
+        background: var(--range-track);
+    }
+
+    &::-moz-range-track {
+        background: var(--range-track);
+    }
+
+    &::-webkit-slider-thumb {
+        border-radius: 0;
+        background-color: var(--thumb-bg);
+        box-shadow: var(--thumb-shadow);
+        outline: var(--thumb-outline);
+        outline-offset: var(--highlight-thickness);
+        transition:
+            background-color var(--transition),
+            box-shadow var(--transition);
+    }
+
+    &::-moz-range-thumb {
+        border-radius: 0;
+        background-color: var(--thumb-bg);
+        box-shadow: var(--thumb-shadow);
+        outline: var(--thumb-outline);
+        outline-offset: var(--highlight-thickness);
+        transition:
+            background-color var(--transition),
+            box-shadow var(--transition);
+    }
+}
+
 /* anchor corner ticks and search icon directly to the control inside any label layout */
 @supports (anchor-scope: --mtt-field-control) {
-    label:has(> :is(input:not([type=checkbox], [type=radio]), select, textarea)) {
+    label:has(> :is(input:not([type=checkbox], [type=radio], [type=range], [type=submit], [type=reset], [type=button], [type=hidden]), select, textarea)) {
         position: relative;
         anchor-scope: --mtt-field-control;
 
-        > :is(input:not([type=checkbox], [type=radio]), select, textarea) {
+        > :is(input:not([type=checkbox], [type=radio], [type=range], [type=submit], [type=reset], [type=button], [type=hidden]), select, textarea) {
             anchor-name: --mtt-field-control;
             --field-corners: none;
         }
@@ -127,7 +180,7 @@
         }
     }
 
-    label:has(> :is(input:not([type=checkbox], [type=radio], :disabled, [aria-disabled=true]), select, textarea):is(:focus, .focus))::after {
+    label:has(> :is(input:not([type=checkbox], [type=radio], [type=range], [type=submit], [type=reset], [type=button], [type=hidden], :disabled, [aria-disabled=true]), select, textarea):is(:focus, .focus))::after {
         --glow-source: var(--tick-color);
         --glow-color: color-mix(in srgb, var(--glow-source, #0000) var(--glow-strength), #0000);
         filter:

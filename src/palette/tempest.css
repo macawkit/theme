@@ -1,0 +1,124 @@
+:root {
+    --mtt-color-body: #0b0d10;
+    --mtt-color-body-name: "Squall";
+    --mtt-color-panel: #13161b;
+    --mtt-color-panel-name: "Thunderhead";
+
+    --mtt-color-main-dimmed: #1c222b;
+    --mtt-color-main-dimmed-name: "Overcast";
+    --mtt-color-button: #2a3340;
+    --mtt-color-button-name: "Stormcloud";
+    --mtt-color-main: #43556e;
+    --mtt-color-main-name: "Tempest";
+    --mtt-color-main-highlight: #506785;
+    --mtt-color-main-highlight-name: "Static";
+
+    --mtt-color-text-muted: #788190;
+    --mtt-color-text-muted-name: "Fog";
+    --mtt-color-text: #b2bac7;
+    --mtt-color-text-name: "Rain";
+    --mtt-color-text-decorated: #f2d45c;
+    --mtt-color-text-decorated-name: "Lightning";
+    --mtt-color-text-bright: #eef2f7;
+    --mtt-color-text-bright-name: "Cloudbreak";
+    --mtt-color-text-brightest: #ffffff;
+    --mtt-color-text-brightest-name: "White";
+
+    --mtt-color-line: #2d3440;
+    --mtt-color-line-name: "Slate";
+    --mtt-color-line-dimmed: #1e232b;
+    --mtt-color-line-dimmed-name: "Mist";
+    --mtt-color-line-highlight: #566173;
+    --mtt-color-line-highlight-name: "Pewter";
+    --mtt-color-line-decorated: #ffef9f;
+    --mtt-color-line-decorated-name: "Flash";
+
+    --color-info: var(--mtt-color-main-dimmed);
+    --color-info-name: var(--mtt-color-main-dimmed-name);
+    --color-info-highlight: var(--mtt-color-text-decorated);
+    --color-info-highlight-name: var(--mtt-color-text-decorated-name);
+    --color-info-text: var(--mtt-color-line-decorated);
+    --color-info-text-name: var(--mtt-color-line-decorated-name);
+
+    --color-signature: #132936;
+    --color-signature-name: "Fjord";
+    --color-signature-highlight: #4ad9f5;
+    --color-signature-highlight-name: "Ion";
+    --color-signature-text: #8ee8fa;
+    --color-signature-text-name: "Ozone";
+
+    --color-success: #122922;
+    --color-success-name: "Pine";
+    --color-success-highlight: #4ade94;
+    --color-success-highlight-name: "Lichen";
+    --color-success-text: #8ef0be;
+    --color-success-text-name: "Mint";
+
+    --color-priority: #241d38;
+    --color-priority-name: "Dusk";
+    --color-priority-highlight: #b991ff;
+    --color-priority-highlight-name: "Violet";
+    --color-priority-text: #d7beff;
+    --color-priority-text-name: "Wisteria";
+
+    --color-warning: #2e1f14;
+    --color-warning-name: "Umber";
+    --color-warning-highlight: #ff9238;
+    --color-warning-highlight-name: "Ember";
+    --color-warning-text: #ffbe85;
+    --color-warning-text-name: "Apricot";
+
+    --color-danger: #33171d;
+    --color-danger-name: "Garnet";
+    --color-danger-highlight: #d43347;
+    --color-danger-highlight-name: "Crimson";
+    --color-danger-text: #ff8e99;
+    --color-danger-text-name: "Coral";
+
+    --color-category-1: #6ba8ff;
+    --color-category-1-name: "Bolt blue";
+    --color-category-2: var(--color-priority-highlight);
+    --color-category-2-name: var(--color-priority-highlight-name);
+    --color-category-3: #f582c4;
+    --color-category-3-name: "Magenta";
+    --color-category-4: var(--color-danger-text);
+    --color-category-4-name: var(--color-danger-text-name);
+    --color-category-5: var(--color-warning-highlight);
+    --color-category-5-name: var(--color-warning-highlight-name);
+    --color-category-6: var(--mtt-color-text-decorated);
+    --color-category-6-name: var(--mtt-color-text-decorated-name);
+    --color-category-7: var(--color-success-highlight);
+    --color-category-7-name: var(--color-success-highlight-name);
+    --color-category-8: var(--color-signature-highlight);
+    --color-category-8-name: var(--color-signature-highlight-name);
+    --color-category-9: #6860c9;
+    --color-category-9-name: "Indigo";
+    --color-category-10: #9e4b9e;
+    --color-category-10-name: "Plum";
+    --color-category-11: #b83c63;
+    --color-category-11-name: "Raspberry";
+    --color-category-12: #ad561a;
+    --color-category-12-name: "Rust";
+    --color-category-13: #8c7618;
+    --color-category-13-name: "Ochre";
+    --color-category-14: #3b852e;
+    --color-category-14-name: "Moss";
+    --color-category-15: #148078;
+    --color-category-15-name: "Teal";
+    --color-category-16: #1976a8;
+    --color-category-16-name: "Cerulean";
+
+    --shadow-color: #000000;
+    --shadow-strength: 60%;
+
+    --glow-radius: 10px;
+    --shine-radius: 2px;
+    --glow-strength: 55%;
+    --disabled-filter: brightness(0.7) contrast(0.9) saturate(0.7);
+
+    --fill-lift: 0;
+}
+
+html {
+    color-scheme: dark;
+}

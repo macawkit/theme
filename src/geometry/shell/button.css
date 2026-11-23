@@ -1,6 +1,6 @@
 nav.tabs > a,
 nav.pages a,
-:is(button, .button) {
+:is(button, .button, input:is([type=submit], [type=reset], [type=button])) {
     --background-color: var(--mtt-color-button);
     background-color: transparent;
     transition:
@@ -12,7 +12,7 @@ nav.pages a,
 }
 
 /* zero specificity so disabled and state filters override cleanly */
-:where(button, .button, nav.pages a[rel]) {
+:where(button, .button, input:is([type=submit], [type=reset], [type=button]), nav.pages a[rel]) {
     --elevation: var(--unlit);
     filter: var(--unlit) var(--elevation);
 }
@@ -21,7 +21,7 @@ nav.pages a,
     filter: var(--unlit);
 }
 
-:is(button, .button, :where(nav.pages a[rel])) {
+:is(button, .button, input:is([type=submit], [type=reset], [type=button]), :where(nav.pages a[rel])) {
     --shadow-ink: color-mix(in oklab, var(--shadow-color), var(--background-color, var(--shadow-color)) 35%);
     --raised: drop-shadow(0 3px 5px color-mix(in srgb, var(--shadow-ink) min(var(--shadow-strength) * 2.5, 100%), #0000));
 
@@ -114,7 +114,7 @@ nav.pages a,
 }
 
 /* subtract the 1px border from padding so .alt matches plain button width */
-:is(button, .button).alt,
+:is(button, .button, input:is([type=submit], [type=reset], [type=button])).alt,
 nav.pages a[rel],
 .box {
     background-color: var(--mtt-color-main-dimmed);
@@ -154,7 +154,7 @@ nav.pages a[rel]:is(.hover, :hover):not([aria-disabled=true])::before,
     inset: calc(-1px - var(--highlight-thickness));
 }
 
-:is(button, .button).alt,
+:is(button, .button, input:is([type=submit], [type=reset], [type=button])).alt,
 nav.pages a[rel] {
     --background-color: var(--mtt-color-main-dimmed);
     background-color: var(--background-color);
@@ -199,7 +199,7 @@ nav.pages a[rel] {
     }
 }
 
-:is(button, .button) {
+:is(button, .button, input:is([type=submit], [type=reset], [type=button])) {
     &.danger {
         --background-color: var(--color-danger);
         color: var(--color-danger-text);
@@ -219,6 +219,32 @@ nav.pages a[rel] {
         &:is(.hover, :hover):not(:disabled, [aria-disabled=true]) {
             --background-color: var(--background);
             color: var(--mtt-color-text-bright);
+        }
+    }
+}
+
+/* <input> is a void element without ::before/::after, so draw the chipped corner or ticks directly on it */
+input:is([type=submit], [type=reset], [type=button]) {
+    &:not(.alt) {
+        background: linear-gradient(315deg, #0000 calc(var(--chip) * 0.7071), var(--background-color) calc(var(--chip) * 0.7071 + 0.5px));
+    }
+
+    &:not(.alt).small {
+        --chip: var(--chip-small);
+    }
+
+    &.alt {
+        --tick-color: var(--mtt-color-line-highlight);
+        --tick-size: calc(var(--chip) / 2);
+        background: var(--ticks) no-repeat, var(--background-color);
+
+        &:is(.hover, :hover):not(:disabled, [aria-disabled=true]) {
+            --tick-color: var(--mtt-color-line-decorated);
+            --tick-size: var(--chip);
+        }
+
+        &:is(:active, .active):not(:disabled, [aria-disabled=true]) {
+            --tick-size: calc(var(--chip-small) / 2);
         }
     }
 }

@@ -125,6 +125,15 @@ function fillMeter (meter) {
     meter.style.setProperty('--value', `${Math.min(Math.max(share, 0), 1) * 100}%`);
 }
 
+function fillRange (range) {
+    const min = range.min !== '' ? Number(range.min) : 0;
+    const max = range.max !== '' ? Number(range.max) : 100;
+    const value = Number(range.value);
+    const share = max > min ? (value - min) / (max - min) : 0;
+
+    range.style.setProperty('--value', `${Math.min(Math.max(share, 0), 1) * 100}%`);
+}
+
 function within (root, selector) {
     const found = [...root.querySelectorAll(selector)];
     if (root instanceof Element && root.matches(selector))
@@ -147,9 +156,18 @@ function refresh (root = document) {
         for (const meter of within(root, '[role=meter]'))
             fillMeter(meter);
 
-    for (const field of within(root, 'input[role=combobox]'))
-        if (isCombobox(field) && isMultiple(field))
+    for (const range of within(root, 'input[type=range]'))
+        fillRange(range);
+
+    for (const field of within(root, 'input[role=combobox]')) {
+        if (!isCombobox(field))
+            continue;
+
+        if (isMultiple(field))
             field.value = summaryOf(field);
+        else
+            syncLead(field, currentOf(field));
+    }
 
     watchTabs(root);
 
@@ -279,6 +297,23 @@ function activate (field, option) {
         field.removeAttribute('aria-activedescendant');
 }
 
+// mirror a leading marker (.swatch, icon, svg, img) from the chosen option into the combobox field
+function syncLead (field, option) {
+    const label = field.parentElement;
+    if (field.type === 'search' || label?.tagName !== 'LABEL')
+        return;
+
+    label.querySelector(':scope > [data-mtt-lead]')?.remove();
+    const marker = option?.querySelector(':scope > :is(.swatch, i.icon, svg, img):first-child');
+    if (!marker)
+        return;
+
+    const lead = marker.cloneNode(true);
+    lead.dataset.mttLead = '';
+    lead.setAttribute('aria-hidden', 'true');
+    field.before(lead);
+}
+
 // use manual popovers so clicking the input doesn't light-dismiss the list and desync aria-expanded
 function expand (field, open) {
     const list = listOf(field);
@@ -392,6 +427,7 @@ function choose (field, option) {
         field.value = textOfOption(option);
 
     markCurrent(field, option);
+    syncLead(field, option);
 
     filter(field, '');
     expand(field, false);
@@ -422,8 +458,11 @@ function settle (field) {
             field.value = current ? labelOf(current) : '';
     }
 
-    if (!chose)
+    if (!chose) {
         filter(field, '');
+        if (!isMultiple(field))
+            syncLead(field, currentOf(field));
+    }
 }
 
 // suppress native change from search typing in choice comboboxes; choose() dispatches the real one
@@ -439,12 +478,22 @@ document.addEventListener('beforeinput', event => {
 });
 
 document.addEventListener('input', event => {
+    if (event.target instanceof HTMLInputElement && event.target.type === 'range') {
+        fillRange(event.target);
+        return;
+    }
+
     if (!isInteractiveCombobox(event.target))
         return;
 
     filter(event.target, event.target.value);
     expand(event.target, true);
     listOf(event.target).scrollTop = 0;
+});
+
+document.addEventListener('reset', event => {
+    if (event.target instanceof HTMLFormElement)
+        requestAnimationFrame(() => refresh(event.target));
 });
 
 // keep focus in the combobox when clicking the list, while still allowing scrollbar drags

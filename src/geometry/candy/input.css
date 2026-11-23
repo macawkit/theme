@@ -1,4 +1,4 @@
-:is(input:not([type=checkbox], [type=radio]), select, textarea) {
+:is(input:not([type=checkbox], [type=radio], [type=range], [type=submit], [type=reset], [type=button], [type=hidden]), select, textarea) {
     --field-surface: var(--mtt-color-body);
     --rim-color: var(--mtt-color-line);
     --halo: color-mix(in srgb, var(--rim-color) 0%, #0000);
@@ -19,6 +19,10 @@
     transition:
         background-color var(--transition),
         box-shadow var(--transition);
+
+    &:is(:hover, .hover):where(:not(:disabled, [aria-disabled=true], :user-invalid, [aria-invalid=true], .error)) {
+        --rim-color: var(--mtt-color-line-highlight);
+    }
 
     &:is(:focus, .focus) {
         --rim-color: var(--mtt-color-line-decorated);
@@ -52,6 +56,72 @@
             right calc(var(--chevron-end) + var(--chevron)) center / var(--chevron) var(--chevron),
         linear-gradient(to bottom right, var(--mtt-color-text-muted) calc(50% - .75px), #0000 calc(50% + .75px))
             right var(--chevron-end) center / var(--chevron) var(--chevron);
+}
+
+input[type=range] {
+    --range-track:
+        linear-gradient(to right, #0000 var(--value, 0%), var(--background) 0),
+        var(--candy-stripes),
+        var(--gloss),
+        var(--fill-color);
+    --thumb-elevation: var(--raise-low);
+    --thumb-scale: 1;
+    --thumb-outline: none;
+
+    &:is(:hover, .hover):not(:disabled, [aria-disabled=true]) {
+        --thumb-elevation: var(--raise);
+        --thumb-scale: 1.12;
+    }
+
+    &:is(:active, .active):not(:disabled, [aria-disabled=true]) {
+        --thumb-scale: var(--press-squeeze);
+    }
+
+    &:is(:focus-visible, .focus) {
+        --thumb-outline: var(--highlight-thickness) solid color-mix(in srgb, var(--mtt-color-line-decorated) 70%, #0000);
+    }
+
+    &::-webkit-slider-runnable-track {
+        border-radius: var(--pill);
+        background: var(--range-track);
+        box-shadow: inset 0 0 0 1px var(--mtt-color-line-dimmed);
+    }
+
+    &::-moz-range-track {
+        border-radius: var(--pill);
+        background: var(--range-track);
+        box-shadow: inset 0 0 0 1px var(--mtt-color-line-dimmed);
+    }
+
+    &::-webkit-slider-thumb {
+        border-radius: 50%;
+        background: var(--gloss), var(--mtt-color-text-brightest);
+        box-shadow:
+            inset 0 0 0 var(--rim) var(--fill-color),
+            var(--thumb-elevation),
+            0 0 var(--glow-radius) var(--glow-color);
+        transform: scale(var(--thumb-scale));
+        outline: var(--thumb-outline);
+        outline-offset: 2px;
+        transition:
+            transform var(--transition-bounce),
+            box-shadow var(--transition);
+    }
+
+    &::-moz-range-thumb {
+        border-radius: 50%;
+        background: var(--gloss), var(--mtt-color-text-brightest);
+        box-shadow:
+            inset 0 0 0 var(--rim) var(--fill-color),
+            var(--thumb-elevation),
+            0 0 var(--glow-radius) var(--glow-color);
+        transform: scale(var(--thumb-scale));
+        outline: var(--thumb-outline);
+        outline-offset: 2px;
+        transition:
+            transform var(--transition-bounce),
+            box-shadow var(--transition);
+    }
 }
 
 /* :not([type]) matches the (0,1,1) specificity of the shared field rule above */
@@ -93,5 +163,9 @@ textarea:not([type]) {
             pointer-events: none;
             background-color: var(--mtt-color-text-muted);
         }
+    }
+
+    label:has(> [data-mtt-lead]) > [data-mtt-lead] {
+        --field-inset: calc(var(--margin-tight) + 2px);
     }
 }

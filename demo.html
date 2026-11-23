@@ -247,8 +247,10 @@
                     <li role="presentation">Dark</li>
                     <li role="option" id="palette-hyacinth" data-palette="hyacinth" aria-current="true">Hyacinth</li>
                     <li role="option" id="palette-mulberry" data-palette="mulberry">Mulberry</li>
+                    <li role="option" id="palette-tempest" data-palette="tempest">Tempest</li>
                     <li role="presentation">Light</li>
                     <li role="option" id="palette-cream" data-palette="cream">Cream</li>
+                    <li role="option" id="palette-glacier" data-palette="glacier">Glacier</li>
                     <li role="option" id="palette-sunset" data-palette="sunset">Sunset</li>
                 </ul>
             </fieldset>
@@ -779,6 +781,35 @@
                         <small>Server time</small>
                     </label>
                     <label>
+                        Marker color
+                        <input role="combobox" inputmode="none" aria-controls="marker-colors" aria-expanded="false" autocomplete="off" value="Alerts">
+                        <input type="hidden" name="marker" value="3">
+                        <small>Combobox with .swatch options</small>
+                    </label>
+                    <ul role="listbox" id="marker-colors" aria-label="Marker color" popover="manual">
+                        <li role="option" id="mc-none" data-value="">None</li>
+                        <li role="option" id="mc-1" data-value="1"><span class="swatch" aria-hidden="true" style="--color: var(--color-category-1)"></span>Personal</li>
+                        <li role="option" id="mc-3" data-value="3"><span class="swatch" aria-hidden="true" style="--color: var(--color-category-3)"></span>Alerts</li>
+                        <li role="option" id="mc-5" data-value="5"><span class="swatch" aria-hidden="true" style="--color: var(--color-category-5)"></span>Billing</li>
+                        <li role="option" id="mc-7" data-value="7"><span class="swatch" aria-hidden="true" style="--color: var(--color-category-7)"></span>Ops</li>
+                        <li role="option" id="mc-8" data-value="8"><span class="swatch" aria-hidden="true" style="--color: var(--color-category-8)"></span>System</li>
+                    </ul>
+                    <label>
+                        Accent
+                        <input type="color" value="#fb80ca">
+                        <small>The browser's picker, the kit's chrome</small>
+                    </label>
+                    <label>
+                        Concurrency
+                        <input type="range" min="1" max="32" value="12">
+                        <small>1–32 parallel SMTP sessions</small>
+                    </label>
+                    <label>
+                        TLS certificate
+                        <input type="file" accept=".pem,.crt">
+                        <small>PEM-encoded chain</small>
+                    </label>
+                    <label>
                         Domain
                         <input value="example..com" aria-invalid="true">
                         <small><i class="icon i-error"></i>Two dots in a row</small>
@@ -838,8 +869,8 @@
                     </div>
                 </div>
                 <footer>
-                    <button type="reset" class="ghost">Reset</button>
-                    <button>Save</button>
+                    <input type="reset" class="ghost" value="Reset">
+                    <input type="submit" value="Save">
                 </footer>
             </form>
         </section>

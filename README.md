@@ -37,7 +37,7 @@ Or link the built files directly without a bundler:
 - **`theme.css`** — shared structure and behavior across all geometries.
 - **Geometry** — shape, typography, and motion: `shell` (sharp, chipped, console-lit) or `candy` (rounded, glossy, soft).
 - **Palette** — colors: `hyacinth` and `mulberry` (dark), `cream` (light), and `sunset` (warm orange). Any geometry pairs with any palette.
-- **`icon.css`** — required even if you don't use `<i class="icon i-…"></i>`; it also supplies checkbox ticks, option checkmarks, date/time pickers, and search icons. Icons use `data:` URIs, so a strict CSP needs `img-src data:`.
+- **`icon.css`** — required even if you don't use `<i class="icon i-…"></i>`; it also supplies checkbox ticks, option checkmarks, date/time/file pickers, and search icons. Icons use `data:` URIs, so a strict CSP needs `img-src data:`.
 - **`general.js`** — powers tabs, comboboxes, sparklines, fallback meters, and a `commandfor` polyfill. See [Script](#script).
 
 ## Layout
@@ -107,7 +107,7 @@ Gap-spaced containers (`.stack`, `.row`, `.tiles`, `.card`, `.alert`, `.empty`, 
 
 ### Buttons
 
-- `button`, or `.button` on `<a>` or `<label>`.
+- `button`, `<input type="submit|reset|button">`, or `.button` on `<a>` or `<label>`.
 - Variants: `.alt` (secondary), `.ghost` (transparent until hovered), `.danger` (destructive), `.small` (compact height).
 - **Toggles**: use `aria-pressed` on a `<button>`, or wrap a checkbox/radio in `<label class="button">` so it stays natively focusable and submits with forms.
 - **Icon buttons**: icons receive equal horizontal and vertical inset, making icon-only buttons square: `<button class="alt" title="Retry"><i class="icon i-refresh"></i></button>`. Always provide `title` or `aria-label`.
@@ -156,7 +156,7 @@ Each palette also defines 16 non-semantic category colors (`--color-category-1` 
 
 ## Forms
 
-Use plain `input`, `select`, and `textarea` elements inside `<label>`, with label text before the control and an optional `<small>` hint after it. A `<fieldset>` lays out its labels in a vertical grid with `<legend>` as the heading. `:user-invalid` or `aria-invalid="true"` styles the field as invalid and turns its `<small>` hint to the danger tone. `<input type="checkbox" class="switch">` renders a toggle switch.
+Use plain `input`, `select`, and `textarea` elements inside `<label>`, with label text before the control and an optional `<small>` hint after it. A `<fieldset>` lays out its labels in a vertical grid with `<legend>` as the heading. `:user-invalid` or `aria-invalid="true"` styles the field as invalid and turns its `<small>` hint to the danger tone. `<input type="checkbox" class="switch">` renders a toggle switch; `<input type="color">`, `<input type="range">`, and `<input type="file">` are styled natively (standalone `<input type="color">` collapses to a compact square/circle swatch).
 
 ### Combobox
 
@@ -179,6 +179,7 @@ Pair an `<input role="combobox">` with a `[role="listbox"][popover]` linked by `
 - **Dropdown**: add `inputmode="none"` to make it click/keyboard-only while keeping native `required` validation.
 - **Single choice**: a trailing `<input type="hidden">` restricts selection to listed options; the hidden input submits `data-value` while the visible field displays `data-label` (or text content). An option with `data-value=""` acts as the empty/reset option (e.g. "All students").
 - **Multi-select**: add `aria-multiselectable="true"` on the listbox and place a `<input type="checkbox">` inside each option. The list stays open while toggling, checkboxes submit the form values, and the field shows a comma-separated summary.
+- **Rich options & leading markers**: options can contain custom HTML—such as `<span class="swatch" aria-hidden="true" style="--color: var(--color-category-3)"></span>`, `<i class="icon i-…"></i>`, `<svg>`, `<img>`, or trailing `<small>` hints. In single-choice comboboxes and dropdowns (except `type="search"`), a leading `.swatch`, `i.icon`, `svg`, or `img` on the chosen option is automatically mirrored inside the closed field, making it easy to build palette color pickers, icon dropdowns, or avatar selectors without custom controls.
 - **Helpers**: `data-find` adds extra search terms, `data-empty` sets the empty-state message, and `role="presentation"` renders sticky group headings.
 - **Events**: `change` fires only when the value actually changes (matching `<select>`). To select an option programmatically, call `option.click()`.
 
@@ -211,7 +212,7 @@ Clicking or using Arrow keys, Home, and End switches tabs (skipping disabled tab
 
 ## Script
 
-`general.js` uses document-level event delegation, so dynamically added tabs, comboboxes, and dialog triggers work automatically. Elements that require initialization—sparks, fallback meters, `data-open` dialogs, new tablists, and scripted checkbox changes in multi-select comboboxes—are initialized on load. After inserting or updating those dynamically, call `mtt.refresh()` (or `mtt.refresh(element)` to scope it to a subtree).
+`general.js` uses document-level event delegation, so dynamically added tabs, comboboxes, and dialog triggers work automatically. Elements that require initialization—sparks, fallback meters, range fills, `data-open` dialogs, new tablists, and scripted combobox changes—are initialized on load. After inserting or updating those dynamically, call `mtt.refresh()` (or `mtt.refresh(element)` to scope it to a subtree).
 
 ## Licenses
 
