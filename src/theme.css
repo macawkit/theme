@@ -153,6 +153,50 @@ details[open] > summary::after {
     rotate: -90deg;
 }
 
+@supports (interpolate-size: allow-keywords) {
+    details {
+        interpolate-size: allow-keywords;
+
+        > summary {
+            transition:
+                padding-bottom var(--transition),
+                margin-bottom var(--transition),
+                min-height var(--transition),
+                background-size var(--transition);
+        }
+
+        &::details-content {
+            display: flow-root;
+            min-block-size: 0;
+            block-size: 0;
+            opacity: 0;
+            overflow: clip;
+            transition:
+                block-size var(--transition),
+                opacity var(--transition),
+                content-visibility var(--transition) allow-discrete;
+        }
+
+        &[open]::details-content {
+            block-size: auto;
+            opacity: 1;
+        }
+
+        &:is(.card, .stack) {
+            transition: gap var(--transition);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            &,
+            > summary,
+            > summary::after,
+            &::details-content {
+                transition: none;
+            }
+        }
+    }
+}
+
 @keyframes mtt-stuck {
     from {
         opacity: 0;
@@ -167,6 +211,7 @@ header.sticky {
     position: sticky;
     top: var(--page-inset-top, 0px);
     z-index: 2;
+    flex: none;
     min-height: calc(var(--element-height-small) + var(--margin-tight) * 2);
     margin-inline: calc(-1 * (var(--margin) + var(--page-inset-start, 0px))) calc(-1 * var(--margin));
     padding: var(--margin-tight) var(--margin) var(--margin-tight) calc(var(--margin) + var(--page-inset-start, 0px));
@@ -214,6 +259,10 @@ footer {
     align-items: center;
     justify-content: flex-end;
     gap: var(--margin-tight);
+}
+
+:where(details > summary) {
+    margin-bottom: 0;
 }
 
 :where(header, details[open] > summary) {
@@ -551,7 +600,8 @@ code {
     margin-block: 0;
 }
 
-:where(.panel, .well, dt, dd) > :where(:first-child:not(dialog, [popover])) {
+:where(.panel, .well, dt, dd) > :where(:first-child:not(dialog, [popover])),
+details > :where(summary + :not(dialog, [popover])) {
     margin-block-start: 0;
 }
 
@@ -658,6 +708,18 @@ code {
     isolation: isolate;
 }
 
+details:is(.card, .stack) {
+    gap: 0;
+
+    &[open] {
+        gap: var(--margin);
+    }
+
+    &.tight[open] {
+        gap: var(--margin-tight);
+    }
+}
+
 .card.compact {
     --card-wash: 16%;
     --card-ground: color-mix(in srgb, var(--color) var(--card-wash), var(--mtt-color-panel));
@@ -735,16 +797,6 @@ a.card.compact {
     isolation: isolate;
 }
 
-.app:has(> .page) {
-    height: 100vh;
-    height: 100dvh;
-
-    > :is(aside, .page) {
-        min-height: 0;
-        overflow-y: auto;
-    }
-}
-
 .app {
     display: grid;
     grid-template-columns: var(--nav-width) minmax(0, 1fr);
@@ -752,8 +804,16 @@ a.card.compact {
     min-height: 100dvh;
 }
 
-.app:has(> header) {
-    grid-template-rows: auto 1fr;
+.app:has(> header:not(.mobile)) {
+    grid-template-rows: auto minmax(0, 1fr);
+}
+
+.app:has(> footer) {
+    grid-template-rows: minmax(0, 1fr) auto;
+}
+
+.app:has(> header:not(.mobile)):has(> footer) {
+    grid-template-rows: auto minmax(0, 1fr) auto;
 }
 
 .app > header {
@@ -764,11 +824,14 @@ a.card.compact {
 }
 
 .app > :is(aside, aside + *) {
-    display: flex;
     flex-direction: column;
     gap: var(--margin);
     min-width: 0;
     padding: var(--margin);
+}
+
+.app > :is(aside:not([popover]), aside[popover]:popover-open, aside + *) {
+    display: flex;
 }
 
 .app > aside + * {
@@ -778,53 +841,242 @@ a.card.compact {
     padding-inline-start: calc(var(--margin) + var(--page-inset-start));
 }
 
+.app > footer {
+    justify-content: flex-start;
+    margin: 0;
+    padding: var(--margin-tight) var(--margin) var(--margin);
+    min-width: 0;
+}
+
+@media (width >= 600px) {
+    .mobile,
+    .app > aside[popover] > button[popovertargetaction=hide] {
+        display: none !important;
+    }
+
+    /* zero specificity overrides UA [popover] defaults while letting geometry styles win */
+    :where(.app > aside[popover]) {
+        display: flex;
+        position: static;
+        inset: auto;
+        width: auto;
+        height: auto;
+        margin: 0;
+        border: 0;
+        color: inherit;
+        background: transparent;
+        overflow: visible;
+        translate: none;
+    }
+
+    .app:has(> .page) {
+        height: 100vh;
+        height: 100dvh;
+
+        > :is(aside, .page) {
+            min-height: 0;
+            overflow-y: auto;
+        }
+    }
+
+    .app:has(> footer) {
+        > aside {
+            grid-column: 1;
+            grid-row: 1;
+        }
+
+        > footer {
+            grid-column: 1;
+            grid-row: 2;
+        }
+
+        > aside + * {
+            grid-column: 2;
+            grid-row: 1 / -1;
+        }
+    }
+
+    .app:has(> header:not(.mobile)):has(> footer) {
+        > aside {
+            grid-row: 2;
+        }
+
+        > footer {
+            grid-row: 3;
+        }
+
+        > aside + * {
+            grid-row: 2 / -1;
+        }
+    }
+}
+
 .page:has(> header.sticky) {
     scroll-padding-top: calc(var(--element-height) + var(--margin) + var(--page-inset-top, 0px));
 }
 
-.app > aside > :where(:last-child:not(:first-child, nav)) {
+.app > aside > :where(:last-child:not(:first-child, button[popovertargetaction=hide] + *, nav, button[popovertargetaction=hide])) {
     margin-block-start: auto;
 }
 
 @media (width < 600px) {
+    :root:has(.app:has(> aside[popover]) > header) {
+        scroll-padding-top: calc(var(--element-height-small) + var(--margin) * 2);
+    }
+
+    body:has(.app > aside[popover]:popover-open) {
+        overflow: hidden;
+    }
+
     .app {
-        grid-template-columns: minmax(0, 1fr);
-        grid-template-rows: auto 1fr;
+        display: flex;
+        flex-direction: column;
     }
 
-    .app:has(> header) {
-        grid-template-rows: auto auto 1fr;
+    .app > aside + * {
+        flex: 1 0 auto;
     }
 
-    .app > aside {
-        flex-direction: row;
-        flex-wrap: wrap;
-        align-items: center;
+    .app > footer {
+        padding: var(--margin);
     }
 
-    .app > aside > nav {
-        flex: 1 1 100%;
-        min-width: 0;
+    /* inline horizontal sidebar when aside is not a popover drawer */
+    .app:not(:has(> aside[popover])) {
+        > aside {
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: var(--margin-tight);
+            padding: var(--margin-tight) var(--margin);
+        }
+
+        > aside > nav {
+            flex: 1 1 100%;
+            min-width: 0;
+        }
+
+        > aside > nav:not(.tabs, .crumbs, .pages, :has(> :is(ul, ol))),
+        > aside > nav:not(.tabs, .crumbs, .pages) > :is(ul, ol) {
+            flex-direction: row;
+            overflow-x: auto;
+            overscroll-behavior-x: contain;
+            padding: var(--overhang);
+            margin: calc(-1 * var(--overhang));
+        }
+
+        > aside > nav > :is(ul, ol) > li,
+        > aside > nav > a {
+            flex: none;
+        }
+
+        > aside > nav:not(.tabs, .crumbs, .pages) a {
+            white-space: nowrap;
+            height: var(--element-height);
+            padding: 0 var(--margin);
+        }
     }
 
-    .app > aside > nav:not(.tabs, .crumbs, .pages, :has(> :is(ul, ol))),
-    .app > aside > nav:not(.tabs, .crumbs, .pages) > :is(ul, ol) {
-        flex-direction: row;
-        overflow-x: auto;
-        overscroll-behavior-x: contain;
-        padding: var(--overhang);
-        margin: calc(-1 * var(--overhang));
+    /* native popover mobile drawer: slim sticky header + top-layer slide-in aside */
+    .app:has(> aside[popover]) {
+        > header {
+            position: sticky;
+            top: 0;
+            z-index: 4;
+            flex-wrap: nowrap;
+            justify-content: flex-start;
+            min-height: calc(var(--element-height-small) + var(--margin-tight) * 2);
+            padding: var(--margin-tight) var(--margin);
+
+            > button[popovertarget] + * {
+                margin-inline-end: auto;
+                min-width: 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+        }
+
+        /* avoid stacking a second sticky bar underneath a sticky mobile app bar */
+        &:has(> header) > aside + * > header.sticky {
+            position: static;
+            min-height: calc(var(--element-height-small) + var(--header-inset));
+            margin-inline: 0;
+            margin-block: 0;
+            padding: 0 0 var(--header-inset);
+            container-type: normal;
+
+            &::before {
+                content: none;
+            }
+        }
     }
 
-    .app > aside > nav > :is(ul, ol) > li,
-    .app > aside > nav > a {
-        flex: none;
+    :where(.app > aside[popover]) {
+        margin: 0;
+        border: 0;
+        color: var(--mtt-color-text);
     }
 
-    .app > aside > nav:not(.tabs, .crumbs, .pages) a {
-        white-space: nowrap;
-        height: var(--element-height);
-        padding: 0 var(--margin);
+    .app > aside[popover] {
+        position: fixed;
+        inset-block: 0;
+        inset-inline-start: 0;
+        inset-inline-end: auto;
+        width: min(85vw, calc(var(--nav-width) * 1.35));
+        max-width: 100%;
+        height: auto;
+        gap: var(--margin-tight);
+        overflow-x: hidden;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        translate: -100% 0;
+        transition:
+            translate var(--transition),
+            overlay var(--transition) allow-discrete,
+            display var(--transition) allow-discrete;
+
+        &::backdrop {
+            opacity: 0;
+            transition:
+                opacity var(--transition),
+                overlay var(--transition) allow-discrete,
+                display var(--transition) allow-discrete;
+        }
+
+        &:popover-open {
+            translate: 0 0;
+
+            &::backdrop {
+                opacity: 1;
+            }
+
+            @starting-style {
+                translate: -100% 0;
+
+                &::backdrop {
+                    opacity: 0;
+                }
+            }
+        }
+
+        > button[popovertargetaction=hide] {
+            position: absolute;
+            top: var(--margin-tight);
+            inset-inline-end: var(--margin-tight);
+            z-index: 1;
+        }
+
+        > button[popovertargetaction=hide] + * {
+            padding-inline-end: var(--element-height);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            &,
+            &::backdrop {
+                transition: none;
+            }
+        }
     }
 }
 

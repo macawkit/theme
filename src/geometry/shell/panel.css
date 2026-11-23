@@ -88,7 +88,7 @@ dialog::backdrop {
 }
 
 header,
-details[open] > summary {
+details > summary {
     background:
         linear-gradient(var(--mtt-color-text-decorated), var(--mtt-color-text-decorated)) 0 100% / calc(var(--chip) * 2) 1px no-repeat,
         linear-gradient(var(--mtt-color-line-highlight), var(--mtt-color-line-highlight)) 100% 100% / var(--chip) 1px no-repeat,
@@ -96,9 +96,22 @@ details[open] > summary {
     background-origin: border-box;
 }
 
+details:not([open]) > summary {
+    background-size: 0 1px, 0 1px, 0 1px;
+}
+
+header.sticky {
+    --sticky-start: calc(var(--margin) + var(--page-inset-start, 0px));
+    background:
+        linear-gradient(var(--mtt-color-text-decorated), var(--mtt-color-text-decorated)) var(--sticky-start) 100% / calc(var(--chip) * 2) 1px no-repeat,
+        linear-gradient(var(--mtt-color-line-highlight), var(--mtt-color-line-highlight)) calc(100% - var(--margin)) 100% / var(--chip) 1px no-repeat,
+        linear-gradient(var(--mtt-color-line-dimmed), var(--mtt-color-line-dimmed)) var(--sticky-start) 100% / calc(100% - var(--sticky-start) - var(--margin)) 1px no-repeat;
+}
+
 header.sticky::before {
-    background-color: color-mix(in srgb, var(--mtt-color-panel) 90%, #0000);
-    backdrop-filter: blur(8px);
+    background-color: var(--mtt-color-panel);
+    border-bottom: 1px solid var(--mtt-color-line-dimmed);
+    box-shadow: 0 6px 16px -8px color-mix(in srgb, var(--shadow-color) min(var(--shadow-strength) * 2, 100%), #0000);
 }
 
 .numbered:not(nav) {
@@ -123,14 +136,35 @@ header.sticky::before {
     background-color: var(--mtt-color-panel);
 }
 
-.app > aside {
+.app > aside,
+.app > footer {
     background-color: var(--mtt-color-panel);
     border-inline-end: 1px solid var(--mtt-color-line-dimmed);
 }
 
+.app > aside[popover]::backdrop {
+    background-color: color-mix(in srgb, var(--mtt-color-body) var(--glow-strength), #0000);
+}
+
 @media (width < 600px) {
-    .app > aside {
+    .app:not(:has(> aside[popover])) > aside {
         border-inline-end: 0;
         border-bottom: 1px solid var(--mtt-color-line-dimmed);
+    }
+
+    .app > aside[popover] {
+        box-shadow: 8px 0 24px -8px color-mix(in srgb, var(--shadow-color) min(var(--shadow-strength) * 2.5, 100%), #0000);
+    }
+
+    .app:has(> aside[popover]):has(> header) > aside + * > header.sticky {
+        background:
+            linear-gradient(var(--mtt-color-text-decorated), var(--mtt-color-text-decorated)) 0 100% / calc(var(--chip) * 2) 1px no-repeat,
+            linear-gradient(var(--mtt-color-line-highlight), var(--mtt-color-line-highlight)) 100% 100% / var(--chip) 1px no-repeat,
+            linear-gradient(var(--mtt-color-line-dimmed), var(--mtt-color-line-dimmed)) 0 100% / 100% 1px no-repeat;
+    }
+
+    .app > footer {
+        border-inline-end: 0;
+        border-top: 1px solid var(--mtt-color-line-dimmed);
     }
 }

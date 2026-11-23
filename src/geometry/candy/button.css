@@ -154,7 +154,7 @@ nav.pages a,
 }
 
 @media (width < 600px) {
-    .app > aside > nav:not(.tabs, .crumbs, .pages) {
+    .app:not(:has(> aside[popover])) > aside > nav:not(.tabs, .crumbs, .pages) {
         & > :is(ul, ol) {
             background: var(--groove);
         }

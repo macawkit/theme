@@ -34,7 +34,7 @@ nav.pages a:not([rel])::after,
 }
 
 @media (width < 600px) {
-    .app > aside > nav:not(.tabs, .crumbs, .pages) a::after {
+    .app:not(:has(> aside[popover])) > aside > nav:not(.tabs, .crumbs, .pages) a::after {
         top: auto;
         bottom: 0;
         width: 100%;

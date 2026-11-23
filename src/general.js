@@ -202,6 +202,13 @@ if (document.readyState === 'loading')
 else
     refresh();
 
+// dismiss an open mobile drawer popover if the viewport widens to desktop
+matchMedia('(width >= 600px)').addEventListener('change', event => {
+    if (event.matches)
+        for (const aside of document.querySelectorAll('.app > aside[popover]:popover-open'))
+            aside.hidePopover();
+});
+
 function pickerTarget (button) {
     const id = button.getAttribute('popovertarget');
     const target = id ? document.getElementById(id) : null;
@@ -759,6 +766,12 @@ document.addEventListener('click', event => {
         const control = clear.parentElement?.querySelector(':scope > :is(input[role=combobox], button.picker[popovertarget])');
         if (control)
             clearControl(control);
+        return;
+    }
+
+    const drawerLink = event.target.closest('.app > aside[popover]:popover-open nav a');
+    if (drawerLink) {
+        drawerLink.closest('[popover]').hidePopover();
         return;
     }
 

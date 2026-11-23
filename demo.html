@@ -26,21 +26,14 @@
     </script>
     <link rel="stylesheet" href="src/icon.css">
     <style>
-        /* place the two theme pickers side by side when the sidebar stacks on narrow viewports */
-        @media (width < 600px) {
-            #look {
-                flex: 1 1 100%;
-            }
-
-            #look > fieldset {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-        }
-
-        /* cap content width on ultrawide displays */
-        .app > main > * {
+        /* cap content width on ultrawide displays without breaking full-bleed sticky headers */
+        .app > main > :not(header.sticky) {
             width: 100%;
             max-width: 1400px;
+        }
+
+        .app > main > header.sticky {
+            padding-inline-end: max(var(--sticky-end, var(--margin)), calc(100% - 1400px + var(--sticky-end, var(--margin))));
         }
 
         /* palette swatches: color chip, palette name, and token role */
@@ -226,7 +219,12 @@
 </head>
 <body>
 <div class="app numbered">
-    <aside>
+    <header class="mobile">
+        <button type="button" class="ghost small" popovertarget="nav" aria-label="Menu"><i class="icon i-menu" aria-hidden="true"></i></button>
+        <strong>@macawkit/theme</strong>
+    </header>
+    <aside id="nav" popover>
+        <button type="button" class="ghost small" popovertarget="nav" popovertargetaction="hide" aria-label="Close menu"><i class="icon i-x" aria-hidden="true"></i></button>
         <strong>@macawkit/theme</strong>
         <form id="look">
             <fieldset>
@@ -273,7 +271,6 @@
                 <li><a href="#bar">App bar</a></li>
             </ol>
         </nav>
-        <small>0.5.0 · MIT · <a href="https://github.com/macawkit/theme">Source</a><br>This page is an <code>.app</code> itself</small>
     </aside>
 
     <main class="page">
@@ -1329,6 +1326,7 @@
                         <span class="row"><span class="box"><i class="icon i-check"></i></span><code class="small">check</code></span>
                         <span class="row"><span class="box"><i class="icon i-calendar"></i></span><code class="small">calendar</code></span>
                         <span class="row"><span class="box"><i class="icon i-clock"></i></span><code class="small">clock</code></span>
+                        <span class="row"><span class="box"><i class="icon i-menu"></i></span><code class="small">menu</code></span>
                     </div>
                 </div>
             </section>
@@ -1408,7 +1406,7 @@
                                 </form>
                             </div>
                         </div>
-                        <small><code>.center</code> is a page of one thing in the middle of the window: a sign-in, a confirmation, an error. <code>.app</code> is this very page, the column on the side and the page beside it. On a phone the column goes over the page as a row.</small>
+                        <small><code>.center</code> is a page of one thing in the middle of the window: a sign-in, a confirmation, an error. <code>.app</code> is this very page, the column on the side and the page beside it. Give <code>aside</code> a native <code>popover</code> and on a phone it tucks into a drawer behind a slim top bar while any <code>footer</code> moves below the page.</small>
                     </div>
                 </section>
 
@@ -1465,6 +1463,9 @@
             </div>
         </section>
     </main>
+    <footer>
+        <small>0.5.0 · MIT · <a href="https://github.com/macawkit/theme">Source</a><br>This page is an <code>.app</code> itself</small>
+    </footer>
 </div>
 <script>
     document.getElementById('dmarc').indeterminate = true;

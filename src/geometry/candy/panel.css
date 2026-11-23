@@ -87,45 +87,98 @@ dialog::backdrop {
     border-end-end-radius: var(--radius);
 }
 
+.app > footer {
+    background-color: var(--mtt-color-panel);
+    border-inline-end: 1px solid var(--mtt-color-line-dimmed);
+    border-end-end-radius: var(--radius);
+}
+
+.app > aside[popover]::backdrop {
+    background-color: color-mix(in srgb, var(--mtt-color-body) var(--glow-strength), #0000);
+}
+
+@media (width >= 600px) {
+    .app:has(> footer) > aside {
+        border-end-end-radius: 0;
+    }
+
+    /* extend .page under the rounded sidebar edge so its backdrop fills the outer corner */
+    .app:not(:has(> header:not(.mobile))) {
+        > aside,
+        > footer {
+            position: relative;
+            z-index: 1;
+        }
+
+        > aside + .page {
+            --page-inset-start: var(--radius);
+            margin-inline-start: calc(-1 * var(--page-inset-start));
+        }
+    }
+}
+
 @media (width < 600px) {
-    .app > aside {
+    .app:not(:has(> aside[popover])) > aside {
         border-inline-end: 0;
         border-bottom: 1px solid var(--mtt-color-line-dimmed);
         border-radius: 0 0 var(--radius) var(--radius);
     }
-}
 
-header.sticky::before {
-    background-color: color-mix(in srgb, var(--mtt-color-body) 85%, #0000);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--mtt-color-line-dimmed);
-    box-shadow: var(--raise-low);
-}
-
-/* extend .page under the rounded sidebar edge so its backdrop fills the outer corner */
-.app:not(:has(> header)) {
-    > aside {
+    .app:not(:has(> header:not(.mobile))) > aside:not([popover]) {
         position: relative;
         z-index: 1;
     }
 
-    > aside + .page {
-        @media (width >= 600px) {
-            --page-inset-start: var(--radius);
-            margin-inline-start: calc(-1 * var(--page-inset-start));
-        }
+    .app > header.mobile {
+        background-color: var(--mtt-color-panel);
+        border-bottom: 1px solid var(--mtt-color-line-dimmed);
+        border-radius: 0 0 var(--radius) var(--radius);
+        box-shadow: var(--raise-low);
+    }
 
-        @media (width < 600px) {
-            --page-inset-top: var(--radius);
-            margin-block-start: calc(-1 * var(--page-inset-top));
-        }
+    .app > aside[popover] {
+        box-shadow: var(--raise-high);
+    }
+
+    .app > footer {
+        border-inline-end: 0;
+        border-top: 1px solid var(--mtt-color-line-dimmed);
+        border-radius: 0;
+    }
+
+    /* extend .page under the rounded top bar so the sky fills its outer corners */
+    .app:is(:has(> header.mobile), :not(:has(> header, > aside[popover]))) > aside + .page {
+        --page-inset-top: var(--radius);
+        margin-block-start: calc(-1 * var(--page-inset-top));
     }
 }
 
-.app:has(> header) {
+/* floating rounded bar concentric with .small pills, inset evenly from top, sidebar, and scrollbar */
+header.sticky {
+    --sticky-end: var(--margin-tight);
+    top: calc(var(--page-inset-top, 0px) + var(--margin-tight));
+    margin-inline: calc(-1 * var(--margin-tight));
+    margin-block-start: calc(-1 * var(--margin-minimal));
+    padding: var(--margin-tight);
+
+    &::before {
+        inset: 0;
+        background-color: var(--mtt-color-panel);
+        border: 1px solid var(--mtt-color-line-dimmed);
+        border-radius: var(--radius);
+        box-shadow: var(--raise);
+    }
+}
+
+.page:has(> header.sticky) {
+    scroll-padding-top: calc(var(--element-height) + var(--margin) + var(--margin-tight) + var(--page-inset-top, 0px));
+}
+
+.app:has(> header:not(.mobile)) {
     background-color: var(--mtt-color-panel);
 
-    > aside {
+    > aside,
+    > footer {
         background: none;
         border: 0;
         border-radius: 0;
@@ -142,6 +195,24 @@ header.sticky::before {
         @media (width < 600px) {
             border-inline-start: 0;
             border-start-end-radius: var(--radius);
+        }
+    }
+
+    @media (width < 600px) {
+        > header {
+            background-color: var(--mtt-color-panel);
+        }
+
+        > aside[popover] {
+            background-color: var(--mtt-color-panel);
+            border-inline-end: 1px solid var(--mtt-color-line-dimmed);
+            border-start-end-radius: var(--radius);
+            border-end-end-radius: var(--radius);
+            box-shadow: var(--raise-high);
+        }
+
+        > footer {
+            border-top: 1px solid var(--mtt-color-line-dimmed);
         }
     }
 }

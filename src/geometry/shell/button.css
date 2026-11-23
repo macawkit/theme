@@ -303,6 +303,16 @@ nav:not(.tabs, .crumbs, .pages) a {
     }
 }
 
+@media (width < 600px) {
+    .app > aside[popover] > nav:not(.tabs, .crumbs, .pages) a[aria-current] {
+        background: linear-gradient(
+            315deg,
+            #0000 calc(var(--chip) * 0.7071),
+            var(--mtt-color-main-dimmed) calc(var(--chip) * 0.7071 + 0.5px)
+        );
+    }
+}
+
 :is(nav.numbered, .app.numbered > aside > nav):not(.tabs, .crumbs, .pages) {
     counter-reset: mtt-nav;
 

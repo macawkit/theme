@@ -17,6 +17,7 @@ globalThis.HTMLDialogElement = class extends MinimalElement {};
 globalThis.HTMLFormElement = class extends MinimalElement {};
 globalThis.CSS = { supports: () => true, escape: s => s };
 globalThis.ResizeObserver = class { observe () {} };
+globalThis.matchMedia = () => ({ addEventListener () {} });
 const listeners = new Map();
 globalThis.document = {
     readyState: 'complete',

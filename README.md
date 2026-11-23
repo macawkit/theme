@@ -46,20 +46,26 @@ Or link the built files directly without a bundler:
 
 ```html
 <div class="app">
-    <aside>
+    <header class="mobile">
+        <button type="button" class="ghost small" popovertarget="nav" aria-label="Menu"><i class="icon i-menu" aria-hidden="true"></i></button>
+        <strong>Studio</strong>
+    </header>
+    <aside id="nav" popover>
+        <button type="button" class="ghost small" popovertarget="nav" popovertargetaction="hide" aria-label="Close menu"><i class="icon i-x" aria-hidden="true"></i></button>
         <strong>Studio</strong>
         <nav><ul><li><a href="/" aria-current="true">Home</a></li>…</ul></nav>
-        <small>Pinned to the bottom</small>
     </aside>
     <main class="page">…</main>
+    <footer><small>Pinned to the sidebar on desktop, below the page on mobile</small></footer>
 </div>
 ```
 
-- `aside` is the sidebar (width controlled by `--nav-width`). A `nav` inside it renders a vertical link list; `aria-current` marks the active link, a trailing `<small>` inside a link aligns to the end as a count, and wrapping the label in `<span>` truncates long labels with `…` instead of wrapping. The last non-`nav` child sits at the bottom.
+- `aside` is the sidebar (width controlled by `--nav-width`). A `nav` inside it renders a vertical link list; `aria-current` marks the active link, a trailing `<small>` inside a link aligns to the end as a count, and wrapping the label in `<span>` truncates long labels with `…` instead of wrapping. Any trailing non-`nav` child inside `aside` also pins to the bottom of the sidebar.
 - Add `.numbered` to a sidebar `<nav>`, a panel container (such as `<main class="page numbered">` or `.tiles.numbered`), or `.app.numbered` for both: Shell automatically numbers links and panel heads (`01`, `02`, …) via CSS counters while Candy stays unnumbered.
 - The sibling after `aside` is the main content area.
-- A `<header>` before `aside` spans across both the sidebar and the main area as a top bar.
-- Below `600px`, the sidebar stacks above the content and its nav links scroll horizontally.
+- A `<header>` before `aside` spans across both the sidebar and the main area as a top bar. Add `.mobile` to hide it on desktop (`>= 600px`) when you only want a slim mobile drawer bar—or keep a permanent `<header>` and put `.mobile` on just the `<button popovertarget="nav">` trigger inside it.
+- A `<footer>` direct child of `.app` sits at the bottom of the sidebar column on desktop and moves below the main content at the bottom of the page on mobile.
+- Adding native `popover` to `aside` (paired with a `<button popovertarget="…">` trigger and optional `popovertargetaction="hide"` close button) turns it into a pure-CSS slide-out drawer below `600px` with native backdrop, click-outside light-dismiss, `Escape`, and focus restoration (`general.js` only adds auto-close on in-page nav link clicks and desktop resize). Without `popover` on `aside`, it renders inline as a compact horizontal strip above the content on mobile.
 
 ### `.page`: independent pane scrolling
 
@@ -87,8 +93,8 @@ Gap-spaced containers (`.stack`, `.row`, `.tiles`, `.card`, `.alert`, `.empty`, 
 ### Surfaces
 
 - **`.panel`** — primary surface. A `<header>` inside holds a title and actions, wrapping when tight. Headers reserve `--element-height-small` so title-only and `.small`-button heads align across side-by-side panels.
-- **Sticky page head (`header.sticky`)** — pins a page `<header>` to the top of `.page` (or the viewport) and reveals a surface band once scrolled, automatically matching each geometry's `--page-inset-top` / `--page-inset-start` offsets with no JS.
-- **Folded surface (`<details>`)** — native `<details>` with `<summary>` styled like a header and a rotating chevron; composes with `.panel`, `.card`, `.well`, or bare `<details>` with no JS.
+- **Sticky page head (`header.sticky`)** — pins a page `<header>` to the top of `.page` (or the viewport) and reveals a solid theme-native band once scrolled (full-bleed console band on Shell, floating rounded bar on Candy), automatically matching each geometry's `--page-inset-top` / `--page-inset-start` offsets with no JS. Below `600px` inside an `.app` with a sticky `<header>` and popover drawer, it flows normally so two sticky bars never stack.
+- **Folded surface (`<details>`)** — native `<details>` with `<summary>` styled like a header, a rotating chevron, and smooth pure-CSS open/close animation; composes with `.panel`, `.card`, `.well`, or bare `<details>` with no JS.
 - **Back link + heading (`.title`)** — wrap a back button and heading inside `.title` so the heading wraps beside the button while trailing header actions drop below:
 
   ```html

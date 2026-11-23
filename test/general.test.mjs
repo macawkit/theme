@@ -81,15 +81,6 @@ class FakeEvent {
 function matchSingleSelector (el, raw, scope = null) {
     const sel = raw.trim();
     if (!sel) return false;
-    // Handle :scope prefix
-    if (sel.startsWith(':scope > ')) {
-        if (!scope || el.parentNode !== scope) return false;
-        return matchSelector(el, sel.slice(':scope > '.length), scope);
-    }
-    if (sel.startsWith(':scope ')) {
-        if (!scope || !scope.contains(el) || scope === el) return false;
-        return matchSelector(el, sel.slice(':scope '.length), scope);
-    }
 
     // Handle combinators outside parens/brackets
     const parts = splitCombinators(sel);
@@ -403,6 +394,17 @@ class FakeElement {
             this.childNodes.push(node);
         }
     }
+    prepend (...nodes) {
+        const list = [];
+        for (const n of nodes) {
+            if (n === undefined || n === null) continue;
+            const node = typeof n === 'string' ? new TextNode(n) : n;
+            if (node.parentNode) node.parentNode.removeChild(node);
+            node.parentNode = this;
+            list.push(node);
+        }
+        this.childNodes.unshift(...list);
+    }
     removeChild (node) {
         const i = this.childNodes.indexOf(node);
         if (i !== -1) {
@@ -640,6 +642,7 @@ class FakeDocument extends FakeElement {
 }
 
 let resizeCallback = null;
+const mediaListeners = new Map();
 const observed = new Set();
 const rafQueue = [];
 
@@ -658,6 +661,14 @@ globalThis.ResizeObserver = class {
     constructor (cb) { resizeCallback = cb; }
     observe (el) { observed.add(el); }
 };
+globalThis.matchMedia = query => ({
+    media: query,
+    matches: false,
+    addEventListener (type, fn) {
+        if (!mediaListeners.has(query)) mediaListeners.set(query, []);
+        mediaListeners.get(query).push({ type, fn });
+    }
+});
 globalThis.getComputedStyle = el => ({
     paddingLeft: el._paddingLeft ?? '0px',
     paddingRight: el._paddingRight ?? '0px'
@@ -1505,4 +1516,36 @@ test('Clear button (data-clear) for pickers, DDLs, comboboxes, and multiselect',
     // Search combobox gets no injected clear button; orphan clear button click is a no-op
     assert.equal(searchLabel.querySelector('button[data-mtt-clear]'), null);
     orphanClear.dispatchEvent(new FakeEvent('click', { bubbles: true }));
+});
+
+test('Native popover mobile drawer: nav link auto-close and desktop breakpoint dismiss', () => {
+    document.body.replaceChildren();
+
+    const navLink = el('a', { href: '#one' }, ['One']);
+    const aside = el('aside', { id: 'nav', popover: '' }, [
+        el('nav', {}, [el('ul', {}, [el('li', {}, [navLink])])])
+    ]);
+    const app = el('div', { class: 'app' }, [aside, el('main')]);
+    document.body.append(app);
+
+    // Clicking a nav link while the drawer popover is open hides it
+    aside.showPopover();
+    assert.equal(aside._popoverOpen, true);
+    navLink.dispatchEvent(new FakeEvent('click', { bubbles: true }));
+    assert.equal(aside._popoverOpen, false);
+
+    // Clicking a nav link while closed is a no-op
+    navLink.dispatchEvent(new FakeEvent('click', { bubbles: true }));
+    assert.equal(aside._popoverOpen, false);
+
+    // Crossing the desktop breakpoint closes any open drawer popover; non-matching change leaves it open
+    const listeners = mediaListeners.get('(width >= 600px)') ?? [];
+    assert.equal(listeners.length, 1);
+
+    aside.showPopover();
+    listeners[0].fn({ matches: false });
+    assert.equal(aside._popoverOpen, true);
+
+    listeners[0].fn({ matches: true });
+    assert.equal(aside._popoverOpen, false);
 });

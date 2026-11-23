@@ -76,7 +76,7 @@
     }
 }
 
-:is(body:not(:has(.page, .app > header)), .page, .app > header ~ aside + *)::before {
+:is(body:not(:has(.page, .app > header:not(.mobile))), .page, .app > header:not(.mobile) ~ aside + *)::before {
     content: "";
     border-radius: inherit;
     position: absolute;
