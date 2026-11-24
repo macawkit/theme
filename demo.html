@@ -27,13 +27,13 @@
     <link rel="stylesheet" href="src/icon.css">
     <style>
         /* cap content width on ultrawide displays without breaking full-bleed sticky headers */
-        .app > main > :not(header.sticky) {
-            width: 100%;
-            max-width: 1400px;
+        .app > main {
+            --page-width: 1400px;
         }
 
-        .app > main > header.sticky {
-            padding-inline-end: max(var(--sticky-end, var(--margin)), calc(100% - 1400px + var(--sticky-end, var(--margin))));
+        .app > main > :not(header.sticky) {
+            width: 100%;
+            max-width: var(--page-width);
         }
 
         /* palette swatches: color chip, palette name, and token role */

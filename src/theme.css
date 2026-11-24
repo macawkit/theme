@@ -208,14 +208,15 @@ details[open] > summary::after {
 
 /* sticky page head; bleeds across page padding (including geometry insets) and reveals a band once scrolled */
 header.sticky {
+    --sticky-start: calc(var(--margin) + var(--page-inset-start, 0px));
     position: sticky;
     top: var(--page-inset-top, 0px);
     z-index: 2;
     flex: none;
     min-height: calc(var(--element-height-small) + var(--margin-tight) * 2);
-    margin-inline: calc(-1 * (var(--margin) + var(--page-inset-start, 0px))) calc(-1 * var(--margin));
-    padding: var(--margin-tight) var(--margin) var(--margin-tight) calc(var(--margin) + var(--page-inset-start, 0px));
-    margin-block: calc(-1 * var(--margin-tight)) calc(var(--header-inset) - var(--margin-tight));
+    margin-inline: calc(-1 * var(--sticky-start)) calc(-1 * var(--margin));
+    padding: var(--margin-tight) max(var(--margin), calc(100% - var(--page-width, 100%) + var(--margin))) var(--margin-tight) var(--sticky-start);
+    margin-block: var(--margin-tight) calc(var(--header-inset) - var(--margin-tight));
 
     &::before {
         content: "";
@@ -841,6 +842,11 @@ a.card.compact {
     padding-inline-start: calc(var(--margin) + var(--page-inset-start));
 }
 
+/* drop top page padding when a sticky header starts the scrollport so top: 0 sticks at the actual top and starts unstuck */
+.app > aside + :has(> header.sticky) {
+    padding-block-start: var(--page-inset-top);
+}
+
 .app > footer {
     justify-content: flex-start;
     margin: 0;
@@ -998,6 +1004,10 @@ a.card.compact {
         }
 
         /* avoid stacking a second sticky bar underneath a sticky mobile app bar */
+        &:has(> header) > aside + :has(> header.sticky) {
+            padding-block-start: calc(var(--margin) + var(--page-inset-top));
+        }
+
         &:has(> header) > aside + * > header.sticky {
             position: static;
             min-height: calc(var(--element-height-small) + var(--header-inset));
@@ -1425,6 +1435,7 @@ input[role=combobox][inputmode=none] {
 }
 
 [role=listbox][popover] {
+    max-inline-size: calc(100vw - var(--margin) * 2);
     max-height: calc(var(--element-height) * 8);
     overscroll-behavior: contain;
 }
@@ -1434,8 +1445,13 @@ input[role=combobox][inputmode=none] {
     align-items: center;
     gap: var(--margin-tight);
     min-height: var(--element-height);
-    padding: 0 var(--margin-tight);
+    padding: var(--margin-minimal) var(--margin-tight);
+    overflow-wrap: anywhere;
     cursor: pointer;
+
+    > span {
+        min-width: 0;
+    }
 
     &:is([aria-current=true], [aria-checked=true])::before {
         content: "";
@@ -1564,11 +1580,16 @@ button.picker {
         --swatch-gap: var(--margin-minimal);
     }
 
-    &:not([popover]),
-    &[popover]:popover-open {
+    &:not([popover]) {
         display: flex;
         flex-wrap: wrap;
         align-items: center;
+        gap: var(--swatch-gap);
+    }
+
+    &[popover]:popover-open {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, var(--swatch-size));
         gap: var(--swatch-gap);
     }
 
@@ -1592,13 +1613,15 @@ button.picker {
 }
 
 .swatches[popover] {
+    --swatch-grid-width: calc(
+        var(--swatch-columns) * var(--swatch-size)
+        + (var(--swatch-columns) - 1) * var(--swatch-gap)
+        + var(--margin-tight) * 2 + 2px
+    );
     inset: auto;
     margin: 0;
     padding: var(--margin-tight);
-    max-inline-size: min(
-        calc(var(--swatch-columns) * var(--swatch-size) + (var(--swatch-columns) - 1) * var(--swatch-gap) + var(--margin-tight) * 2 + 2px),
-        calc(100vw - var(--margin) * 2)
-    );
+    max-inline-size: min(var(--swatch-grid-width), calc(100vw - var(--margin) * 2));
 }
 
 @supports (anchor-name: --mtt-picker) {
@@ -1611,6 +1634,15 @@ button.picker {
         position-area: block-end span-inline-end;
         position-try: flip-block, flip-inline, flip-block flip-inline;
         margin: var(--margin-minimal) 0;
+    }
+
+    /* field-bound pickers stay within their trigger width, matching combobox listboxes */
+    :root:has(label > button.picker[aria-expanded=true]) .swatches[popover] {
+        max-inline-size: min(
+            var(--swatch-grid-width),
+            anchor-size(width),
+            calc(100vw - var(--margin) * 2)
+        );
     }
 }
 

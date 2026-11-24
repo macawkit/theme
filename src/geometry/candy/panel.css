@@ -153,20 +153,27 @@ dialog::backdrop {
     }
 }
 
-/* floating rounded bar concentric with .small pills, inset evenly from top, sidebar, and scrollbar */
+/* floating rounded bar inset evenly from top, sidebar, and scrollbar; frosted glass once stuck */
 header.sticky {
-    --sticky-end: var(--margin-tight);
-    top: calc(var(--page-inset-top, 0px) + var(--margin-tight));
-    margin-inline: calc(-1 * var(--margin-tight));
-    margin-block-start: calc(-1 * var(--margin-minimal));
-    padding: var(--margin-tight);
+    --sticky-inset: calc(var(--margin-tight) + var(--margin-minimal));
+    top: calc(var(--page-inset-top, 0px) + var(--margin-minimal));
+    max-width: calc(var(--page-width, 100%) + var(--sticky-inset) * 2);
+    margin-inline: calc(-1 * var(--sticky-inset));
+    padding: var(--margin-tight) var(--sticky-inset);
 
     &::before {
         inset: 0;
         background-color: var(--mtt-color-panel);
         border: 1px solid var(--mtt-color-line-dimmed);
-        border-radius: var(--radius);
+        border-radius: calc(var(--radius) - var(--margin-minimal));
         box-shadow: var(--raise);
+    }
+
+    @supports (backdrop-filter: blur(1px)) {
+        &::before {
+            background-color: color-mix(in srgb, var(--mtt-color-panel) 75%, #0000);
+            backdrop-filter: blur(var(--margin-tight));
+        }
     }
 }
 
