@@ -1,4 +1,5 @@
 [role=listbox],
+menu[popover],
 .swatches[popover] {
     background-color: var(--mtt-color-body);
     border: 1px solid var(--mtt-color-line);
@@ -27,5 +28,15 @@
         background: none;
         color: var(--mtt-color-text-bright);
         font-weight: 700;
+    }
+}
+
+@supports (anchor-scope: --mtt-item) {
+    @media (width >= 600px) {
+        menu[popover] li:has(> menu) > menu {
+            margin-block: -1px;
+            background-color: var(--mtt-color-body);
+            border: 1px solid var(--mtt-color-line);
+        }
     }
 }

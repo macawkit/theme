@@ -258,6 +258,7 @@
                 <li><a href="#palette" aria-current="true">Palette<small>49</small></a></li>
                 <li><a href="#dashboard">Dashboard</a></li>
                 <li><a href="#buttons">Buttons</a></li>
+                <li><a href="#menus">Menus</a></li>
                 <li><a href="#forms">Forms</a></li>
                 <li><a href="#tones">Tones<small>6</small></a></li>
                 <li><a href="#alerts">Alerts</a></li>
@@ -623,6 +624,57 @@
                     </div>
                 </div>
                 <small><code>[aria-pressed]</code> needs a script to flip it, the first group has one. A radio or a checkbox in <code>label.button</code> looks the same and needs none, the other two are those.</small>
+            </div>
+        </section>
+
+        <section class="panel" id="menus">
+            <header>
+                <h2>Menus</h2>
+                <menu class="small" aria-label="Message tools">
+                    <li><label class="button ghost" title="Filter"><input type="checkbox" checked><i class="icon i-filter"></i></label></li>
+                    <li><button type="button" class="ghost" title="Retry"><i class="icon i-refresh"></i></button></li>
+                    <li role="separator"></li>
+                    <li><button type="button" class="ghost" popovertarget="msg-menu" title="Message"><i class="icon i-menu"></i></button></li>
+                </menu>
+            </header>
+            <div class="stack">
+                <menu aria-label="Queue tools">
+                    <li><button type="button" class="alt" title="Search"><i class="icon i-search"></i></button></li>
+                    <li><label class="button alt" title="Hold"><input type="checkbox"><i class="icon i-pause"></i></label></li>
+                    <li role="separator"></li>
+                    <li><button type="button" class="alt" popovertarget="queue-menu"><i class="icon i-send"></i>Deliver</button></li>
+                    <li><button type="button" class="ghost danger" title="Delete"><i class="icon i-trash"></i></button></li>
+                </menu>
+                <menu popover id="queue-menu" aria-label="Deliver">
+                    <li role="presentation">Now</li>
+                    <li><button type="button"><i class="icon i-send"></i>Send now<small>Ctrl ↵</small></button></li>
+                    <li><button type="button" disabled><i class="icon i-refresh"></i>Retry all<small>R</small></button></li>
+                    <li role="presentation">Later</li>
+                    <li><label><input type="radio" name="when" checked>In an hour</label></li>
+                    <li><label><input type="radio" name="when">Tomorrow</label></li>
+                </menu>
+                <menu popover id="msg-menu" aria-label="Message">
+                    <li role="presentation">Delivery</li>
+                    <li><button type="button"><i class="icon i-send"></i>Send now<small>Ctrl ↵</small></button></li>
+                    <li><button type="button" disabled><i class="icon i-pause"></i>Hold<small>H</small></button></li>
+                    <li><label><input type="checkbox" checked>Read receipt</label></li>
+                    <li>
+                        <button type="button"><i class="icon i-arrow"></i>Move to</button>
+                        <menu>
+                            <li><button type="button">Inbox</button></li>
+                            <li>
+                                <button type="button">Archive</button>
+                                <menu>
+                                    <li><button type="button">2026</button></li>
+                                    <li><button type="button">2025</button></li>
+                                </menu>
+                            </li>
+                        </menu>
+                    </li>
+                    <li role="separator"></li>
+                    <li><button type="button" class="danger"><i class="icon i-trash"></i>Delete<small>Del</small></button></li>
+                </menu>
+                <small>A <code>&lt;menu&gt;</code> is a toolbar; a <code>&lt;menu popover&gt;</code> drops down from the button that opens it. A <code>&lt;menu&gt;</code> nested in an item cascades out to the side on hover or focus, as many levels deep as you need. None of it needs a script; with one, picking an action closes the menu.</small>
             </div>
         </section>
 
@@ -1442,6 +1494,41 @@
                     <div class="app">
                         <header>
                             <strong>Postmaster</strong>
+                            <nav aria-label="Site">
+                                <menu>
+                                    <li><a href="#bar" aria-current="page">Queue</a></li>
+                                    <li>
+                                        <button type="button" popovertarget="bar-domains">Domains</button>
+                                        <menu popover id="bar-domains" aria-label="Domains">
+                                            <li role="presentation">Hosted</li>
+                                            <li><a href="#bar">All domains</a></li>
+                                            <li>
+                                                <button type="button">example.com</button>
+                                                <menu>
+                                                    <li><a href="#bar">Mailboxes</a></li>
+                                                    <li>
+                                                        <button type="button">Relays</button>
+                                                        <menu>
+                                                            <li><a href="#bar">SMTP</a></li>
+                                                            <li><a href="#bar">LMTP</a></li>
+                                                        </menu>
+                                                    </li>
+                                                </menu>
+                                            </li>
+                                            <li><a href="#bar">example.net</a></li>
+                                            <li role="separator"></li>
+                                            <li><a href="#bar">Add domain</a></li>
+                                        </menu>
+                                    </li>
+                                    <li>
+                                        <button type="button" popovertarget="bar-reports">Reports</button>
+                                        <menu popover id="bar-reports" aria-label="Reports">
+                                            <li><a href="#bar">Delivery</a></li>
+                                            <li><a href="#bar">Bounces</a></li>
+                                        </menu>
+                                    </li>
+                                </menu>
+                            </nav>
                             <button class="alt" title="Account"><i class="icon i-user"></i></button>
                         </header>
                         <aside>
@@ -1459,12 +1546,12 @@
                         </main>
                     </div>
                 </div>
-                <small>A <code>header</code> before the column of an <code>.app</code> is a bar over the column and the page.</small>
+                <small>A <code>header</code> before the column of an <code>.app</code> is a bar over the column and the page. A <code>nav &gt; menu</code> in it is a site bar whose items drop down menus.</small>
             </div>
         </section>
     </main>
     <footer>
-        <small>0.5.1 · MIT · <a href="https://github.com/macawkit/theme">Source</a><br>This page is an <code>.app</code> itself</small>
+        <small>0.5.2 · MIT · <a href="https://github.com/macawkit/theme">Source</a><br>This page is an <code>.app</code> itself</small>
     </footer>
 </div>
 <script>
@@ -1524,7 +1611,7 @@
     form.addEventListener('change', apply);
 
     // Scrollspy: mark the sidebar link for whichever section has the most visible height
-    const links = new Map([...document.querySelectorAll('.app > aside nav a')].map(link => [link.hash.slice(1), link]));
+    const links = new Map([...document.querySelector('.app').querySelectorAll(':scope > aside nav a')].map(link => [link.hash.slice(1), link]));
     const seen = new Map();
     const spy = new IntersectionObserver(entries => {
         for (const entry of entries)

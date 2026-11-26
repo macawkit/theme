@@ -1,6 +1,6 @@
 nav.tabs > a,
 nav.pages a,
-:is(button:not(.picker, [data-mtt-clear]), .button, input:is([type=submit], [type=reset], [type=button])) {
+:is(button:not(.picker, [data-mtt-clear], :where(nav:not(.tabs, .crumbs, .pages), menu[popover]) *), .button, input:is([type=submit], [type=reset], [type=button])) {
     --background-color: var(--mtt-color-button);
     --gloss-layer: var(--gloss);
     --rim-color: #0000;
@@ -27,12 +27,18 @@ nav.pages a,
         scale var(--transition-bounce);
 }
 
+/* an anchored popover follows its trigger, so triggers never hop or squeeze */
+:is(button, input)[popovertarget] {
+    translate: none;
+    scale: none;
+}
+
 /* pre-promote to a compositor layer so text antialiasing doesn't snap when bounce settles */
-:is(button:not(.picker, [data-mtt-clear]), .button, input:is([type=submit], [type=reset], [type=button]), nav.pages a[rel]):not([role=tab], :disabled, [aria-disabled=true], :has(> input:disabled)) {
+:is(button:not(.picker, [data-mtt-clear], :where(nav:not(.tabs, .crumbs, .pages), menu[popover]) *), .button, input:is([type=submit], [type=reset], [type=button]), nav.pages a[rel]):not([role=tab], :disabled, [aria-disabled=true], :has(> input:disabled)) {
     will-change: translate, scale;
 }
 
-:is(button:not(.picker, [data-mtt-clear]), .button, input:is([type=submit], [type=reset], [type=button]), :where(nav.pages a[rel])) {
+:is(button:not(.picker, [data-mtt-clear], :where(nav:not(.tabs, .crumbs, .pages), menu[popover]) *), .button, input:is([type=submit], [type=reset], [type=button]), :where(nav.pages a[rel])) {
     &:is(.hover, :hover):not(.ghost, :disabled, [aria-disabled=true], [role=tab]):where(:not(:has(> input:disabled))) {
         --elevation: var(--raise);
         --lift: var(--hop);
@@ -129,14 +135,13 @@ nav.pages a,
     box-shadow: inset 0 0 0 var(--rim) var(--mtt-color-line);
 }
 
+/* a lit box is a pressed .alt */
 .box.active {
-    --glow-source: var(--mtt-color-line-decorated);
-    --glow-color: color-mix(in srgb, var(--glow-source, #0000) var(--glow-strength), #0000);
-    background: var(--gloss), var(--mtt-color-button);
+    background-color: var(--mtt-color-main);
     box-shadow:
-        inset 0 0 0 2px var(--mtt-color-line-decorated),
-        var(--raise-low),
-        0 0 var(--glow-radius) var(--glow-color);
+        inset 0 0 0 var(--rim) color-mix(in srgb, var(--mtt-color-text-brightest) 40%, #0000),
+        0 0 var(--glow-radius) color-mix(in srgb, var(--mtt-color-main) var(--glow-strength), #0000);
+    color: var(--mtt-color-text-brightest);
 }
 
 /* draw the pill track on local content-box so it scrolls with the tabs and excludes overhang padding */
@@ -274,7 +279,7 @@ nav.pages a:not([rel]) {
     }
 }
 
-nav:not(.tabs, .crumbs, .pages) a {
+:is(nav:not(.tabs, .crumbs, .pages), menu[popover]) :is(a, button, label) {
     border-radius: var(--radius-small);
     transition:
         background-color var(--transition),

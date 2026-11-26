@@ -1,4 +1,5 @@
 [role=listbox],
+menu[popover],
 .swatches[popover] {
     font-weight: 500;
     background-color: var(--mtt-color-panel);
@@ -7,7 +8,8 @@
     box-shadow: var(--raise-high);
 }
 
-[role=listbox][popover] {
+[role=listbox][popover],
+menu[popover] {
     padding: var(--margin-minimal);
 
     > [role=presentation] {
@@ -27,8 +29,12 @@
     }
 }
 
-[role=option] {
+[role=option],
+menu[popover] :is(a, button, label) {
     border-radius: calc(var(--radius-small) - var(--margin-minimal));
+}
+
+[role=option] {
     transition:
         background-color var(--transition),
         color var(--transition);
@@ -47,5 +53,18 @@
         background: none;
         color: var(--mtt-color-text-bright);
         font-weight: 800;
+    }
+}
+
+@supports (anchor-scope: --mtt-item) {
+    @media (width >= 600px) {
+        menu[popover] li:has(> menu) > menu {
+            margin-block: calc(-1 * var(--margin-minimal) - 1px);
+            padding: var(--margin-minimal);
+            background-color: var(--mtt-color-panel);
+            border: 1px solid var(--mtt-color-line);
+            border-radius: var(--radius-small);
+            box-shadow: var(--raise-high);
+        }
     }
 }

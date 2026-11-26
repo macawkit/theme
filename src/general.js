@@ -769,11 +769,17 @@ document.addEventListener('click', event => {
         return;
     }
 
+    // closing the drawer also closes any dropdown open inside it
     const drawerLink = event.target.closest('.app > aside[popover]:popover-open nav a');
     if (drawerLink) {
-        drawerLink.closest('[popover]').hidePopover();
+        drawerLink.closest('aside[popover]').hidePopover();
         return;
     }
+
+    // a link or action closes its dropdown; toggles, submenu triggers, and disabled items keep it open
+    const menuItem = event.target.closest('menu[popover]:popover-open li:not(:has(menu)) > :is(button, a):not([popovertarget], [aria-pressed], :disabled, [aria-disabled=true])');
+    if (menuItem)
+        menuItem.closest('menu[popover]').hidePopover();
 
     const tab = event.target.closest('[role=tablist] > [role=tab]');
     if (tab) {

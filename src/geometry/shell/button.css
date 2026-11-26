@@ -1,6 +1,6 @@
 nav.tabs > a,
 nav.pages a,
-:is(button:not(.picker, [data-mtt-clear]), .button, input:is([type=submit], [type=reset], [type=button])) {
+:is(button:not(.picker, [data-mtt-clear], :where(nav:not(.tabs, .crumbs, .pages), menu[popover]) *), .button, input:is([type=submit], [type=reset], [type=button])) {
     --background-color: var(--mtt-color-button);
     background-color: transparent;
     transition:
@@ -12,16 +12,16 @@ nav.pages a,
 }
 
 /* zero specificity so disabled and state filters override cleanly */
-:where(button:not(.picker, [data-mtt-clear]), .button, input:is([type=submit], [type=reset], [type=button]), nav.pages a[rel]) {
+:where(button:not(.picker, [data-mtt-clear], :where(nav:not(.tabs, .crumbs, .pages), menu[popover]) *), .button, input:is([type=submit], [type=reset], [type=button]), nav.pages a[rel]) {
     --elevation: var(--unlit);
     filter: var(--unlit) var(--elevation);
 }
 
-:where(button:not(.picker, [data-mtt-clear]), .button, nav.pages a[rel]) > * {
+:where(button:not(.picker, [data-mtt-clear], :where(nav:not(.tabs, .crumbs, .pages), menu[popover]) *), .button, nav.pages a[rel]) > * {
     filter: var(--unlit);
 }
 
-:is(button:not(.picker, [data-mtt-clear]), .button, input:is([type=submit], [type=reset], [type=button]), :where(nav.pages a[rel])) {
+:is(button:not(.picker, [data-mtt-clear], :where(nav:not(.tabs, .crumbs, .pages), menu[popover]) *), .button, input:is([type=submit], [type=reset], [type=button]), :where(nav.pages a[rel])) {
     --shadow-ink: color-mix(in oklab, var(--shadow-color), var(--background-color, var(--shadow-color)) 35%);
     --raised: drop-shadow(0 3px 5px color-mix(in srgb, var(--shadow-ink) min(var(--shadow-strength) * 2.5, 100%), #0000));
 
@@ -102,7 +102,7 @@ nav.pages a,
     }
 
     /* integer pixel press, no scale: icons have their own filter layer and would drift from text */
-    &:is(:active, .active):not(:disabled, [aria-disabled=true], [role=tab]) {
+    &:is(:active, .active):not(:disabled, [aria-disabled=true], [role=tab], [popovertarget]) {
         --elevation: var(--unlit);
         translate: 0 var(--press-translate);
     }
@@ -150,8 +150,16 @@ nav.pages a[rel]:is(.hover, :hover):not([aria-disabled=true])::before,
     filter: drop-shadow(0 0 var(--shine-radius) color-mix(in srgb, var(--tick-color) var(--shining), #0000));
 }
 
-:is(button, .button).alt:is([aria-pressed=true], :has(> input:checked))::before {
+:is(button, .button).alt:is([aria-pressed=true], :has(> input:checked))::before,
+.box.active::before {
     inset: calc(-1px - var(--highlight-thickness));
+}
+
+/* a lit box is a pressed .alt */
+.box.active {
+    background-color: var(--mtt-color-main);
+    border-color: var(--mtt-color-main);
+    color: var(--mtt-color-text-brightest);
 }
 
 :is(button, .button, input:is([type=submit], [type=reset], [type=button])).alt,
@@ -272,7 +280,7 @@ nav.tabs > a[aria-current=page],
     text-shadow: 0 0 calc(var(--shine-radius) / 2) color-mix(in srgb, var(--mtt-color-text-bright) var(--shining), #0000);
 }
 
-nav:not(.tabs, .crumbs, .pages) a {
+:is(nav:not(.tabs, .crumbs, .pages), menu[popover]) :is(a, button, label) {
     transition:
         background-color var(--transition),
         color var(--transition);
@@ -289,12 +297,15 @@ nav:not(.tabs, .crumbs, .pages) a {
         color: var(--mtt-color-text-bright);
         background-color: var(--mtt-color-main-dimmed);
 
+        /* top bar and dropdown items stay flat like a selected tab or option */
         @media (width >= 600px) {
-            background: linear-gradient(
-                315deg,
-                #0000 calc(var(--chip) * 0.7071),
-                var(--mtt-color-main-dimmed) calc(var(--chip) * 0.7071 + 0.5px)
-            );
+            &:not(menu *) {
+                background: linear-gradient(
+                    315deg,
+                    #0000 calc(var(--chip) * 0.7071),
+                    var(--mtt-color-main-dimmed) calc(var(--chip) * 0.7071 + 0.5px)
+                );
+            }
         }
 
         small {

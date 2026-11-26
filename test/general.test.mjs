@@ -1549,3 +1549,65 @@ test('Native popover mobile drawer: nav link auto-close and desktop breakpoint d
     listeners[0].fn({ matches: true });
     assert.equal(aside._popoverOpen, false);
 });
+
+test('Menu popovers: links and actions close the dropdown; toggles, submenu triggers, and disabled items keep it open', () => {
+    document.body.replaceChildren();
+
+    const action = el('button', { type: 'button' }, ['Send']);
+    const link = el('a', { href: '#inbox' }, ['Inbox']);
+    const pressed = el('button', { type: 'button', 'aria-pressed': 'false' }, ['Bold']);
+    const disabled = el('button', { type: 'button' }, ['Hold']);
+    disabled.disabled = true;
+    const subTrigger = el('button', { type: 'button' }, ['Move to']);
+    const deepTrigger = el('button', { type: 'button' }, ['Archive']);
+    const subAction = el('button', { type: 'button' }, ['Spam']);
+    const deepAction = el('a', { href: '#2026' }, ['2026']);
+    const menu = el('menu', { id: 'top', popover: '' }, [
+        el('li', {}, [action]),
+        el('li', {}, [link]),
+        el('li', {}, [pressed]),
+        el('li', {}, [disabled]),
+        el('li', {}, [subTrigger, el('menu', {}, [
+            el('li', {}, [subAction]),
+            el('li', {}, [deepTrigger, el('menu', {}, [el('li', {}, [deepAction])])])
+        ])])
+    ]);
+    document.body.append(menu);
+    const click = node => node.dispatchEvent(new FakeEvent('click', { bubbles: true }));
+
+    menu.showPopover();
+    for (const keep of [pressed, disabled, subTrigger, deepTrigger]) {
+        click(keep);
+        assert.equal(menu._popoverOpen, true);
+    }
+
+    for (const close of [action, link, subAction, deepAction]) {
+        menu.showPopover();
+        click(close);
+        assert.equal(menu._popoverOpen, false);
+    }
+
+    // a closed menu is left alone
+    click(action);
+    assert.equal(menu._popoverOpen, false);
+});
+
+test('Drawer nav dropdown: a link inside it closes the drawer', () => {
+    document.body.replaceChildren();
+
+    const link = el('a', { href: '#one' }, ['One']);
+    const drop = el('menu', { id: 'drop', popover: '' }, [el('li', {}, [link])]);
+    const aside = el('aside', { id: 'nav', popover: '' }, [
+        el('nav', {}, [el('menu', {}, [el('li', {}, [el('button', { type: 'button', popovertarget: 'drop' }, ['More']), drop])])])
+    ]);
+    document.body.append(el('div', { class: 'app' }, [aside, el('main')]));
+
+    aside.showPopover();
+    drop.showPopover();
+    click(link);
+    assert.equal(aside._popoverOpen, false);
+
+    function click (node) {
+        node.dispatchEvent(new FakeEvent('click', { bubbles: true }));
+    }
+});

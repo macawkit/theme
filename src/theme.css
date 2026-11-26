@@ -310,7 +310,7 @@ nav.tabs > a {
     padding: 0;
 }
 
-:is(button, .button), nav a, .box, input, [role=option] {
+:is(button, .button), nav a, :is(nav:not(.tabs, .crumbs, .pages), menu[popover]) :is(a, button, label), .box, input, [role=option] {
     position: relative;
     isolation: isolate;
 }
@@ -348,7 +348,8 @@ nav.pages a > img,
 }
 
 nav a,
-:is(button:not(.picker, [data-mtt-clear]), .button, input:is([type=submit], [type=reset], [type=button])) {
+:is(nav:not(.tabs, .crumbs, .pages), menu[popover]) :is(a, button, label),
+:is(button:not(.picker, [data-mtt-clear], :where(nav:not(.tabs, .crumbs, .pages), menu[popover]) *), .button, input:is([type=submit], [type=reset], [type=button])) {
     font-weight: 700;
     white-space: nowrap;
     cursor: pointer;
@@ -359,7 +360,7 @@ nav a,
 
 nav.tabs > a,
 nav.pages a,
-:is(button:not(.picker, [data-mtt-clear]), .button, input:is([type=submit], [type=reset], [type=button])) {
+:is(button:not(.picker, [data-mtt-clear], :where(nav:not(.tabs, .crumbs, .pages), menu[popover]) *), .button, input:is([type=submit], [type=reset], [type=button])) {
     --inset: var(--margin);
     display: inline-flex;
     justify-content: center;
@@ -369,15 +370,23 @@ nav.pages a,
     background-color: var(--mtt-color-button);
 }
 
-nav:not(.tabs, .crumbs, .pages) a {
+:is(nav:not(.tabs, .crumbs, .pages), menu[popover]) :is(a, button, label) {
     display: flex;
     min-height: var(--element-height);
     height: auto;
     padding: var(--margin-tight);
+    border: 0;
+    background: none;
     line-height: var(--heading-line-height);
+    text-align: start;
     white-space: normal;
     overflow-wrap: anywhere;
     color: var(--mtt-color-text);
+}
+
+/* toned items keep their tone like any toned text */
+:is(nav:not(.tabs, .crumbs, .pages), menu[popover]) :is(a, button, label):is(.info, .signature, .success, .priority, .warning, .danger) {
+    color: var(--color);
 }
 
 .small, small {
@@ -386,6 +395,7 @@ nav:not(.tabs, .crumbs, .pages) a {
 
 nav.tabs.small,
 .small[role=tablist],
+menu.small,
 nav.tabs > a.small,
 [role=tablist] > :is(button, .button)[role=tab].small,
 :is(button, .button, input:is([type=submit], [type=reset], [type=button])).small {
@@ -394,16 +404,17 @@ nav.tabs > a.small,
 
 nav.tabs > a.small,
 nav.tabs.small > a,
+menu.small > li > :is(button, .button),
 [role=tablist] > :is(button, .button)[role=tab].small,
 .small[role=tablist] > :is(button, .button)[role=tab],
-:is(button:not(.picker, [data-mtt-clear]), .button, input:is([type=submit], [type=reset], [type=button])).small {
+:is(button:not(.picker, [data-mtt-clear], :where(nav:not(.tabs, .crumbs, .pages), menu[popover]) *), .button, input:is([type=submit], [type=reset], [type=button])).small {
     --inset: var(--margin-tight);
 }
 
 /* equalize icon horizontal and vertical inset so icon-only buttons are square */
 nav.tabs > a,
 nav.pages a,
-:is(button:not(.picker, [data-mtt-clear]), .button) {
+:is(button:not(.picker, [data-mtt-clear], :where(nav:not(.tabs, .crumbs, .pages), menu[popover]) *), .button) {
     &:has(> :is(.icon, svg, img)) {
         --trim: calc(var(--inset) - (var(--element-height) - var(--icon-size)) / 2);
         gap: calc(var(--margin-tight) + var(--trim));
@@ -450,19 +461,19 @@ nav:not(.tabs, .crumbs, .pages) :is(ul, ol) {
     flex-direction: column;
 }
 
-nav:not(.tabs, .crumbs, .pages) a > span {
+:is(nav:not(.tabs, .crumbs, .pages), menu[popover]) :is(a, button, label) > span {
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-nav:not(.tabs, .crumbs, .pages) a small {
+:is(nav:not(.tabs, .crumbs, .pages), menu[popover]) :is(a, button, label) small {
     flex: none;
     font-family: var(--mono);
 }
 
-nav:not(.tabs, .crumbs, .pages) a > small:last-child {
+:is(nav:not(.tabs, .crumbs, .pages), menu[popover]) :is(a, button, label) > small:last-child {
     margin-inline-start: auto;
 }
 
@@ -1097,6 +1108,7 @@ a.card.compact {
     justify-content: center;
     min-width: var(--element-height-small);
     height: var(--element-height-small);
+    color: var(--mtt-color-text-bright);
     --inset: var(--margin-minimal);
     padding-inline: var(--inset);
 }
@@ -1122,7 +1134,8 @@ label > span {
 }
 
 /* <label> itself doesn't match :disabled */
-.button:has(> input:disabled) {
+.button:has(> input:disabled),
+:is(nav:not(.tabs, .crumbs, .pages), menu[popover]) :is(button:disabled, label:has(> input:disabled)) {
     pointer-events: none;
 }
 
@@ -1415,7 +1428,7 @@ input[role=combobox][inputmode=none] {
     caret-color: transparent;
 }
 
-[role=listbox] {
+:is([role=listbox], menu[popover]) {
     margin: 0;
     padding: 0;
     list-style: none;
@@ -1464,7 +1477,7 @@ input[role=combobox][inputmode=none] {
     }
 }
 
-[role=listbox] > [role=presentation] {
+:is([role=listbox], menu[popover]) > [role=presentation] {
     padding: var(--margin-tight) var(--margin-tight) var(--margin-minimal);
 }
 
@@ -1474,7 +1487,7 @@ input[role=combobox][inputmode=none] {
 }
 
 /* keep keyboard-focused options clear of sticky group captions */
-[role=listbox][popover] {
+:is([role=listbox], menu)[popover] {
     &:has(> [role=presentation]) {
         scroll-padding-block-start: calc(var(--margin-tight) + var(--line-height) + var(--margin-minimal));
     }
@@ -1643,6 +1656,127 @@ button.picker {
             anchor-size(width),
             calc(100vw - var(--margin) * 2)
         );
+    }
+}
+
+menu {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    > li {
+        display: flex;
+    }
+
+    > [role=separator] {
+        align-self: stretch;
+        inline-size: 1px;
+        background-color: var(--mtt-color-line-dimmed);
+    }
+}
+
+/* toolbar; inside a nav it is a top bar */
+menu:not([popover], menu[popover] *) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--margin-tight);
+}
+
+/* dropdown: closed popovers keep the UA display: none */
+menu[popover] {
+    min-inline-size: var(--column-width);
+    max-inline-size: calc(100vw - var(--margin) * 2);
+    max-block-size: calc(100dvh - var(--margin) * 2);
+    overscroll-behavior: contain;
+
+    &:popover-open {
+        display: flex;
+        flex-direction: column;
+    }
+
+    li {
+        flex-direction: column;
+    }
+
+    [role=separator] {
+        inline-size: auto;
+        block-size: 1px;
+        margin-block: var(--margin-minimal);
+    }
+
+    /* submenus list inline and indented below 600px or without anchor-scope */
+    li > menu {
+        padding-inline-start: var(--margin-tight);
+    }
+}
+
+/* the popovertarget invoker is the implicit anchor, so every trigger anchors its own menu */
+@supports (position-anchor: auto) {
+    menu[popover] {
+        position-anchor: auto;
+        position-area: block-end span-inline-end;
+        position-try: flip-block, flip-inline, flip-block flip-inline;
+        inset: auto;
+        margin: var(--margin-minimal) 0;
+        /* natural width: a menu near the edge flips rather than squeezing its items onto two lines */
+        inline-size: max-content;
+        min-inline-size: max(var(--column-width), anchor-size(width));
+    }
+}
+
+/* submenus cascade beside their item; fixed escapes the dropdown's overflow and flips against the viewport */
+@supports (anchor-scope: --mtt-item) {
+    @media (width >= 600px) {
+        menu[popover] li:has(> menu) {
+            anchor-scope: --mtt-item;
+
+            > :first-child {
+                anchor-name: --mtt-item;
+
+                &::before {
+                    content: "";
+                    order: 1;
+                    flex: none;
+                    width: var(--icon-size);
+                    height: var(--icon-size);
+                    margin-inline-start: auto;
+                    background-color: currentColor;
+                }
+            }
+
+            > menu {
+                position: fixed;
+                position-anchor: --mtt-item;
+                position-area: inline-end span-block-end;
+                position-try: flip-inline, flip-block, flip-block flip-inline;
+                inset: auto;
+                z-index: 1;
+                inline-size: max-content;
+                min-inline-size: var(--column-width);
+                margin: 0;
+                padding: 0;
+                visibility: hidden;
+                /* close late so the pointer can cut across siblings on its way in */
+                transition: visibility 0s var(--animation-duration);
+            }
+
+            /* open a beat late so passing over a sibling doesn't open it */
+            &:is(:hover, :focus-within) > menu {
+                visibility: visible;
+                transition-delay: var(--animation-duration-fast);
+            }
+
+            /* keyboard focus opens at once so Tab can enter */
+            &:has(> :focus-visible) > menu {
+                transition-delay: 0s;
+            }
+        }
+
+        /* the pointer wins over a focused branch it has left */
+        menu[popover]:has(li:hover) li:not(:hover) > menu {
+            visibility: hidden;
+        }
     }
 }
 

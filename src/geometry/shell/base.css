@@ -111,11 +111,11 @@ label:has(> :is(input:not([type=checkbox], [type=radio], [type=range], [type=sub
     color: var(--mtt-color-text-decorated);
 }
 
-th, .note, fieldset, .small:not(button, .button, input:is([type=submit], [type=reset], [type=button]), nav, [role=tablist], [role=tab]), small, [role=listbox] > [role=presentation] {
+th, .note, fieldset, .small:not(button, .button, input:is([type=submit], [type=reset], [type=button]), nav, menu, [role=tablist], [role=tab]), small, :is([role=listbox], menu[popover]) > [role=presentation] {
     color: var(--mtt-color-text-muted);
 }
 
-th, .note, .label, fieldset, [role=listbox] > [role=presentation] {
+th, .note, .label, fieldset, :is([role=listbox], menu[popover]) > [role=presentation] {
     font-family: var(--mono);
     font-size: var(--decrease-font-size);
     font-weight: 400;
@@ -171,7 +171,8 @@ dt:not(:last-of-type), dd:not(:last-of-type) {
     outline-offset: var(--highlight-thickness);
 }
 
-/* cards clip overflow, so draw the focus ring inside the border */
-a.card:is(:focus-visible, .focus) {
+/* cards and dropdown menus clip overflow, so draw the focus ring inside the border */
+a.card:is(:focus-visible, .focus),
+menu[popover] :is(a, button, label):is(:focus-visible, .focus, :has(> input:focus-visible)) {
     outline-offset: calc(-1 * var(--highlight-thickness));
 }

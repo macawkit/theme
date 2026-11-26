@@ -38,7 +38,7 @@ Or link the built files directly without a bundler:
 - **Geometry** — shape, typography, and motion: `shell` (sharp, chipped, console-lit) or `candy` (rounded, glossy, soft).
 - **Palette** — colors: `hyacinth` and `mulberry` (dark), `cream` (light), and `sunset` (warm orange). Any geometry pairs with any palette.
 - **`icon.css`** — required even if you don't use `<i class="icon i-…"></i>`; it also supplies checkbox ticks, option checkmarks, date/time/file pickers, and search icons. Icons use `data:` URIs, so a strict CSP needs `img-src data:`.
-- **`general.js`** — powers tabs, comboboxes, sparklines, fallback meters, and a `commandfor` polyfill. See [Script](#script).
+- **`general.js`** — powers tabs, comboboxes, sparklines, fallback meters, menu auto-close, and a `commandfor` polyfill. See [Script](#script).
 
 ## Layout
 
@@ -121,6 +121,50 @@ Gap-spaced containers (`.stack`, `.row`, `.tiles`, `.card`, `.alert`, `.empty`, 
 - **Toggles**: use `aria-pressed` on a `<button>`, or wrap a checkbox/radio in `<label class="button">` so it stays natively focusable and submits with forms.
 - **Icon buttons**: icons receive equal horizontal and vertical inset, making icon-only buttons square: `<button class="alt" title="Retry"><i class="icon i-refresh"></i></button>`. Always provide `title` or `aria-label`.
 
+### Toolbars, menus, and top navigation
+
+A `<menu>` is a toolbar. A `<menu popover>` is a dropdown that opens from whichever `<button type="button" popovertarget>` invokes it. A `<menu>` nested in a dropdown item is a submenu that cascades out to the side. Inside a `<nav>`, a `<menu>` is a site bar whose items drop down menus. None of it needs a script.
+
+```html
+<menu class="small" aria-label="Message tools">
+    <li><label class="button ghost" title="Filter"><input type="checkbox"><i class="icon i-filter"></i></label></li>
+    <li role="separator"></li>
+    <li><button type="button" class="ghost" popovertarget="message" title="Message"><i class="icon i-menu"></i></button></li>
+</menu>
+<menu popover id="message" aria-label="Message">
+    <li role="presentation">Delivery</li>
+    <li><button type="button"><i class="icon i-send"></i>Send now<small>Ctrl ↵</small></button></li>
+    <li><label><input type="checkbox" checked>Read receipt</label></li>
+    <li>
+        <button type="button"><i class="icon i-arrow"></i>Move to</button>
+        <menu>
+            <li><button type="button">Inbox</button></li>
+            <li><button type="button">Archive</button><menu>…</menu></li>
+        </menu>
+    </li>
+    <li role="separator"></li>
+    <li><button type="button" class="danger"><i class="icon i-trash"></i>Delete</button></li>
+</menu>
+
+<header>
+    <strong>Postmaster</strong>
+    <nav aria-label="Site">
+        <menu>
+            <li><a href="/" aria-current="page">Queue</a></li>
+            <li><button type="button" popovertarget="domains">Domains</button><menu popover id="domains">…</menu></li>
+        </menu>
+    </nav>
+</header>
+```
+
+- **Toolbar items** are buttons, `a.button`, or `label.button` around a checkbox or radio, in any variant. `menu.small` shrinks them all.
+- **Dropdown and top-bar items** are bare `<a>`, `<button>`, or `<label>` around a checkbox or radio. They look like sidebar links: a flat fill on hover, the accent on `aria-current`, and tones such as `.danger` tint them. Inside a `nav` or a dropdown, a `<button>` is an item without button chrome, so keep `.button` calls to action outside them.
+- **Headings and dividers:** `<li role="presentation">` is a sticky category heading. `<li role="separator">` is a divider, vertical in a toolbar and horizontal in a dropdown. A trailing `<small>` hint aligns to the end.
+- **Dropdowns** anchor to their trigger and flip at the viewport edge. Light-dismiss, `Escape`, and focus return are native. Popover triggers don't hop or squeeze when pressed, so the open menu stays put.
+- **Submenus** open on hover or keyboard focus, as many levels deep as you need. A chevron marks the item. They open a beat late and close a beat late, so the pointer can cut across sibling items on its way in. Each level flips against the viewport edge on its own. Below `600px`, or without `anchor-scope`, they show inline, indented.
+- **Closing:** with `general.js`, a link or action closes its dropdown, while toggles, submenu triggers, and disabled items keep it open. Without the script, add `commandfor="…" command="hide-popover"` to an item.
+- **Accessibility:** give icon-only items `title` or `aria-label`. Don't add `role="menu"`: it promises arrow-key navigation, while `<menu>` is announced as a plain list that Tab moves through.
+
 ### Navigation
 
 - **`nav.tabs`** — horizontal link tabs (`aria-current="page"` on the active link). For in-page panel switching, see [Tabs](#tabs).
@@ -145,7 +189,7 @@ Gap-spaced containers (`.stack`, `.row`, `.tiles`, `.card`, `.alert`, `.empty`, 
 
 - **Icons**: `<i class="icon i-mail"></i>` (see the demo for the full built-in set).
 - **`.badge` / `.tag`**: compact inline labels (`.badge` adds a leading status dot). In tight layouts they degrade gracefully: a tag with an icon keeps the icon, a badge keeps its dot, and text truncates with `…`. Add `title` if the full label matters.
-- **`.box`**: small square frame for a single icon or value (`<div class="box"><i class="icon i-user"></i></div>`); add `.active` to highlight it.
+- **`.box`**: small square frame for a single icon or value (`<div class="box"><i class="icon i-user"></i></div>`). It looks like a resting `.alt` button; add `.active` to light it like a pressed one.
 - **`.swatch`**: color indicator using `--color` (`<span class="swatch" aria-hidden="true" style="--color: var(--color-category-7)"></span>`). Modifiers: `.small`, `.quiet`.
 - **`.hero`**, **`.label`**, **`.note`**: large KPI figure, accented small-caps label, and muted small-caps label.
 - **`.num`**: end-aligned tabular numbers for table cells.
@@ -250,7 +294,7 @@ Clicking or using Arrow keys, Home, and End switches tabs (skipping disabled tab
 
 ## Script
 
-`general.js` uses document-level event delegation, so dynamically added tabs, comboboxes, and dialog triggers work automatically. Elements that require initialization—sparks, fallback meters, range fills, `data-open` dialogs, new tablists, and scripted combobox changes—are initialized on load. After inserting or updating those dynamically, call `mtt.refresh()` (or `mtt.refresh(element)` to scope it to a subtree).
+`general.js` uses document-level event delegation, so dynamically added tabs, comboboxes, and dialog triggers work automatically. A link or action in an open `<menu popover>` closes it, and a link in the drawer closes the drawer. Elements that require initialization—sparks, fallback meters, range fills, `data-open` dialogs, new tablists, and scripted combobox changes—are initialized on load. After inserting or updating those dynamically, call `mtt.refresh()` (or `mtt.refresh(element)` to scope it to a subtree).
 
 ## Licenses
 

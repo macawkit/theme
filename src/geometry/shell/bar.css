@@ -1,6 +1,6 @@
 .alert::after,
 :is(button, .button).ghost::after,
-nav:not(.tabs, .crumbs, .pages) a::after,
+:is(nav:not(.tabs, .crumbs, .pages), menu[popover]) :is(a, button, label)::after,
 [role=option]::after,
 nav.tabs > a::after,
 nav.pages a:not([rel])::after,
@@ -18,7 +18,7 @@ nav.pages a:not([rel])::after,
 
 .alert::after,
 :is(button, .button).ghost::after,
-nav:not(.tabs, .crumbs, .pages) a::after,
+:is(nav:not(.tabs, .crumbs, .pages), menu[popover]) :is(a, button, label)::after,
 [role=option]::after {
     top: 0;
     width: var(--highlight-thickness);
@@ -28,6 +28,14 @@ nav:not(.tabs, .crumbs, .pages) a::after,
 nav.tabs > a::after,
 nav.pages a:not([rel])::after,
 :is(button, .button)[role=tab]::after {
+    bottom: 0;
+    width: 100%;
+    height: var(--highlight-thickness);
+}
+
+/* a top bar lights its bottom edge like tabs */
+nav:not(.tabs, .crumbs, .pages) > menu > li > *::after {
+    top: auto;
     bottom: 0;
     width: 100%;
     height: var(--highlight-thickness);
@@ -43,7 +51,7 @@ nav.pages a:not([rel])::after,
 }
 
 :is(button, .button).ghost::after,
-nav:not(.tabs, .crumbs, .pages) a::after,
+:is(nav:not(.tabs, .crumbs, .pages), menu[popover]) :is(a, button, label)::after,
 [role=option]::after,
 nav.tabs > a::after,
 nav.pages a:not([rel])::after,
@@ -54,7 +62,7 @@ nav.pages a:not([rel])::after,
 
 :is(button, .button).ghost:is([aria-pressed=true], :has(> input:checked))::after,
 :is(button, .button).ghost:is(.hover, :hover):not(:disabled, [aria-disabled=true], [aria-pressed], :has(> input))::after,
-nav:not(.tabs, .crumbs, .pages) a[aria-current]::after,
+:is(nav:not(.tabs, .crumbs, .pages), menu[popover]) :is(a, button, label)[aria-current]::after,
 [role=option][aria-selected=true]::after {
     transition: opacity var(--transition-fast);
     opacity: 1;
@@ -80,6 +88,7 @@ nav.pages a[aria-current=page]::after,
 }
 
 nav a:not(:where(nav.pages a[rel]))::after,
+:is(nav:not(.tabs, .crumbs, .pages), menu[popover]) :is(a, button, label)::after,
 [role=option]::after,
 :is(button, .button)[role=tab]::after {
     --glow-source: var(--mtt-color-main-highlight);
