@@ -2,7 +2,7 @@ input[type=radio],
 input[type=checkbox] {
     --background-color: var(--mtt-color-body);
     --gloss-layer: none;
-    --rim-color: var(--mtt-color-line);
+    --rim-color: var(--mtt-color-control);
     --elevation: var(--flat);
     --glow-color: color-mix(in srgb, var(--glow-source, #0000) var(--glow-strength), #0000);
     --glow-reach: 0px;

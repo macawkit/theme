@@ -389,6 +389,10 @@ nav.pages a,
     color: var(--color);
 }
 
+:is(nav:not(.tabs, .crumbs, .pages), menu[popover]) :is(a, button, label).danger {
+    color: var(--shine-color);
+}
+
 .small, small {
     font-size: var(--decrease-font-size);
 }
@@ -1863,6 +1867,10 @@ input[type=range],
     color: var(--color);
 }
 
+.danger {
+    color: var(--shine-color);
+}
+
 .badge, .tag {
     display: inline-flex;
     flex-wrap: wrap;
@@ -1916,4 +1924,14 @@ input[type=number] {
 
 .num {
     text-align: end;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html:root {
+        --animation-duration: 0ms;
+        --animation-duration-fast: 0ms;
+        --press-translate: 0px;
+        --press-squeeze: 1;
+        --hop: 0px;
+    }
 }
