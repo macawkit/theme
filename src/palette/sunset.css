@@ -32,6 +32,8 @@
     --mtt-color-line-highlight-name: "Terracotta";
     --mtt-color-line-decorated: #9226ae;
     --mtt-color-line-decorated-name: "Petunia";
+    --mtt-color-control: #ad5129;
+    --mtt-color-control-name: "Copper";
 
     --color-info: var(--mtt-color-main-dimmed);
     --color-info-name: var(--mtt-color-main-dimmed-name);

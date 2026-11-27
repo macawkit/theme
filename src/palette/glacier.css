@@ -32,6 +32,8 @@
     --mtt-color-line-highlight-name: "Mist";
     --mtt-color-line-decorated: #0a7a99;
     --mtt-color-line-decorated-name: "Lagoon";
+    --mtt-color-control: #4f829c;
+    --mtt-color-control-name: "Harbor";
 
     --color-info: var(--mtt-color-main-dimmed);
     --color-info-name: var(--mtt-color-main-dimmed-name);

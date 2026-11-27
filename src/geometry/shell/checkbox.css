@@ -14,7 +14,7 @@ input:is([type=radio], [type=checkbox]) {
     --glow-color: color-mix(in srgb, var(--glow-source, #0000) var(--glow-strength), #0000);
     border-radius: 0;
     background-color: var(--mtt-color-body);
-    box-shadow: 0 0 0 1px var(--mtt-color-line);
+    box-shadow: 0 0 0 1px var(--mtt-color-control);
     transition:
         background-color var(--transition),
         box-shadow var(--transition);
@@ -99,7 +99,7 @@ input[type=radio] {
         width: calc(100% - var(--element-inner-margin-small) * 2);
         height: calc(100% - var(--element-inner-margin-small) * 2);
         transform: scale(.8);
-        background-color: var(--mtt-color-line);
+        background-color: var(--mtt-color-control);
     }
 
     &:checked::before {

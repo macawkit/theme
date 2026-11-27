@@ -13,7 +13,7 @@
     --mtt-color-main-highlight: #d01985;
     --mtt-color-main-highlight-name: "Fuchsia";
 
-    --mtt-color-text-muted: #856180;
+    --mtt-color-text-muted: #9e7c98;
     --mtt-color-text-muted-name: "Heather";
     --mtt-color-text: #be9eb6;
     --mtt-color-text-name: "Thistle";
@@ -32,6 +32,8 @@
     --mtt-color-line-highlight-name: "Beetroot";
     --mtt-color-line-decorated: #f2a1c5;
     --mtt-color-line-decorated-name: "Carnation";
+    --mtt-color-control: #994a84;
+    --mtt-color-control-name: "Amaranth";
 
     --color-info: var(--mtt-color-main-dimmed);
     --color-info-name: var(--mtt-color-main-dimmed-name);

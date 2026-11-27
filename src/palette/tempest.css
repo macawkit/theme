@@ -13,7 +13,7 @@
     --mtt-color-main-highlight: #506785;
     --mtt-color-main-highlight-name: "Static";
 
-    --mtt-color-text-muted: #788190;
+    --mtt-color-text-muted: #808998;
     --mtt-color-text-muted-name: "Fog";
     --mtt-color-text: #b2bac7;
     --mtt-color-text-name: "Rain";
@@ -32,6 +32,8 @@
     --mtt-color-line-highlight-name: "Pewter";
     --mtt-color-line-decorated: #ffef9f;
     --mtt-color-line-decorated-name: "Flash";
+    --mtt-color-control: #5d697c;
+    --mtt-color-control-name: "Lead";
 
     --color-info: var(--mtt-color-main-dimmed);
     --color-info-name: var(--mtt-color-main-dimmed-name);

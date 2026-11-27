@@ -13,7 +13,7 @@
     --mtt-color-main-highlight: #3462ff;
     --mtt-color-main-highlight-name: "Electric blue";
 
-    --mtt-color-text-muted: #5d6c99;
+    --mtt-color-text-muted: #7a8aba;
     --mtt-color-text-muted-name: "Dusk";
     --mtt-color-text: #97a6cf;
     --mtt-color-text-name: "Moonlight";
@@ -32,6 +32,8 @@
     --mtt-color-line-highlight-name: "Denim";
     --mtt-color-line-decorated: #9db8ff;
     --mtt-color-line-decorated-name: "Ice blue";
+    --mtt-color-control: #4a64b0;
+    --mtt-color-control-name: "Chambray";
 
     --color-info: var(--mtt-color-main-dimmed);
     --color-info-name: var(--mtt-color-main-dimmed-name);

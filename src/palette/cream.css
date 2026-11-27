@@ -13,7 +13,7 @@
     --mtt-color-main-highlight: #1a817d;
     --mtt-color-main-highlight-name: "Teal";
 
-    --mtt-color-text-muted: #7a7060;
+    --mtt-color-text-muted: #726859;
     --mtt-color-text-muted-name: "Driftwood";
     --mtt-color-text: #554c3f;
     --mtt-color-text-name: "Sepia";
@@ -32,6 +32,8 @@
     --mtt-color-line-highlight-name: "Eucalyptus";
     --mtt-color-line-decorated: #1c8c87;
     --mtt-color-line-decorated-name: "Lagoon";
+    --mtt-color-control: #658577;
+    --mtt-color-control-name: "Juniper";
 
     --color-info: var(--mtt-color-main-dimmed);
     --color-info-name: var(--mtt-color-main-dimmed-name);
