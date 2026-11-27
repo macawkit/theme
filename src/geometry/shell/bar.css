@@ -5,6 +5,7 @@
 nav.tabs > a::after,
 nav.pages a:not([rel])::after,
 :is(button, .button)[role=tab]::after {
+    --glow-source: var(--color);
     --glow-color: color-mix(in srgb, var(--glow-source, #0000) var(--glow-strength), #0000);
     content: "";
     position: absolute;
@@ -72,24 +73,4 @@ nav.tabs > a[aria-current=page]::after,
 nav.pages a[aria-current=page]::after,
 :is(button, .button)[role=tab][aria-selected=true]::after {
     opacity: 1;
-}
-
-.alert::after {
-    --glow-source: var(--color);
-}
-
-:is(button, .button).ghost::after {
-    --glow-source: var(--mtt-color-text-decorated);
-}
-
-:is(.info, .signature, .success, .priority, .warning, .danger) :is(button, .button).ghost::after,
-:is(button, .button).ghost:is(.info, .signature, .success, .priority, .warning, .danger)::after {
-    --glow-source: var(--color);
-}
-
-nav a:not(:where(nav.pages a[rel]))::after,
-:is(nav:not(.tabs, .crumbs, .pages), menu[popover]) :is(a, button, label)::after,
-[role=option]::after,
-:is(button, .button)[role=tab]::after {
-    --glow-source: var(--mtt-color-main-highlight);
 }

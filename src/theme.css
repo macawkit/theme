@@ -1,4 +1,4 @@
-:root {
+:where(:root) {
     --key-width: 120px;
     --column-width: 150px;
     --tile-width: calc(var(--column-width) * 2);
@@ -1799,7 +1799,7 @@ menu[popover] {
 }
 
 .share > i {
-    --glow-source: var(--shine-color);
+    --glow-source: var(--color);
     flex: var(--value);
     height: 100%;
 }
@@ -1812,7 +1812,7 @@ menu[popover] {
 }
 
 [role=meter]::before {
-    --glow-source: var(--shine-color);
+    --glow-source: var(--color);
     content: "";
     position: absolute;
     top: 0;

@@ -8,9 +8,9 @@
     --mtt-color-main-dimmed-name: "Overcast";
     --mtt-color-button: #2a3340;
     --mtt-color-button-name: "Stormcloud";
-    --mtt-color-main: #43556e;
+    --mtt-color-main: #647285;
     --mtt-color-main-name: "Tempest";
-    --mtt-color-main-highlight: #506785;
+    --mtt-color-main-highlight: #76859b;
     --mtt-color-main-highlight-name: "Static";
 
     --mtt-color-text-muted: #788190;
@@ -33,12 +33,12 @@
     --mtt-color-line-decorated: #ffef9f;
     --mtt-color-line-decorated-name: "Flash";
 
-    --color-info: var(--mtt-color-main-dimmed);
-    --color-info-name: var(--mtt-color-main-dimmed-name);
-    --color-info-highlight: var(--mtt-color-text-decorated);
-    --color-info-highlight-name: var(--mtt-color-text-decorated-name);
-    --color-info-text: var(--mtt-color-line-decorated);
-    --color-info-text-name: var(--mtt-color-line-decorated-name);
+    --color-info: #172438;
+    --color-info-name: "Deepwater";
+    --color-info-highlight: #76a8e8;
+    --color-info-highlight-name: "Storm blue";
+    --color-info-text: #b3d2fa;
+    --color-info-text-name: "Cirrus";
 
     --color-signature: #132936;
     --color-signature-name: "Fjord";
@@ -75,8 +75,8 @@
     --color-danger-text: #ff8e99;
     --color-danger-text-name: "Coral";
 
-    --color-category-1: #6ba8ff;
-    --color-category-1-name: "Bolt blue";
+    --color-category-1: var(--color-info-highlight);
+    --color-category-1-name: var(--color-info-highlight-name);
     --color-category-2: var(--color-priority-highlight);
     --color-category-2-name: var(--color-priority-highlight-name);
     --color-category-3: #f582c4;
@@ -113,10 +113,11 @@
 
     --glow-radius: 10px;
     --shine-radius: 2px;
-    --glow-strength: 55%;
+    --glow-strength: 50%;
     --disabled-filter: brightness(0.7) contrast(0.9) saturate(0.7);
 
     --fill-lift: 0;
+    --color: var(--mtt-color-text-decorated);
 }
 
 html {

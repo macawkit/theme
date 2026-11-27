@@ -8,7 +8,7 @@
 }
 
 .spark > i:last-child {
-    --glow-source: var(--shine-color);
+    --glow-source: var(--color);
     background: var(--fill-color);
     box-shadow:
         0 0 calc(var(--shine-radius) * 2) var(--color),

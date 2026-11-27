@@ -11,7 +11,7 @@
 }
 
 .spark > i:last-child {
-    --glow-source: var(--shine-color);
+    --glow-source: var(--color);
     background: var(--fill-color);
 }
 
